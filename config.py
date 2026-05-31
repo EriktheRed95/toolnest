@@ -9,7 +9,7 @@ SITE_TAGLINE = "Free, fast online calculators and tools"
 # Your live domain, NO trailing slash. Used for canonical URLs + sitemap.
 # Until you buy a domain, leave the placeholder; just remember to change it
 # before you submit to Google / AdSense.
-DOMAIN = "https://eriktherered95.github.io"
+DOMAIN = "https://erikthered95.github.io"
 
 # If you deploy to a GitHub *project* page WITHOUT a custom domain, the site
 # lives at  https://<user>.github.io/<repo>/  -> set BASE_PATH = "/<repo>".

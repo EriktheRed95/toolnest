@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://eriktherered95.github.io/toolnest/sitemap.xml
+Sitemap: https://erikthered95.github.io/toolnest/sitemap.xml
