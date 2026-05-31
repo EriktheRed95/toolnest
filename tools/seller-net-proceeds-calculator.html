@@ -1,0 +1,80 @@
+<!--META
+{
+  "title": "Seller Net Proceeds Calculator",
+  "slug": "seller-net-proceeds-calculator",
+  "category": "finance",
+  "h1": "Home Seller Net Proceeds Calculator",
+  "description": "Estimate how much cash you'll walk away with after selling your home — sale price minus mortgage payoff, agent commission, and closing costs. Free seller net sheet.",
+  "keywords": "seller net proceeds calculator, net sheet, home sale proceeds, how much will I make selling my house, closing costs calculator seller",
+  "faq": [
+    {"q": "What are net proceeds when selling a house?", "a": "Net proceeds are the cash you actually receive after the sale price is reduced by everything you owe at closing: your remaining mortgage balance, real estate commissions, title and escrow fees, transfer taxes, and any concessions or repairs you agreed to."},
+    {"q": "How much are closing costs for a seller?", "a": "As a rough guide, sellers commonly pay 6%–10% of the sale price all-in. The largest piece is usually the real estate commission (often 5%–6%, though increasingly negotiable), followed by title/escrow fees and any local transfer taxes."},
+    {"q": "Who pays transfer tax, the buyer or the seller?", "a": "It varies by state, county, and even city, and is sometimes negotiated in the contract. In many California areas the seller customarily pays the documentary transfer tax; Oklahoma's documentary stamp tax is comparatively low. Check local custom and your contract, and enter your figure in the form."},
+    {"q": "Is this the same as my profit?", "a": "No. Net proceeds is the cash from this transaction. Your actual profit also depends on what you originally paid, improvements you made, and possible capital gains taxes. Talk to a tax professional about gains."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="s-price">Sale price ($)</label><input type="number" id="s-price" value="450000" min="0" step="1000"></div>
+  <div class="field"><label for="s-payoff">Mortgage payoff ($) <span class="hint">remaining balance</span></label><input type="number" id="s-payoff" value="250000" min="0" step="1000"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="s-comm">Agent commission (%)</label><input type="number" id="s-comm" value="5" min="0" step="0.1"></div>
+  <div class="field"><label for="s-title">Title &amp; escrow ($)</label><input type="number" id="s-title" value="2500" min="0" step="100"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="s-transfer">Transfer / excise tax ($)</label><input type="number" id="s-transfer" value="0" min="0" step="50"></div>
+  <div class="field"><label for="s-warranty">Home warranty ($)</label><input type="number" id="s-warranty" value="0" min="0" step="50"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="s-concess">Repairs / buyer credits ($)</label><input type="number" id="s-concess" value="0" min="0" step="100"></div>
+  <div class="field"><label for="s-other">Other costs ($)</label><input type="number" id="s-other" value="0" min="0" step="100"></div>
+</div>
+
+<div class="result" id="s-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['s-price', 's-payoff', 's-comm', 's-title', 's-transfer', 's-warranty', 's-concess', 's-other'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function calc() {
+    var price = v('s-price');
+    var commission = price * v('s-comm') / 100;
+    var costs = commission + v('s-title') + v('s-transfer') + v('s-warranty') + v('s-concess') + v('s-other');
+    var payoff = v('s-payoff');
+    var net = price - payoff - costs;
+    document.getElementById('s-out').innerHTML =
+      '<div class="result-sub">Estimated net proceeds</div>' +
+      '<div class="result-big">' + money.format(net) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Sale price', money.format(price)) +
+        kv('Agent commission (' + (v('s-comm')) + '%)', '&minus; ' + money.format(commission)) +
+        kv('Title &amp; escrow', '&minus; ' + money.format(v('s-title'))) +
+        (v('s-transfer') ? kv('Transfer / excise tax', '&minus; ' + money.format(v('s-transfer'))) : '') +
+        (v('s-warranty') ? kv('Home warranty', '&minus; ' + money.format(v('s-warranty'))) : '') +
+        (v('s-concess') ? kv('Repairs / credits', '&minus; ' + money.format(v('s-concess'))) : '') +
+        (v('s-other') ? kv('Other costs', '&minus; ' + money.format(v('s-other'))) : '') +
+        kv('Mortgage payoff', '&minus; ' + money.format(payoff)) +
+        kv('<strong>Net to seller</strong>', '<strong>' + money.format(net) + '</strong>') +
+      '</div>' +
+      (price ? '<p class="note">Total selling costs: ' + money.format(costs) + ' (' + (costs / price * 100).toFixed(1) + '% of sale price), before mortgage payoff.</p>' : '') +
+      (net < 0 ? '<p class="note">Heads up: this estimate is negative, meaning the sale may not cover your payoff plus costs.</p>' : '');
+  }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How the seller net sheet works</h2>
+<p>When you sell a home, the sale price is not what you pocket. From the price, the closing process subtracts what you still owe on your mortgage plus the costs of selling. What's left is your <strong>net proceeds</strong> — the wire or check you receive at closing. This calculator builds a simplified version of the "net sheet" your agent or escrow officer prepares.</p>
+<p>The biggest line items are usually:</p>
+<ul>
+  <li><strong>Mortgage payoff</strong> — your remaining loan balance, plus any prepayment interest.</li>
+  <li><strong>Real estate commission</strong> — historically 5%–6% of the price, increasingly negotiable. Enter the total rate for both sides as your contract specifies.</li>
+  <li><strong>Title &amp; escrow / settlement fees</strong> — for handling the closing, title search, and title insurance, per local custom.</li>
+  <li><strong>Transfer / excise tax</strong> — a government fee on the sale that varies widely by state and county (low in Oklahoma; often paid by the seller in much of California).</li>
+  <li><strong>Concessions, repairs, and credits</strong> — anything you agreed to credit the buyer.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> Actual costs depend on your state, county, contract, loan, and the closing date (which affects tax and interest prorations). This tool is for planning and is not legal, tax, or financial advice — your agent, title/escrow officer, and a tax professional can give exact figures for your sale.</p>

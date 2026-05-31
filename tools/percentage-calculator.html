@@ -1,0 +1,75 @@
+<!--META
+{
+  "title": "Percentage Calculator",
+  "slug": "percentage-calculator",
+  "category": "everyday",
+  "h1": "Percentage Calculator",
+  "description": "Work out percentages three ways: what is X% of Y, X is what percent of Y, and the percent increase or decrease between two numbers. Free and instant.",
+  "keywords": "percentage calculator, percent of a number, percentage increase, percentage change, what percent",
+  "faq": [
+    {"q": "How do I calculate a percentage of a number?", "a": "Multiply the number by the percentage and divide by 100. For example, 20% of 150 is 150 × 20 ÷ 100 = 30. Use the first calculator above to do it instantly."},
+    {"q": "How do I find what percent one number is of another?", "a": "Divide the part by the whole and multiply by 100. For example, 30 out of 150 is 30 ÷ 150 × 100 = 20%. The second calculator does this for you."},
+    {"q": "How do I calculate percentage increase or decrease?", "a": "Subtract the old value from the new value, divide by the old value, and multiply by 100. A rise from 150 to 180 is (180 − 150) ÷ 150 × 100 = +20%."}
+  ]
+}
+META-->
+<h2 style="margin-top:0">What is X% of Y?</h2>
+<div class="row">
+  <div class="field"><label for="p1-x">Percent (%)</label><input type="number" id="p1-x" value="20"></div>
+  <div class="field"><label for="p1-y">of</label><input type="number" id="p1-y" value="150"></div>
+</div>
+<div class="result empty" id="p1-out">Result appears here.</div>
+
+<h2>X is what percent of Y?</h2>
+<div class="row">
+  <div class="field"><label for="p2-x">Number</label><input type="number" id="p2-x" value="30"></div>
+  <div class="field"><label for="p2-y">is what % of</label><input type="number" id="p2-y" value="150"></div>
+</div>
+<div class="result empty" id="p2-out">Result appears here.</div>
+
+<h2>Percent increase / decrease</h2>
+<div class="row">
+  <div class="field"><label for="p3-a">From</label><input type="number" id="p3-a" value="150"></div>
+  <div class="field"><label for="p3-b">To</label><input type="number" id="p3-b" value="180"></div>
+</div>
+<div class="result empty" id="p3-out">Result appears here.</div>
+
+<script>
+(function () {
+  var nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 4 });
+  function bind(ids, fn) {
+    ids.forEach(function (id) { document.getElementById(id).addEventListener('input', fn); });
+    fn();
+  }
+  bind(['p1-x', 'p1-y'], function () {
+    var x = +document.getElementById('p1-x').value, y = +document.getElementById('p1-y').value;
+    var o = document.getElementById('p1-out');
+    if (isNaN(x) || isNaN(y)) return;
+    o.className = 'result'; o.innerHTML = '<span class="result-big">' + nf.format(x * y / 100) + '</span>';
+  });
+  bind(['p2-x', 'p2-y'], function () {
+    var x = +document.getElementById('p2-x').value, y = +document.getElementById('p2-y').value;
+    var o = document.getElementById('p2-out');
+    if (isNaN(x) || isNaN(y) || y === 0) { o.className = 'result'; o.textContent = 'Enter a non-zero second number.'; return; }
+    o.className = 'result'; o.innerHTML = '<span class="result-big">' + nf.format(x / y * 100) + '%</span>';
+  });
+  bind(['p3-a', 'p3-b'], function () {
+    var a = +document.getElementById('p3-a').value, b = +document.getElementById('p3-b').value;
+    var o = document.getElementById('p3-out');
+    if (isNaN(a) || isNaN(b) || a === 0) { o.className = 'result'; o.textContent = 'Enter a non-zero starting value.'; return; }
+    var pct = (b - a) / Math.abs(a) * 100;
+    var word = pct > 0 ? 'increase' : pct < 0 ? 'decrease' : 'change';
+    o.className = 'result';
+    o.innerHTML = '<span class="result-big">' + (pct > 0 ? '+' : '') + nf.format(pct) + '%</span> <span class="result-sub">' + word + '</span>';
+  });
+})();
+</script>
+
+<h2>Percentage formulas</h2>
+<p>A percentage is just a fraction out of 100. These are the three calculations people need most:</p>
+<ul>
+  <li><strong>Percent of a number:</strong> X% of Y = Y × X ÷ 100. (20% of 150 = 30)</li>
+  <li><strong>What percent:</strong> X is (X ÷ Y × 100)% of Y. (30 is 20% of 150)</li>
+  <li><strong>Percent change:</strong> (New − Old) ÷ Old × 100. (150 → 180 is +20%)</li>
+</ul>
+<p>Each calculator above updates as you type, so you can use it for tips, discounts, tax, grades, commissions, markups, or tracking how much a number went up or down.</p>

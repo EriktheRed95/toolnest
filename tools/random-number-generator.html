@@ -1,0 +1,63 @@
+<!--META
+{
+  "title": "Random Number Generator",
+  "slug": "random-number-generator",
+  "category": "random",
+  "h1": "Random Number Generator",
+  "description": "Generate random numbers in any range — pick a min and max, choose how many, and toggle duplicates. Free, instant, works on any device.",
+  "keywords": "random number generator, pick a random number, number picker, rng, random integer",
+  "faq": [
+    {"q": "How do I generate a random number between 1 and 100?", "a": "Set the minimum to 1 and the maximum to 100, leave the count at 1, and press Generate. You'll get one whole number from 1 to 100, including both ends."},
+    {"q": "Can I generate numbers without duplicates?", "a": "Yes. Tick \"No duplicates\" and the tool will draw unique numbers. This is useful for raffles, lottery picks, or assigning unique IDs. If you ask for more numbers than the range allows, it will tell you."},
+    {"q": "Are the numbers truly random?", "a": "They are generated in your browser using JavaScript's pseudo-random generator, which is fine for games, draws, picking winners, and everyday use. It is not certified for gambling or cryptographic purposes."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="rng-min">Minimum</label><input type="number" id="rng-min" value="1"></div>
+  <div class="field"><label for="rng-max">Maximum</label><input type="number" id="rng-max" value="100"></div>
+  <div class="field"><label for="rng-count">How many</label><input type="number" id="rng-count" value="1" min="1" max="10000"></div>
+</div>
+<div class="checks">
+  <label><input type="checkbox" id="rng-nodup"> No duplicates</label>
+  <label><input type="checkbox" id="rng-sort"> Sort results</label>
+</div>
+<div class="btn-row">
+  <button class="btn" id="rng-go">Generate</button>
+  <button class="btn secondary" data-copy="#rng-out" id="rng-copy">Copy</button>
+</div>
+<div class="result empty" id="rng-out">Your random numbers will appear here.</div>
+
+<script>
+(function () {
+  var out = document.getElementById('rng-out');
+  function go() {
+    var min = Math.floor(+document.getElementById('rng-min').value);
+    var max = Math.floor(+document.getElementById('rng-max').value);
+    var count = Math.floor(+document.getElementById('rng-count').value) || 1;
+    var nodup = document.getElementById('rng-nodup').checked;
+    var sort = document.getElementById('rng-sort').checked;
+    if (isNaN(min) || isNaN(max)) { return fail('Please enter valid minimum and maximum numbers.'); }
+    if (min > max) { var t = min; min = max; max = t; }
+    count = Math.max(1, Math.min(count, 10000));
+    var span = max - min + 1;
+    if (nodup && count > span) { return fail('Only ' + span + ' unique numbers exist between ' + min + ' and ' + max + '. Lower the count or untick "No duplicates".'); }
+    var nums = [];
+    if (nodup) {
+      var pool = []; for (var i = min; i <= max; i++) pool.push(i);
+      for (var k = 0; k < count; k++) { var j = Math.floor(Math.random() * pool.length); nums.push(pool.splice(j, 1)[0]); }
+    } else {
+      for (var n = 0; n < count; n++) nums.push(min + Math.floor(Math.random() * span));
+    }
+    if (sort) nums.sort(function (a, b) { return a - b; });
+    out.className = 'result out-list';
+    out.textContent = nums.join(', ');
+  }
+  function fail(msg) { out.className = 'result'; out.textContent = msg; }
+  document.getElementById('rng-go').addEventListener('click', go);
+})();
+</script>
+
+<h2>About this random number generator</h2>
+<p>This free tool picks random whole numbers between any two values you choose. Use it to draw raffle and giveaway winners, roll custom dice, assign random order to a list, pick lottery-style numbers, or seed any decision that should be left to chance. Everything runs in your browser — nothing is sent to a server, and there's no sign-up.</p>
+<p>The <strong>No duplicates</strong> option guarantees every number is unique, which is what you want for draws where the same entry shouldn't win twice. The <strong>Sort results</strong> option lists them low-to-high so a set of picks is easy to read.</p>

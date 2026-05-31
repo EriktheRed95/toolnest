@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<meta name="description" content="{{META_DESCRIPTION}}">
+<meta name="keywords" content="{{KEYWORDS}}">
+<link rel="canonical" href="{{CANONICAL}}">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{SITE_NAME}}">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{META_DESCRIPTION}}">
+<meta property="og:url" content="{{CANONICAL}}">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="{{BASE}}/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="{{BASE}}/assets/site.css">
+{{JSONLD}}
+{{ADSENSE_HEAD}}
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="{{BASE}}/">{{SITE_NAME}}</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav">{{NAV}}</nav>
+  </div>
+</header>
+<main id="main" class="container">
+{{BREADCRUMB}}
+{{CONTENT}}
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links">{{FOOTER_LINKS}}</p>
+    <p class="footer-note">&copy; {{YEAR}} {{SITE_NAME}}. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="{{BASE}}/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="{{BASE}}/assets/site.js" defer></script>
+</body>
+</html>

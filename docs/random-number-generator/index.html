@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Random Number Generator</title>
+<meta name="description" content="Generate random numbers in any range — pick a min and max, choose how many, and toggle duplicates. Free, instant, works on any device.">
+<meta name="keywords" content="random number generator, pick a random number, number picker, rng, random integer">
+<link rel="canonical" href="https://eriktherered95.github.io/toolnest/random-number-generator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Random Number Generator">
+<meta property="og:description" content="Generate random numbers in any range — pick a min and max, choose how many, and toggle duplicates. Free, instant, works on any device.">
+<meta property="og:url" content="https://eriktherered95.github.io/toolnest/random-number-generator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Random Number Generator", "url": "https://eriktherered95.github.io/toolnest/random-number-generator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Generate random numbers in any range \u2014 pick a min and max, choose how many, and toggle duplicates. Free, instant, works on any device."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I generate a random number between 1 and 100?", "acceptedAnswer": {"@type": "Answer", "text": "Set the minimum to 1 and the maximum to 100, leave the count at 1, and press Generate. You'll get one whole number from 1 to 100, including both ends."}}, {"@type": "Question", "name": "Can I generate numbers without duplicates?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Tick \"No duplicates\" and the tool will draw unique numbers. This is useful for raffles, lottery picks, or assigning unique IDs. If you ask for more numbers than the range allows, it will tell you."}}, {"@type": "Question", "name": "Are the numbers truly random?", "acceptedAnswer": {"@type": "Answer", "text": "They are generated in your browser using JavaScript's pseudo-random generator, which is fine for games, draws, picking winners, and everyday use. It is not certified for gambling or cryptographic purposes."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>Random Number Generator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://eriktherered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://eriktherered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "Random Number Generator"}]}</script>
+<article class="tool"><h1>Random Number Generator</h1><p class="lede">Generate random numbers in any range — pick a min and max, choose how many, and toggle duplicates. Free, instant, works on any device.</p><div class="row">
+  <div class="field"><label for="rng-min">Minimum</label><input type="number" id="rng-min" value="1"></div>
+  <div class="field"><label for="rng-max">Maximum</label><input type="number" id="rng-max" value="100"></div>
+  <div class="field"><label for="rng-count">How many</label><input type="number" id="rng-count" value="1" min="1" max="10000"></div>
+</div>
+<div class="checks">
+  <label><input type="checkbox" id="rng-nodup"> No duplicates</label>
+  <label><input type="checkbox" id="rng-sort"> Sort results</label>
+</div>
+<div class="btn-row">
+  <button class="btn" id="rng-go">Generate</button>
+  <button class="btn secondary" data-copy="#rng-out" id="rng-copy">Copy</button>
+</div>
+<div class="result empty" id="rng-out">Your random numbers will appear here.</div>
+
+<script>
+(function () {
+  var out = document.getElementById('rng-out');
+  function go() {
+    var min = Math.floor(+document.getElementById('rng-min').value);
+    var max = Math.floor(+document.getElementById('rng-max').value);
+    var count = Math.floor(+document.getElementById('rng-count').value) || 1;
+    var nodup = document.getElementById('rng-nodup').checked;
+    var sort = document.getElementById('rng-sort').checked;
+    if (isNaN(min) || isNaN(max)) { return fail('Please enter valid minimum and maximum numbers.'); }
+    if (min > max) { var t = min; min = max; max = t; }
+    count = Math.max(1, Math.min(count, 10000));
+    var span = max - min + 1;
+    if (nodup && count > span) { return fail('Only ' + span + ' unique numbers exist between ' + min + ' and ' + max + '. Lower the count or untick "No duplicates".'); }
+    var nums = [];
+    if (nodup) {
+      var pool = []; for (var i = min; i <= max; i++) pool.push(i);
+      for (var k = 0; k < count; k++) { var j = Math.floor(Math.random() * pool.length); nums.push(pool.splice(j, 1)[0]); }
+    } else {
+      for (var n = 0; n < count; n++) nums.push(min + Math.floor(Math.random() * span));
+    }
+    if (sort) nums.sort(function (a, b) { return a - b; });
+    out.className = 'result out-list';
+    out.textContent = nums.join(', ');
+  }
+  function fail(msg) { out.className = 'result'; out.textContent = msg; }
+  document.getElementById('rng-go').addEventListener('click', go);
+})();
+</script>
+
+<h2>About this random number generator</h2>
+<p>This free tool picks random whole numbers between any two values you choose. Use it to draw raffle and giveaway winners, roll custom dice, assign random order to a list, pick lottery-style numbers, or seed any decision that should be left to chance. Everything runs in your browser — nothing is sent to a server, and there's no sign-up.</p>
+<p>The <strong>No duplicates</strong> option guarantees every number is unique, which is what you want for draws where the same entry shouldn't win twice. The <strong>Sort results</strong> option lists them low-to-high so a set of picks is easy to read.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How do I generate a random number between 1 and 100?</summary><div class="faq-a">Set the minimum to 1 and the maximum to 100, leave the count at 1, and press Generate. You'll get one whole number from 1 to 100, including both ends.</div></details>
+<details class="faq-item"><summary>Can I generate numbers without duplicates?</summary><div class="faq-a">Yes. Tick "No duplicates" and the tool will draw unique numbers. This is useful for raffles, lottery picks, or assigning unique IDs. If you ask for more numbers than the range allows, it will tell you.</div></details>
+<details class="faq-item"><summary>Are the numbers truly random?</summary><div class="faq-a">They are generated in your browser using JavaScript's pseudo-random generator, which is fine for games, draws, picking winners, and everyday use. It is not certified for gambling or cryptographic purposes.</div></details></section></article>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

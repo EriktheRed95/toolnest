@@ -1,0 +1,62 @@
+<!--META
+{
+  "title": "Tip Calculator",
+  "slug": "tip-calculator",
+  "category": "everyday",
+  "h1": "Tip Calculator",
+  "description": "Calculate the tip and split the bill in seconds. Enter the bill, choose a tip percentage, and see the tip, total, and amount per person.",
+  "keywords": "tip calculator, gratuity calculator, split the bill, how much to tip, tip percentage",
+  "faq": [
+    {"q": "How much should I tip at a restaurant?", "a": "In the U.S., 18–20% of the pre-tax bill is standard for sit-down table service, 15% for adequate service, and 20%+ for great service. Use the preset buttons above to compare."},
+    {"q": "Should I tip on the pre-tax or post-tax amount?", "a": "Tipping on the pre-tax subtotal is customary, but many people tip on the total for simplicity. Either is acceptable — enter whichever bill figure you prefer."},
+    {"q": "How do I split a bill evenly with tip?", "a": "Enter the bill, set your tip percentage, and set the number of people. The calculator shows the total including tip and divides it equally so everyone pays the same amount."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="tip-bill">Bill amount ($)</label><input type="number" id="tip-bill" value="50" min="0" step="0.01"></div>
+  <div class="field"><label for="tip-pct">Tip (%)</label><input type="number" id="tip-pct" value="20" min="0" step="1"></div>
+  <div class="field"><label for="tip-people">People</label><input type="number" id="tip-people" value="1" min="1" step="1"></div>
+</div>
+<div class="btn-row" id="tip-presets">
+  <button class="chip" data-tip="15">15%</button>
+  <button class="chip active" data-tip="18">18%</button>
+  <button class="chip" data-tip="20">20%</button>
+  <button class="chip" data-tip="25">25%</button>
+</div>
+<div class="checks"><label><input type="checkbox" id="tip-round"> Round total up to the nearest dollar</label></div>
+<div class="result" id="tip-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var pctEl = document.getElementById('tip-pct'), out = document.getElementById('tip-out');
+  function calc() {
+    var bill = +document.getElementById('tip-bill').value || 0;
+    var pct = +pctEl.value || 0;
+    var people = Math.max(1, Math.floor(+document.getElementById('tip-people').value) || 1);
+    var round = document.getElementById('tip-round').checked;
+    var tip = bill * pct / 100;
+    var total = bill + tip;
+    if (round) { total = Math.ceil(total); tip = total - bill; }
+    out.innerHTML =
+      '<div class="kv"><span>Tip</span><span class="v">' + money.format(tip) + '</span></div>' +
+      '<div class="kv"><span>Total</span><span class="v">' + money.format(total) + '</span></div>' +
+      (people > 1 ? '<div class="kv"><span>Each person (' + people + ')</span><span class="v">' + money.format(total / people) + '</span></div>' : '');
+  }
+  document.querySelectorAll('#tip-presets .chip').forEach(function (c) {
+    c.addEventListener('click', function () {
+      document.querySelectorAll('#tip-presets .chip').forEach(function (x) { x.classList.remove('active'); });
+      c.classList.add('active'); pctEl.value = c.dataset.tip; calc();
+    });
+  });
+  ['tip-bill', 'tip-pct', 'tip-people', 'tip-round'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
+
+<h2>How to use the tip calculator</h2>
+<p>Enter your bill, tap a tip percentage (or type your own), and the calculator instantly shows the tip amount, the grand total, and — if you're splitting — what each person owes. Tick <strong>round up</strong> to land on a clean dollar total, which is handy when leaving cash.</p>
+<p>As a quick guide for the U.S.: 15% is a minimum for sit-down service, <strong>18–20%</strong> is the everyday standard, and 20–25% rewards great service. Counter service, delivery, and bars all have their own norms, so adjust to your situation.</p>

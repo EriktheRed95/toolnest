@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mortgage Calculator</title>
+<meta name="description" content="Estimate your monthly mortgage payment including principal, interest, property tax, insurance, PMI, and HOA. See total interest and a full amortization schedule.">
+<meta name="keywords" content="mortgage calculator, monthly payment calculator, home loan calculator, PITI, amortization schedule, PMI calculator">
+<link rel="canonical" href="https://eriktherered95.github.io/toolnest/mortgage-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Mortgage Calculator">
+<meta property="og:description" content="Estimate your monthly mortgage payment including principal, interest, property tax, insurance, PMI, and HOA. See total interest and a full amortization schedule.">
+<meta property="og:url" content="https://eriktherered95.github.io/toolnest/mortgage-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Mortgage Calculator", "url": "https://eriktherered95.github.io/toolnest/mortgage-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Estimate your monthly mortgage payment including principal, interest, property tax, insurance, PMI, and HOA. See total interest and a full amortization schedule."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is included in a monthly mortgage payment?", "acceptedAnswer": {"@type": "Answer", "text": "A typical payment has four parts, often called PITI: Principal and Interest (the loan itself), plus property Taxes and homeowner's Insurance held in escrow. Many payments also include private mortgage insurance (PMI) if your down payment is under 20%, and HOA dues if applicable. This calculator adds all of them."}}, {"@type": "Question", "name": "How is the principal and interest payment calculated?", "acceptedAnswer": {"@type": "Answer", "text": "It uses the standard amortization formula: M = P \u00d7 r(1+r)^n \u00f7 ((1+r)^n \u2212 1), where P is the loan amount, r is the monthly interest rate (annual rate \u00f7 12), and n is the number of monthly payments. Early payments are mostly interest; later payments are mostly principal."}}, {"@type": "Question", "name": "When does PMI go away?", "acceptedAnswer": {"@type": "Answer", "text": "On most conventional loans, PMI can be removed once you reach about 20% equity (an 80% loan-to-value ratio), and lenders must automatically cancel it at 22% equity based on the original schedule. This estimate includes PMI in the monthly figure while your down payment is under 20%."}}, {"@type": "Question", "name": "Is this calculator's result exact?", "acceptedAnswer": {"@type": "Answer", "text": "It's a close estimate for planning. Your actual payment depends on your exact rate, taxes, insurance premiums, loan program, and lender fees. Always confirm with a lender's official Loan Estimate."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Mortgage Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://eriktherered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://eriktherered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Mortgage Calculator"}]}</script>
+<article class="tool"><h1>Mortgage Calculator</h1><p class="lede">Estimate your monthly mortgage payment including principal, interest, property tax, insurance, PMI, and HOA. See total interest and a full amortization schedule.</p><div class="row">
+  <div class="field"><label for="m-price">Home price ($)</label><input type="number" id="m-price" value="400000" min="0" step="1000"></div>
+  <div class="field"><label for="m-dp">Down payment ($)</label><input type="number" id="m-dp" value="80000" min="0" step="1000"></div>
+  <div class="field"><label for="m-dpp">Down payment (%)</label><input type="number" id="m-dpp" value="20" min="0" max="100" step="0.1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="m-rate">Interest rate (% APR)</label><input type="number" id="m-rate" value="6.5" min="0" step="0.01"></div>
+  <div class="field"><label for="m-term">Loan term (years)</label>
+    <select id="m-term"><option>30</option><option>20</option><option>15</option><option>10</option></select></div>
+</div>
+<div class="row">
+  <div class="field"><label for="m-tax">Property tax ($/yr) <span class="hint">optional</span></label><input type="number" id="m-tax" value="4800" min="0" step="100"></div>
+  <div class="field"><label for="m-ins">Home insurance ($/yr) <span class="hint">optional</span></label><input type="number" id="m-ins" value="1500" min="0" step="100"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="m-hoa">HOA ($/mo) <span class="hint">optional</span></label><input type="number" id="m-hoa" value="0" min="0" step="10"></div>
+  <div class="field"><label for="m-pmi">PMI rate (%/yr) <span class="hint">if &lt;20% down</span></label><input type="number" id="m-pmi" value="0.5" min="0" step="0.1"></div>
+</div>
+
+<div class="result" id="m-out"></div>
+<div class="btn-row"><button class="btn secondary" id="m-toggle">Show amortization schedule</button></div>
+<div id="m-sched" style="display:none"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['m-price', 'm-dp', 'm-dpp', 'm-rate', 'm-term', 'm-tax', 'm-ins', 'm-hoa', 'm-pmi'];
+  var lastDp = 'dollar';
+  var price = function () { return +document.getElementById('m-price').value || 0; };
+
+  document.getElementById('m-dp').addEventListener('input', function () { lastDp = 'dollar'; syncDp(); calc(); });
+  document.getElementById('m-dpp').addEventListener('input', function () { lastDp = 'pct'; syncDp(); calc(); });
+  function syncDp() {
+    var p = price();
+    if (lastDp === 'dollar') {
+      var dp = +document.getElementById('m-dp').value || 0;
+      document.getElementById('m-dpp').value = p ? +(dp / p * 100).toFixed(2) : 0;
+    } else {
+      var pct = +document.getElementById('m-dpp').value || 0;
+      document.getElementById('m-dp').value = Math.round(p * pct / 100);
+    }
+  }
+
+  function schedule(P, r, n) {
+    var rows = [], bal = P, totalInt = 0;
+    var pay = r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    for (var i = 1; i <= n; i++) {
+      var interest = bal * r, principal = pay - interest;
+      bal -= principal; totalInt += interest;
+      if (bal < 0) bal = 0;
+      rows.push({ m: i, interest: interest, principal: principal, bal: bal });
+    }
+    return { pay: pay, totalInt: totalInt, rows: rows };
+  }
+
+  function calc() {
+    var p = price();
+    var dp = +document.getElementById('m-dp').value || 0;
+    var loan = Math.max(0, p - dp);
+    var rate = (+document.getElementById('m-rate').value || 0) / 100 / 12;
+    var n = (+document.getElementById('m-term').value || 30) * 12;
+    var tax = (+document.getElementById('m-tax').value || 0) / 12;
+    var ins = (+document.getElementById('m-ins').value || 0) / 12;
+    var hoa = +document.getElementById('m-hoa').value || 0;
+    var ltv = p ? loan / p : 0;
+    var pmiMonthly = ltv > 0.8 ? loan * (+document.getElementById('m-pmi').value || 0) / 100 / 12 : 0;
+
+    var s = schedule(loan, rate, n);
+    var pi = s.pay;
+    var total = pi + tax + ins + hoa + pmiMonthly;
+
+    document.getElementById('m-out').innerHTML =
+      '<div class="result-sub">Estimated monthly payment</div>' +
+      '<div class="result-big">' + money2.format(total) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Principal &amp; interest', money2.format(pi)) +
+        (tax ? kv('Property tax', money2.format(tax)) : '') +
+        (ins ? kv('Home insurance', money2.format(ins)) : '') +
+        (pmiMonthly ? kv('PMI (until 20% equity)', money2.format(pmiMonthly)) : '') +
+        (hoa ? kv('HOA', money2.format(hoa)) : '') +
+        kv('Loan amount', money.format(loan)) +
+        kv('Total interest over ' + (n / 12) + ' yrs', money.format(s.totalInt)) +
+        kv('Total of all payments', money.format(s.pay * n)) +
+      '</div>' +
+      (ltv > 0.8 ? '<p class="note">Your down payment is under 20%, so PMI is included until you reach about 20% equity.</p>' : '');
+
+    renderSched(s, n);
+  }
+  function kv(k, v) { return '<div class="kv"><span>' + k + '</span><span class="v">' + v + '</span></div>'; }
+
+  function renderSched(s, n) {
+    var box = document.getElementById('m-sched');
+    var yrs = n / 12, html = '<div class="scroll"><table class="amort"><thead><tr>' +
+      '<th>Year</th><th>Principal paid</th><th>Interest paid</th><th>Balance</th></tr></thead><tbody>';
+    for (var y = 1; y <= yrs; y++) {
+      var pr = 0, intr = 0, bal = 0;
+      for (var m = (y - 1) * 12; m < y * 12; m++) { pr += s.rows[m].principal; intr += s.rows[m].interest; bal = s.rows[m].bal; }
+      html += '<tr><td>' + y + '</td><td>' + money.format(pr) + '</td><td>' + money.format(intr) + '</td><td>' + money.format(bal) + '</td></tr>';
+    }
+    box.innerHTML = html + '</tbody></table></div>';
+  }
+
+  document.getElementById('m-toggle').addEventListener('click', function () {
+    var box = document.getElementById('m-sched');
+    var show = box.style.display === 'none';
+    box.style.display = show ? '' : 'none';
+    this.textContent = show ? 'Hide amortization schedule' : 'Show amortization schedule';
+  });
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  document.getElementById('m-price').addEventListener('input', function () { syncDp(); });
+  calc();
+})();
+</script>
+
+<h2>Understanding your mortgage payment</h2>
+<p>Your monthly housing cost is usually more than just the loan. Lenders bundle it into <strong>PITI</strong> — Principal, Interest, Taxes, and Insurance — and collect the tax and insurance portions in an escrow account so the big annual bills are spread across 12 months. If your down payment is under 20%, most conventional loans add <strong>private mortgage insurance (PMI)</strong>, and homes in a community association add <strong>HOA dues</strong>. This calculator adds all of these so the number you see is closer to what you'll actually pay.</p>
+<p>The principal-and-interest portion is fixed for the life of a fixed-rate loan, but in the early years most of each payment goes to interest. The amortization schedule above shows how the balance falls and how the principal/interest split shifts over time — which is why making extra principal payments early saves the most interest.</p>
+<p><strong>Tip for buyers:</strong> taxes and insurance vary a lot by area. Property tax is often quoted as a percentage of value (roughly 0.5%–2.5%/yr depending on the state and county), and insurance depends on the home and location. Plug in local figures for a realistic estimate, then confirm everything with a lender's official Loan Estimate before you commit.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is included in a monthly mortgage payment?</summary><div class="faq-a">A typical payment has four parts, often called PITI: Principal and Interest (the loan itself), plus property Taxes and homeowner's Insurance held in escrow. Many payments also include private mortgage insurance (PMI) if your down payment is under 20%, and HOA dues if applicable. This calculator adds all of them.</div></details>
+<details class="faq-item"><summary>How is the principal and interest payment calculated?</summary><div class="faq-a">It uses the standard amortization formula: M = P × r(1+r)^n ÷ ((1+r)^n − 1), where P is the loan amount, r is the monthly interest rate (annual rate ÷ 12), and n is the number of monthly payments. Early payments are mostly interest; later payments are mostly principal.</div></details>
+<details class="faq-item"><summary>When does PMI go away?</summary><div class="faq-a">On most conventional loans, PMI can be removed once you reach about 20% equity (an 80% loan-to-value ratio), and lenders must automatically cancel it at 22% equity based on the original schedule. This estimate includes PMI in the monthly figure while your down payment is under 20%.</div></details>
+<details class="faq-item"><summary>Is this calculator's result exact?</summary><div class="faq-a">It's a close estimate for planning. Your actual payment depends on your exact rate, taxes, insurance premiums, loan program, and lender fees. Always confirm with a lender's official Loan Estimate.</div></details></section></article>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

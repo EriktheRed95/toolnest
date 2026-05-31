@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tip Calculator</title>
+<meta name="description" content="Calculate the tip and split the bill in seconds. Enter the bill, choose a tip percentage, and see the tip, total, and amount per person.">
+<meta name="keywords" content="tip calculator, gratuity calculator, split the bill, how much to tip, tip percentage">
+<link rel="canonical" href="https://eriktherered95.github.io/toolnest/tip-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Tip Calculator">
+<meta property="og:description" content="Calculate the tip and split the bill in seconds. Enter the bill, choose a tip percentage, and see the tip, total, and amount per person.">
+<meta property="og:url" content="https://eriktherered95.github.io/toolnest/tip-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Tip Calculator", "url": "https://eriktherered95.github.io/toolnest/tip-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Calculate the tip and split the bill in seconds. Enter the bill, choose a tip percentage, and see the tip, total, and amount per person."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How much should I tip at a restaurant?", "acceptedAnswer": {"@type": "Answer", "text": "In the U.S., 18\u201320% of the pre-tax bill is standard for sit-down table service, 15% for adequate service, and 20%+ for great service. Use the preset buttons above to compare."}}, {"@type": "Question", "name": "Should I tip on the pre-tax or post-tax amount?", "acceptedAnswer": {"@type": "Answer", "text": "Tipping on the pre-tax subtotal is customary, but many people tip on the total for simplicity. Either is acceptable \u2014 enter whichever bill figure you prefer."}}, {"@type": "Question", "name": "How do I split a bill evenly with tip?", "acceptedAnswer": {"@type": "Answer", "text": "Enter the bill, set your tip percentage, and set the number of people. The calculator shows the total including tip and divides it equally so everyone pays the same amount."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Tip Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://eriktherered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://eriktherered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Tip Calculator"}]}</script>
+<article class="tool"><h1>Tip Calculator</h1><p class="lede">Calculate the tip and split the bill in seconds. Enter the bill, choose a tip percentage, and see the tip, total, and amount per person.</p><div class="row">
+  <div class="field"><label for="tip-bill">Bill amount ($)</label><input type="number" id="tip-bill" value="50" min="0" step="0.01"></div>
+  <div class="field"><label for="tip-pct">Tip (%)</label><input type="number" id="tip-pct" value="20" min="0" step="1"></div>
+  <div class="field"><label for="tip-people">People</label><input type="number" id="tip-people" value="1" min="1" step="1"></div>
+</div>
+<div class="btn-row" id="tip-presets">
+  <button class="chip" data-tip="15">15%</button>
+  <button class="chip active" data-tip="18">18%</button>
+  <button class="chip" data-tip="20">20%</button>
+  <button class="chip" data-tip="25">25%</button>
+</div>
+<div class="checks"><label><input type="checkbox" id="tip-round"> Round total up to the nearest dollar</label></div>
+<div class="result" id="tip-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var pctEl = document.getElementById('tip-pct'), out = document.getElementById('tip-out');
+  function calc() {
+    var bill = +document.getElementById('tip-bill').value || 0;
+    var pct = +pctEl.value || 0;
+    var people = Math.max(1, Math.floor(+document.getElementById('tip-people').value) || 1);
+    var round = document.getElementById('tip-round').checked;
+    var tip = bill * pct / 100;
+    var total = bill + tip;
+    if (round) { total = Math.ceil(total); tip = total - bill; }
+    out.innerHTML =
+      '<div class="kv"><span>Tip</span><span class="v">' + money.format(tip) + '</span></div>' +
+      '<div class="kv"><span>Total</span><span class="v">' + money.format(total) + '</span></div>' +
+      (people > 1 ? '<div class="kv"><span>Each person (' + people + ')</span><span class="v">' + money.format(total / people) + '</span></div>' : '');
+  }
+  document.querySelectorAll('#tip-presets .chip').forEach(function (c) {
+    c.addEventListener('click', function () {
+      document.querySelectorAll('#tip-presets .chip').forEach(function (x) { x.classList.remove('active'); });
+      c.classList.add('active'); pctEl.value = c.dataset.tip; calc();
+    });
+  });
+  ['tip-bill', 'tip-pct', 'tip-people', 'tip-round'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
+
+<h2>How to use the tip calculator</h2>
+<p>Enter your bill, tap a tip percentage (or type your own), and the calculator instantly shows the tip amount, the grand total, and — if you're splitting — what each person owes. Tick <strong>round up</strong> to land on a clean dollar total, which is handy when leaving cash.</p>
+<p>As a quick guide for the U.S.: 15% is a minimum for sit-down service, <strong>18–20%</strong> is the everyday standard, and 20–25% rewards great service. Counter service, delivery, and bars all have their own norms, so adjust to your situation.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How much should I tip at a restaurant?</summary><div class="faq-a">In the U.S., 18–20% of the pre-tax bill is standard for sit-down table service, 15% for adequate service, and 20%+ for great service. Use the preset buttons above to compare.</div></details>
+<details class="faq-item"><summary>Should I tip on the pre-tax or post-tax amount?</summary><div class="faq-a">Tipping on the pre-tax subtotal is customary, but many people tip on the total for simplicity. Either is acceptable — enter whichever bill figure you prefer.</div></details>
+<details class="faq-item"><summary>How do I split a bill evenly with tip?</summary><div class="faq-a">Enter the bill, set your tip percentage, and set the number of people. The calculator shows the total including tip and divides it equally so everyone pays the same amount.</div></details></section></article>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

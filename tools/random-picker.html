@@ -1,0 +1,60 @@
+<!--META
+{
+  "title": "Random Picker (Decision Maker)",
+  "slug": "random-picker",
+  "category": "random",
+  "h1": "Random Picker & Decision Maker",
+  "description": "Paste a list of names or options and let chance choose. Perfect for giveaways, raffles, picking a winner, or settling a decision. Free and instant.",
+  "keywords": "random picker, random name picker, decision maker, raffle winner picker, choose random from list",
+  "faq": [
+    {"q": "How do I pick a giveaway winner fairly?", "a": "Paste one entry per line, set how many winners you need, and press Pick. Each line has an equal chance. Tick \"No repeats\" so the same person can't win twice, and take a screenshot for transparency."},
+    {"q": "Can I pick more than one winner?", "a": "Yes — set \"How many to pick\" to the number you need. With \"No repeats\" on, the tool draws that many distinct entries."},
+    {"q": "Does it work for yes/no or either/or decisions?", "a": "Absolutely. Type your options (e.g. Yes / No, or restaurant names) on separate lines and pick one. It's a quick, unbiased way to break a tie."}
+  ]
+}
+META-->
+<div class="field">
+  <label for="rp-list">Your list <span class="hint">— one item per line</span></label>
+  <textarea id="rp-list" placeholder="Alice&#10;Bob&#10;Charlie&#10;Dana"></textarea>
+</div>
+<div class="row">
+  <div class="field"><label for="rp-count">How many to pick</label><input type="number" id="rp-count" value="1" min="1"></div>
+</div>
+<div class="checks">
+  <label><input type="checkbox" id="rp-norepeat" checked> No repeats</label>
+</div>
+<div class="btn-row">
+  <button class="btn" id="rp-go">Pick</button>
+  <button class="btn secondary" data-copy="#rp-out" id="rp-copy">Copy</button>
+</div>
+<div class="result empty" id="rp-out">Your winner(s) will appear here.</div>
+
+<script>
+(function () {
+  var out = document.getElementById('rp-out');
+  function go() {
+    var items = document.getElementById('rp-list').value.split('\n')
+      .map(function (s) { return s.trim(); }).filter(Boolean);
+    var count = Math.max(1, Math.floor(+document.getElementById('rp-count').value) || 1);
+    var norepeat = document.getElementById('rp-norepeat').checked;
+    if (!items.length) { out.className = 'result'; out.textContent = 'Add at least one item to your list.'; return; }
+    var picks = [];
+    if (norepeat) {
+      if (count > items.length) count = items.length;
+      var pool = items.slice();
+      for (var i = 0; i < count; i++) { var j = Math.floor(Math.random() * pool.length); picks.push(pool.splice(j, 1)[0]); }
+    } else {
+      for (var k = 0; k < count; k++) picks.push(items[Math.floor(Math.random() * items.length)]);
+    }
+    out.className = 'result';
+    out.innerHTML = '<div class="result-sub">Winner' + (picks.length > 1 ? 's' : '') + ' (from ' + items.length + ' entries):</div>'
+      + '<div class="result-big">' + picks.map(esc).join('<br>') + '</div>';
+  }
+  function esc(s) { return s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
+  document.getElementById('rp-go').addEventListener('click', go);
+})();
+</script>
+
+<h2>What you can use it for</h2>
+<p>The random picker gives every line in your list an equal chance and selects one or more at random. Common uses: drawing winners for an Instagram, TikTok, or YouTube <strong>giveaway</strong>; running a classroom or team <strong>raffle</strong>; choosing who goes first; deciding where to eat; or assigning tasks fairly. Paste names from a spreadsheet or comments export — one per line — and you're set.</p>
+<p>Keep <strong>No repeats</strong> ticked for giveaways so a single entry can't win multiple prizes. For a quick coin-flip style decision, just enter two options and pick one. The draw happens in your browser, so your list stays private.</p>

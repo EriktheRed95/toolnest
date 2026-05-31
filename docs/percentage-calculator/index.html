@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Percentage Calculator</title>
+<meta name="description" content="Work out percentages three ways: what is X% of Y, X is what percent of Y, and the percent increase or decrease between two numbers. Free and instant.">
+<meta name="keywords" content="percentage calculator, percent of a number, percentage increase, percentage change, what percent">
+<link rel="canonical" href="https://eriktherered95.github.io/toolnest/percentage-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Percentage Calculator">
+<meta property="og:description" content="Work out percentages three ways: what is X% of Y, X is what percent of Y, and the percent increase or decrease between two numbers. Free and instant.">
+<meta property="og:url" content="https://eriktherered95.github.io/toolnest/percentage-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Percentage Calculator", "url": "https://eriktherered95.github.io/toolnest/percentage-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Work out percentages three ways: what is X% of Y, X is what percent of Y, and the percent increase or decrease between two numbers. Free and instant."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I calculate a percentage of a number?", "acceptedAnswer": {"@type": "Answer", "text": "Multiply the number by the percentage and divide by 100. For example, 20% of 150 is 150 \u00d7 20 \u00f7 100 = 30. Use the first calculator above to do it instantly."}}, {"@type": "Question", "name": "How do I find what percent one number is of another?", "acceptedAnswer": {"@type": "Answer", "text": "Divide the part by the whole and multiply by 100. For example, 30 out of 150 is 30 \u00f7 150 \u00d7 100 = 20%. The second calculator does this for you."}}, {"@type": "Question", "name": "How do I calculate percentage increase or decrease?", "acceptedAnswer": {"@type": "Answer", "text": "Subtract the old value from the new value, divide by the old value, and multiply by 100. A rise from 150 to 180 is (180 \u2212 150) \u00f7 150 \u00d7 100 = +20%."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Percentage Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://eriktherered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://eriktherered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Percentage Calculator"}]}</script>
+<article class="tool"><h1>Percentage Calculator</h1><p class="lede">Work out percentages three ways: what is X% of Y, X is what percent of Y, and the percent increase or decrease between two numbers. Free and instant.</p><h2 style="margin-top:0">What is X% of Y?</h2>
+<div class="row">
+  <div class="field"><label for="p1-x">Percent (%)</label><input type="number" id="p1-x" value="20"></div>
+  <div class="field"><label for="p1-y">of</label><input type="number" id="p1-y" value="150"></div>
+</div>
+<div class="result empty" id="p1-out">Result appears here.</div>
+
+<h2>X is what percent of Y?</h2>
+<div class="row">
+  <div class="field"><label for="p2-x">Number</label><input type="number" id="p2-x" value="30"></div>
+  <div class="field"><label for="p2-y">is what % of</label><input type="number" id="p2-y" value="150"></div>
+</div>
+<div class="result empty" id="p2-out">Result appears here.</div>
+
+<h2>Percent increase / decrease</h2>
+<div class="row">
+  <div class="field"><label for="p3-a">From</label><input type="number" id="p3-a" value="150"></div>
+  <div class="field"><label for="p3-b">To</label><input type="number" id="p3-b" value="180"></div>
+</div>
+<div class="result empty" id="p3-out">Result appears here.</div>
+
+<script>
+(function () {
+  var nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 4 });
+  function bind(ids, fn) {
+    ids.forEach(function (id) { document.getElementById(id).addEventListener('input', fn); });
+    fn();
+  }
+  bind(['p1-x', 'p1-y'], function () {
+    var x = +document.getElementById('p1-x').value, y = +document.getElementById('p1-y').value;
+    var o = document.getElementById('p1-out');
+    if (isNaN(x) || isNaN(y)) return;
+    o.className = 'result'; o.innerHTML = '<span class="result-big">' + nf.format(x * y / 100) + '</span>';
+  });
+  bind(['p2-x', 'p2-y'], function () {
+    var x = +document.getElementById('p2-x').value, y = +document.getElementById('p2-y').value;
+    var o = document.getElementById('p2-out');
+    if (isNaN(x) || isNaN(y) || y === 0) { o.className = 'result'; o.textContent = 'Enter a non-zero second number.'; return; }
+    o.className = 'result'; o.innerHTML = '<span class="result-big">' + nf.format(x / y * 100) + '%</span>';
+  });
+  bind(['p3-a', 'p3-b'], function () {
+    var a = +document.getElementById('p3-a').value, b = +document.getElementById('p3-b').value;
+    var o = document.getElementById('p3-out');
+    if (isNaN(a) || isNaN(b) || a === 0) { o.className = 'result'; o.textContent = 'Enter a non-zero starting value.'; return; }
+    var pct = (b - a) / Math.abs(a) * 100;
+    var word = pct > 0 ? 'increase' : pct < 0 ? 'decrease' : 'change';
+    o.className = 'result';
+    o.innerHTML = '<span class="result-big">' + (pct > 0 ? '+' : '') + nf.format(pct) + '%</span> <span class="result-sub">' + word + '</span>';
+  });
+})();
+</script>
+
+<h2>Percentage formulas</h2>
+<p>A percentage is just a fraction out of 100. These are the three calculations people need most:</p>
+<ul>
+  <li><strong>Percent of a number:</strong> X% of Y = Y × X ÷ 100. (20% of 150 = 30)</li>
+  <li><strong>What percent:</strong> X is (X ÷ Y × 100)% of Y. (30 is 20% of 150)</li>
+  <li><strong>Percent change:</strong> (New − Old) ÷ Old × 100. (150 → 180 is +20%)</li>
+</ul>
+<p>Each calculator above updates as you type, so you can use it for tips, discounts, tax, grades, commissions, markups, or tracking how much a number went up or down.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How do I calculate a percentage of a number?</summary><div class="faq-a">Multiply the number by the percentage and divide by 100. For example, 20% of 150 is 150 × 20 ÷ 100 = 30. Use the first calculator above to do it instantly.</div></details>
+<details class="faq-item"><summary>How do I find what percent one number is of another?</summary><div class="faq-a">Divide the part by the whole and multiply by 100. For example, 30 out of 150 is 30 ÷ 150 × 100 = 20%. The second calculator does this for you.</div></details>
+<details class="faq-item"><summary>How do I calculate percentage increase or decrease?</summary><div class="faq-a">Subtract the old value from the new value, divide by the old value, and multiply by 100. A rise from 150 to 180 is (180 − 150) ÷ 150 × 100 = +20%.</div></details></section></article>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>
