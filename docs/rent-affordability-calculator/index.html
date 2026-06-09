@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rent Affordability Calculator</title>
+<meta name="description" content="Find out how much rent you can afford based on your income and the 30% rule. See comfortable, moderate, and stretch budgets, plus the income most landlords require.">
+<meta name="keywords" content="rent affordability calculator, how much rent can I afford, 30 percent rule rent, rent to income ratio, rent budget calculator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/rent-affordability-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Rent Affordability Calculator">
+<meta property="og:description" content="Find out how much rent you can afford based on your income and the 30% rule. See comfortable, moderate, and stretch budgets, plus the income most landlords require.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/rent-affordability-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Rent Affordability Calculator", "url": "https://erikthered95.github.io/toolnest/rent-affordability-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Find out how much rent you can afford based on your income and the 30% rule. See comfortable, moderate, and stretch budgets, plus the income most landlords require."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How much of my income should go to rent?", "acceptedAnswer": {"@type": "Answer", "text": "A common guideline is the 30% rule: spend no more than 30% of your gross (pre-tax) monthly income on rent. On a $5,000 monthly income, that's about $1,500. It's a starting point, not a hard limit \u2014 high earners can often spend less than 30% comfortably, while those in expensive cities sometimes stretch higher."}}, {"@type": "Question", "name": "What income do landlords require to rent?", "acceptedAnswer": {"@type": "Answer", "text": "Many landlords require that your gross monthly income be at least 3 times the monthly rent (some use 2.5x or 40x the monthly rent as annual income). So for $1,500 rent, they'd want roughly $4,500/month in income. This calculator shows the maximum rent that meets the income multiple you choose."}}, {"@type": "Question", "name": "Should rent be based on gross or net income?", "acceptedAnswer": {"@type": "Answer", "text": "The 30% rule traditionally uses gross income (before taxes), which is also what landlords verify. But for your own budgeting, it's wise to also check rent against your take-home pay \u2014 especially if you have high taxes, debt payments, or savings goals, since those come out of net income."}}, {"@type": "Question", "name": "What if I have a lot of debt?", "acceptedAnswer": {"@type": "Answer", "text": "Existing debt payments \u2014 car loans, student loans, credit cards \u2014 eat into what you can realistically afford, even if the 30% rule says otherwise. If your debts are significant, lean toward the lower (comfortable) end of the range so your total obligations stay manageable."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>How Much Rent Can I Afford?</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "How Much Rent Can I Afford?"}]}</script>
+<article class="tool"><h1>How Much Rent Can I Afford?</h1><p class="lede">Find out how much rent you can afford based on your income and the 30% rule. See comfortable, moderate, and stretch budgets, plus the income most landlords require.</p><div class="row">
+  <div class="field"><label for="ra-income">Gross annual income ($)</label><input type="number" id="ra-income" value="60000" min="0" step="1000"></div>
+  <div class="field"><label for="ra-debts">Monthly debt payments ($) <span class="hint">optional</span></label><input type="number" id="ra-debts" value="300" min="0" step="50"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="ra-multiple">Landlord income multiple</label>
+    <select id="ra-multiple"><option value="3">3× rent (typical)</option><option value="2.5">2.5× rent</option><option value="3.5">3.5× rent (strict)</option></select></div>
+</div>
+
+<div class="result" id="ra-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['ra-income', 'ra-debts', 'ra-multiple'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var monthly = v('ra-income') / 12;
+    var comfortable = monthly * 0.25;
+    var moderate = monthly * 0.30;
+    var stretch = monthly * 0.35;
+    var debts = v('ra-debts');
+    // affordability after debts: keep rent + debts under ~36% of income
+    var afterDebts = Math.max(0, monthly * 0.36 - debts);
+    var landlordMax = monthly / v('ra-multiple');
+
+    document.getElementById('ra-out').innerHTML =
+      '<div class="result-sub">Recommended rent budget (30% rule)</div>' +
+      '<div class="result-big">' + money.format(moderate) + '/mo</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Comfortable (25% of income)', money.format(comfortable) + '/mo') +
+        kv('Moderate (30% of income)', money.format(moderate) + '/mo') +
+        kv('Stretch (35% of income)', money.format(stretch) + '/mo') +
+        kv('Max that keeps debts ≤36%', money.format(afterDebts) + '/mo') +
+        kv('Most you’d qualify for (' + v('ra-multiple') + '× rule)', money.format(landlordMax) + '/mo') +
+        kv('Gross monthly income', money.format(monthly)) +
+      '</div>' +
+      (debts > 0 && afterDebts < moderate
+        ? '<p class="note">Because of your ' + money.format(debts) + '/mo in debt payments, staying near ' + money.format(afterDebts) + '/mo keeps your total obligations manageable — below the 30% rule’s ' + money.format(moderate) + '.</p>'
+        : '<p class="note">Landlords typically want income of at least ' + v('ra-multiple') + '× the rent, so a ' + money.format(moderate) + ' rent generally needs about ' + money.format(moderate * v('ra-multiple')) + '/mo in income — which you have.</p>');
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How much rent can you really afford?</h2>
+<p>The classic answer is the <strong>30% rule</strong>: keep rent at or below 30% of your gross (pre-tax) monthly income. It's a useful anchor, but real life is more nuanced — your debts, savings goals, and city all matter. This calculator shows a <strong>range</strong> instead of a single number: a comfortable budget (25%), the standard guideline (30%), and a stretch ceiling (35%), so you can choose where you want to sit.</p>
+<h2>What landlords are looking for</h2>
+<p>It's not just your budget — landlords have their own bar. Most require your gross monthly income to be at least <strong>3 times the rent</strong> (some accept 2.5x, stricter ones want more). That income multiple often sets the practical ceiling on what you'll be approved for, regardless of what you'd be willing to pay. The calculator shows the maximum rent that clears the multiple you select, so you know what you can actually qualify for.</p>
+<h2>Don't forget your other obligations</h2>
+<p>The 30% rule looks only at rent, but your budget has to cover everything. If you carry meaningful <strong>debt payments</strong> — car loans, student loans, credit cards — those compete with rent for the same paycheck. Enter them above and the calculator shows a rent level that keeps your <em>total</em> obligations in a healthy range, which is often lower than 30% alone would suggest. And remember: gross income pays the landlord, but your take-home pay actually funds your life — budget against both.</p>
+<p class="note"><strong>Estimate only.</strong> Affordability depends on your full financial picture — taxes, savings, utilities, and lifestyle. Use this as a planning guide, not a guarantee of approval. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How much of my income should go to rent?</summary><div class="faq-a">A common guideline is the 30% rule: spend no more than 30% of your gross (pre-tax) monthly income on rent. On a $5,000 monthly income, that's about $1,500. It's a starting point, not a hard limit — high earners can often spend less than 30% comfortably, while those in expensive cities sometimes stretch higher.</div></details>
+<details class="faq-item"><summary>What income do landlords require to rent?</summary><div class="faq-a">Many landlords require that your gross monthly income be at least 3 times the monthly rent (some use 2.5x or 40x the monthly rent as annual income). So for $1,500 rent, they'd want roughly $4,500/month in income. This calculator shows the maximum rent that meets the income multiple you choose.</div></details>
+<details class="faq-item"><summary>Should rent be based on gross or net income?</summary><div class="faq-a">The 30% rule traditionally uses gross income (before taxes), which is also what landlords verify. But for your own budgeting, it's wise to also check rent against your take-home pay — especially if you have high taxes, debt payments, or savings goals, since those come out of net income.</div></details>
+<details class="faq-item"><summary>What if I have a lot of debt?</summary><div class="faq-a">Existing debt payments — car loans, student loans, credit cards — eat into what you can realistically afford, even if the 30% rule says otherwise. If your debts are significant, lean toward the lower (comfortable) end of the range so your total obligations stay manageable.</div></details></section></article>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>
