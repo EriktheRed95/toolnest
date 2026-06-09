@@ -1,0 +1,93 @@
+<!--META
+{
+  "title": "Debt-to-Income (DTI) Calculator",
+  "slug": "debt-to-income-calculator",
+  "category": "finance",
+  "h1": "Debt-to-Income Ratio Calculator",
+  "description": "Calculate your debt-to-income (DTI) ratio for a mortgage. Enter your income and monthly debts to see your front-end and back-end ratios and how lenders view them.",
+  "keywords": "debt to income calculator, DTI calculator, debt to income ratio for mortgage, front end back end ratio, qualify for mortgage DTI",
+  "faq": [
+    {"q": "What is a good debt-to-income ratio?", "a": "Lower is better. For a mortgage, a back-end DTI at or below 36% is considered strong, up to 43% is acceptable for many loans, and some programs allow higher with compensating factors. Below 36% gives you the most loan options and the best terms."},
+    {"q": "What's the difference between front-end and back-end DTI?", "a": "The front-end (or housing) ratio is just your housing payment divided by gross monthly income. The back-end ratio adds all your other monthly debt payments — car loans, credit cards, student loans — on top of housing. Lenders care most about the back-end ratio, but both matter."},
+    {"q": "Which debts count toward DTI?", "a": "Recurring monthly obligations: mortgage or rent, car payments, minimum credit card payments, student loans, personal loans, child support or alimony, and other installment debt. Everyday expenses like groceries, utilities, insurance, and streaming services are not counted."},
+    {"q": "Does DTI use gross or net income?", "a": "Gross income — your pay before taxes and deductions. Lenders use gross monthly income because it's standardized and verifiable from pay stubs and tax returns. If you only know your annual salary, divide it by 12."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="d-income">Gross monthly income ($) <span class="hint">before taxes</span></label><input type="number" id="d-income" value="7500" min="0" step="100"></div>
+  <div class="field"><label for="d-housing">Housing payment ($/mo) <span class="hint">rent or mortgage PITI</span></label><input type="number" id="d-housing" value="2000" min="0" step="50"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="d-car">Car / auto loans ($/mo)</label><input type="number" id="d-car" value="450" min="0" step="25"></div>
+  <div class="field"><label for="d-cards">Credit card minimums ($/mo)</label><input type="number" id="d-cards" value="150" min="0" step="25"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="d-student">Student loans ($/mo)</label><input type="number" id="d-student" value="250" min="0" step="25"></div>
+  <div class="field"><label for="d-other">Other debts ($/mo) <span class="hint">support, personal loans</span></label><input type="number" id="d-other" value="0" min="0" step="25"></div>
+</div>
+
+<div class="result" id="d-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['d-income', 'd-housing', 'd-car', 'd-cards', 'd-student', 'd-other'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function rate(pct) {
+    if (pct <= 36) return { label: 'Excellent', cls: 'ok' };
+    if (pct <= 43) return { label: 'Acceptable', cls: '' };
+    if (pct <= 50) return { label: 'High', cls: 'warn' };
+    return { label: 'Very high', cls: 'warn' };
+  }
+
+  function calc() {
+    var income = v('d-income');
+    var housing = v('d-housing');
+    var otherDebt = v('d-car') + v('d-cards') + v('d-student') + v('d-other');
+    var totalDebt = housing + otherDebt;
+    var front = income ? housing / income * 100 : 0;
+    var back = income ? totalDebt / income * 100 : 0;
+    var assess = rate(back);
+
+    var out = document.getElementById('d-out');
+    if (!income) {
+      out.innerHTML = '<p class="note">Enter your gross monthly income to calculate your DTI.</p>';
+      return;
+    }
+    // How much more debt room to hit 43%
+    var room43 = income * 0.43 - totalDebt;
+
+    out.innerHTML =
+      '<div class="result-sub">Back-end DTI ratio &mdash; ' + assess.label + '</div>' +
+      '<div class="result-big">' + back.toFixed(1) + '%</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Front-end (housing only)', front.toFixed(1) + '%') +
+        kv('Back-end (all debts)', back.toFixed(1) + '%') +
+        kv('Total monthly debt', money.format(totalDebt)) +
+        kv('Gross monthly income', money.format(income)) +
+      '</div>' +
+      '<p class="note">' +
+        (back <= 36 ? 'You’re under the 36% mark lenders love — this opens the most loan options and best rates.' :
+         back <= 43 ? 'You’re within the typical 43% qualifying limit for many mortgages, but lowering it improves your terms.' :
+         'Your ratio is above the common 43% limit. Paying down debt or raising income before applying will help significantly.') +
+        (room43 > 0 ? ' You have roughly ' + money.format(room43) + '/mo of debt-payment room before hitting 43%.' : '') +
+      '</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>What your debt-to-income ratio tells lenders</h2>
+<p>Your <strong>debt-to-income (DTI) ratio</strong> is the percentage of your gross monthly income that goes toward debt payments. It's one of the first numbers a mortgage lender checks, because it measures how much room you have in your budget to take on a new loan. The lower your DTI, the more comfortably you can handle payments — and the better the loan terms you'll be offered.</p>
+<p>There are two versions, and lenders look at both:</p>
+<ul>
+  <li><strong>Front-end ratio</strong> — housing payment ÷ gross monthly income. For a mortgage, "housing" means the full payment: principal, interest, taxes, insurance, and any HOA dues. A figure near 28% or below is traditionally considered comfortable.</li>
+  <li><strong>Back-end ratio</strong> — all monthly debt payments (housing plus cars, cards, student and personal loans, support) ÷ gross monthly income. This is the ratio lenders weigh most, and 43% is a common ceiling for qualifying.</li>
+</ul>
+<h2>How to lower your DTI</h2>
+<p>You can move the ratio two ways: reduce the top number or raise the bottom one. Paying off a car loan or a credit card balance removes that monthly payment entirely, which often helps more than people expect. Avoid taking on new debt (or even financing furniture) in the months before applying for a mortgage. And documenting additional income — a raise, a second job, or stable side income — lifts the denominator.</p>
+<p class="note"><strong>Estimate only.</strong> Lenders calculate DTI using verified income and the specific debts on your credit report, and individual loan programs set their own limits. Use this as a planning guide, not a guarantee of approval. This is not financial advice.</p>

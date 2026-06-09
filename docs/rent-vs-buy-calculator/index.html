@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rent vs. Buy Calculator</title>
+<meta name="description" content="Should you rent or buy a home? Compare the true cost of buying — mortgage, taxes, upkeep, and equity — against renting and investing the difference, over your time horizon.">
+<meta name="keywords" content="rent vs buy calculator, should I rent or buy, renting vs buying a home, break even buying a house, cost of buying vs renting">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/rent-vs-buy-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Rent vs. Buy Calculator">
+<meta property="og:description" content="Should you rent or buy a home? Compare the true cost of buying — mortgage, taxes, upkeep, and equity — against renting and investing the difference, over your time horizon.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/rent-vs-buy-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Rent vs. Buy Calculator", "url": "https://erikthered95.github.io/toolnest/rent-vs-buy-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Should you rent or buy a home? Compare the true cost of buying \u2014 mortgage, taxes, upkeep, and equity \u2014 against renting and investing the difference, over your time horizon."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is it better to rent or buy a house?", "acceptedAnswer": {"@type": "Answer", "text": "It depends mostly on how long you'll stay. Buying has large upfront and selling costs, so the longer you own, the more appreciation and paid-down principal work in your favor. Over a short horizon, renting and investing your down payment often comes out ahead. This calculator finds which wins for your numbers and time frame."}}, {"@type": "Question", "name": "How does this compare renting and buying fairly?", "acceptedAnswer": {"@type": "Answer", "text": "It puts both on equal footing. The renter invests the money the buyer would have spent up front (down payment plus closing costs), and whenever one option costs less per month, that surplus is invested too. After your time horizon it compares each person's total net worth \u2014 the buyer's home equity plus side investments versus the renter's investment portfolio."}}, {"@type": "Question", "name": "What's the break-even point for buying?", "acceptedAnswer": {"@type": "Answer", "text": "It's the number of years you must own before buying beats renting, given your costs, appreciation, and investment return. Below the break-even, renting and investing wins; above it, owning pulls ahead as equity and appreciation outgrow the upfront and selling costs."}}, {"@type": "Question", "name": "Does buying always build wealth?", "acceptedAnswer": {"@type": "Answer", "text": "Not automatically. Owning builds equity, but mortgage interest, property taxes, insurance, maintenance, and transaction costs are real expenses. If home prices stagnate or you sell quickly, renting and investing the difference can leave you with more. The assumptions you enter \u2014 especially appreciation and investment return \u2014 drive the result."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Rent vs. Buy Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Rent vs. Buy Calculator"}]}</script>
+<article class="tool"><h1>Rent vs. Buy Calculator</h1><p class="lede">Should you rent or buy a home? Compare the true cost of buying — mortgage, taxes, upkeep, and equity — against renting and investing the difference, over your time horizon.</p><div class="row">
+  <div class="field"><label for="rb-price">Home price ($)</label><input type="number" id="rb-price" value="350000" min="0" step="1000"></div>
+  <div class="field"><label for="rb-rent">Monthly rent ($)</label><input type="number" id="rb-rent" value="1900" min="0" step="50"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="rb-dp">Down payment (%)</label><input type="number" id="rb-dp" value="20" min="0" max="100" step="0.5"></div>
+  <div class="field"><label for="rb-years">Years you'll stay</label><input type="number" id="rb-years" value="7" min="1" max="30" step="1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="rb-rate">Mortgage rate (%)</label><input type="number" id="rb-rate" value="6.5" min="0" step="0.01"></div>
+  <div class="field"><label for="rb-term">Loan term (years)</label>
+    <select id="rb-term"><option>30</option><option>20</option><option>15</option></select></div>
+</div>
+<div class="row">
+  <div class="field"><label for="rb-appr">Home appreciation (%/yr)</label><input type="number" id="rb-appr" value="3" min="-10" step="0.1"></div>
+  <div class="field"><label for="rb-rentinc">Rent increase (%/yr)</label><input type="number" id="rb-rentinc" value="3" min="0" step="0.1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="rb-tax">Property tax (%/yr)</label><input type="number" id="rb-tax" value="1.1" min="0" step="0.05"></div>
+  <div class="field"><label for="rb-upkeep">Insurance &amp; upkeep (%/yr)</label><input type="number" id="rb-upkeep" value="1.5" min="0" step="0.1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="rb-invest">Investment return (%/yr) <span class="hint">if you invest instead</span></label><input type="number" id="rb-invest" value="5" min="0" step="0.1"></div>
+  <div class="field"><label for="rb-costs">Buy + sell costs (% of price)</label><input type="number" id="rb-costs" value="9" min="0" step="0.5"></div>
+</div>
+
+<div class="result" id="rb-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['rb-price', 'rb-rent', 'rb-dp', 'rb-years', 'rb-rate', 'rb-term', 'rb-appr', 'rb-rentinc', 'rb-tax', 'rb-upkeep', 'rb-invest', 'rb-costs'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  // Simulate net worth for buyer and renter over a given number of years.
+  function simulate(yrs, p) {
+    var dp = p.price * p.dpPct / 100;
+    // split total transaction cost: ~1/3 buying (closing), ~2/3 selling — both as % of price
+    var buyCost = p.price * (p.costsPct / 100) * 0.4;
+    var sellRate = (p.costsPct / 100) * 0.6;
+    var upfront = dp + buyCost;
+    var loan = p.price - dp;
+    var r = p.rate / 100 / 12;
+    var n = p.termYears * 12;
+    var pi = r === 0 ? loan / n : loan * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    var im = p.invPct / 100 / 12;
+    var months = Math.round(yrs * 12);
+
+    var bal = loan, homeValue = p.price, rentNow = p.rent;
+    var renterPort = upfront, buyerPort = 0;
+    var totalRent = 0, totalOwn = upfront;
+
+    for (var m = 1; m <= months; m++) {
+      var interest = bal * r, principal = Math.min(pi - interest, bal);
+      bal -= principal; if (bal < 0) bal = 0;
+      var monthlyTax = homeValue * p.taxPct / 100 / 12;
+      var monthlyUpkeep = homeValue * p.upkeepPct / 100 / 12;
+      var buyMonthly = (m <= n ? pi : 0) + monthlyTax + monthlyUpkeep;
+      var rentMonthly = rentNow;
+      totalOwn += buyMonthly; totalRent += rentMonthly;
+      var diff = buyMonthly - rentMonthly;
+      if (diff > 0) renterPort += diff; else buyerPort += -diff;
+      renterPort *= (1 + im); buyerPort *= (1 + im);
+      if (m % 12 === 0) { homeValue *= (1 + p.apprPct / 100); rentNow *= (1 + p.rentIncPct / 100); }
+    }
+    var saleEquity = homeValue - bal - homeValue * sellRate;
+    var buyerNW = saleEquity + buyerPort;
+    var renterNW = renterPort;
+    return { buyerNW: buyerNW, renterNW: renterNW, homeValue: homeValue, bal: bal,
+             saleEquity: saleEquity, buyerPort: buyerPort, renterPort: renterPort,
+             totalRent: totalRent, totalOwn: totalOwn, pi: pi };
+  }
+
+  function calc() {
+    var p = {
+      price: v('rb-price'), rent: v('rb-rent'), dpPct: v('rb-dp'), rate: v('rb-rate'),
+      termYears: v('rb-term'), apprPct: v('rb-appr'), rentIncPct: v('rb-rentinc'),
+      taxPct: v('rb-tax'), upkeepPct: v('rb-upkeep'), invPct: v('rb-invest'), costsPct: v('rb-costs')
+    };
+    var yrs = v('rb-years');
+    var s = simulate(yrs, p);
+    var advantage = s.buyerNW - s.renterNW;
+    var buyWins = advantage >= 0;
+
+    // find break-even year (first year buying >= renting), scan 1..30
+    var breakeven = null;
+    for (var y = 1; y <= 30; y++) {
+      var t = simulate(y, p);
+      if (t.buyerNW - t.renterNW >= 0) { breakeven = y; break; }
+    }
+
+    document.getElementById('rb-out').innerHTML =
+      '<div class="result-sub">After ' + yrs + ' year' + (yrs === 1 ? '' : 's') + ', ' +
+        (buyWins ? 'buying' : 'renting') + ' comes out ahead by</div>' +
+      '<div class="result-big">' + money.format(Math.abs(advantage)) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('<strong>Buying — net worth</strong>', '<strong>' + money.format(s.buyerNW) + '</strong>') +
+        kv('&nbsp;&nbsp;Home value at sale', money.format(s.homeValue)) +
+        kv('&nbsp;&nbsp;Loan balance', '&minus; ' + money.format(s.bal)) +
+        kv('&nbsp;&nbsp;Home equity after selling costs', money.format(s.saleEquity)) +
+        kv('&nbsp;&nbsp;Side investments', money.format(s.buyerPort)) +
+        kv('<strong>Renting — net worth</strong>', '<strong>' + money.format(s.renterNW) + '</strong>') +
+        kv('&nbsp;&nbsp;Investment portfolio', money.format(s.renterPort)) +
+        kv('Total rent paid', money.format(s.totalRent)) +
+        kv('Total spent owning', money.format(s.totalOwn)) +
+      '</div>' +
+      '<p class="note">' +
+        (breakeven === null
+          ? 'With these assumptions, renting and investing stays ahead for at least 30 years — buying never breaks even.'
+          : 'Break-even: buying overtakes renting after about <strong>' + breakeven + ' year' + (breakeven === 1 ? '' : 's') + '</strong>. Stay longer than that and buying wins; sell sooner and renting wins.') +
+      '</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Rent or buy? It mostly comes down to time</h2>
+<p>"Renting is throwing money away" is one of the most expensive myths in personal finance — and so is "buying always builds wealth." The honest answer depends on your numbers and, above all, <strong>how long you'll stay</strong>. Buying carries heavy upfront costs (down payment and closing) and heavy exit costs (agent commission and transfer taxes when you sell). Those only pay off if you own long enough for appreciation and paid-down principal to outweigh them.</p>
+<h2>How this calculator keeps it fair</h2>
+<p>A fair comparison can't just tally rent against a mortgage payment — that ignores the down payment the renter still has to invest, and the equity the buyer builds. This tool puts both people on equal footing:</p>
+<ul>
+  <li>The <strong>renter</strong> invests the money the buyer spends up front (down payment + closing costs), and keeps investing any month that renting costs less than owning.</li>
+  <li>The <strong>buyer</strong> builds equity through appreciation and principal payments, and invests any month that owning costs less than renting.</li>
+  <li>After your time horizon, it compares total <strong>net worth</strong>: the buyer's home equity (after selling costs) plus side investments, versus the renter's portfolio.</li>
+</ul>
+<p>The <strong>break-even year</strong> it reports is the crossover point — own longer than that and buying wins; sell sooner and renting-and-investing wins.</p>
+<h2>The assumptions that matter most</h2>
+<p>Two inputs swing the result more than any others: <strong>home appreciation</strong> and your <strong>investment return</strong>. If you assume homes climb fast and markets crawl, buying looks unbeatable; flip those and renting dominates. Use conservative, realistic figures for both, and try a range — the goal is to understand the trade-off, not to manufacture the answer you were hoping for.</p>
+<p class="note"><strong>Estimate only.</strong> This model simplifies taxes (it doesn't include mortgage-interest or property-tax deductions, which vary by situation) and assumes steady rates of appreciation, rent growth, and returns. Real markets are bumpy. Treat it as a planning guide, not financial advice — talk to a professional about your specific situation.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>Is it better to rent or buy a house?</summary><div class="faq-a">It depends mostly on how long you'll stay. Buying has large upfront and selling costs, so the longer you own, the more appreciation and paid-down principal work in your favor. Over a short horizon, renting and investing your down payment often comes out ahead. This calculator finds which wins for your numbers and time frame.</div></details>
+<details class="faq-item"><summary>How does this compare renting and buying fairly?</summary><div class="faq-a">It puts both on equal footing. The renter invests the money the buyer would have spent up front (down payment plus closing costs), and whenever one option costs less per month, that surplus is invested too. After your time horizon it compares each person's total net worth — the buyer's home equity plus side investments versus the renter's investment portfolio.</div></details>
+<details class="faq-item"><summary>What's the break-even point for buying?</summary><div class="faq-a">It's the number of years you must own before buying beats renting, given your costs, appreciation, and investment return. Below the break-even, renting and investing wins; above it, owning pulls ahead as equity and appreciation outgrow the upfront and selling costs.</div></details>
+<details class="faq-item"><summary>Does buying always build wealth?</summary><div class="faq-a">Not automatically. Owning builds equity, but mortgage interest, property taxes, insurance, maintenance, and transaction costs are real expenses. If home prices stagnate or you sell quickly, renting and investing the difference can leave you with more. The assumptions you enter — especially appreciation and investment return — drive the result.</div></details></section></article>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>
