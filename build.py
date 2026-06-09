@@ -126,6 +126,27 @@ def faq_html(meta):
 
 
 # --------------------------------------------------------------------------- #
+#  Related tools (internal linking: each tool links to siblings in its category)
+# --------------------------------------------------------------------------- #
+def related_html(meta, by_cat):
+    cat_list = by_cat.get(meta["category"], [])
+    if len(cat_list) < 2:
+        return ""
+    # cyclic pick of the next siblings, so every tool both links to and is
+    # linked from a handful of others — spreads internal link equity evenly.
+    idx = next((i for i, t in enumerate(cat_list) if t["slug"] == meta["slug"]), 0)
+    want = min(6, len(cat_list) - 1)
+    picks = [cat_list[(idx + i) % len(cat_list)] for i in range(1, want + 1)]
+    cards = "".join(
+        f'<a class="card" href="{BASE}/{t["slug"]}/"><h3>{t["title"]}</h3>'
+        f'<p>{t["description"]}</p></a>'
+        for t in picks
+    )
+    return (f'<section class="related"><h2>Related tools</h2>'
+            f'<div class="grid">{cards}</div></section>')
+
+
+# --------------------------------------------------------------------------- #
 #  Chrome: nav, breadcrumb, footer
 # --------------------------------------------------------------------------- #
 def nav_html():
@@ -228,6 +249,11 @@ def build():
     pages = [parse(os.path.join(ROOT, "pages", f))
              for f in os.listdir(os.path.join(ROOT, "pages")) if f.endswith(".html")]
 
+    # group by category once, for related-tool linking
+    by_cat = {}
+    for m in tools:
+        by_cat.setdefault(m["category"], []).append(m)
+
     # ---- tool pages ----
     for m in tools:
         body = (
@@ -236,6 +262,7 @@ def build():
             f'{m["body"]}'
             f'{faq_html(m)}'
             "</article>"
+            f'{related_html(m, by_cat)}'
         )
         write(m["slug"], render(m, body, url_for(m["slug"])))
 
@@ -266,19 +293,44 @@ def home_meta():
     }
 
 
+# A curated set of high-value tools featured at the top of the homepage.
+# (Missing slugs are silently skipped, so this list is safe to edit.)
+POPULAR = [
+    "mortgage-calculator", "rent-vs-buy-calculator", "home-affordability-calculator",
+    "mortgage-payoff-calculator", "compound-interest-calculator", "loan-calculator",
+    "bmi-calculator", "percentage-calculator",
+]
+
+
 def home_html(tools):
     by_cat = {}
     for m in tools:
         by_cat.setdefault(m["category"], []).append(m)
+    by_slug = {m["slug"]: m for m in tools}
+    total = len(tools)
 
     parts = [
         '<section class="hero"><h1>{tagline}</h1>'
-        '<p class="lede">Simple, free tools that do one job well — no sign-up, no clutter, '
-        'works on your phone.</p>'
-        '<input type="search" id="tool-filter" class="filter" placeholder="Search tools…" '
-        'aria-label="Search tools"></section>'.format(tagline=config.SITE_TAGLINE),
+        '<p class="lede">{total} simple, free tools that each do one job well — no sign-up, '
+        'no clutter, works on your phone.</p>'
+        '<input type="search" id="tool-filter" class="filter" placeholder="Search {total} tools…" '
+        'aria-label="Search tools"></section>'.format(tagline=config.SITE_TAGLINE, total=total),
         "<!--AD-->",
     ]
+
+    # featured "Popular tools" strip (data-name="" so it hides during a search)
+    popular = [by_slug[s] for s in POPULAR if s in by_slug]
+    if popular:
+        cards = "".join(
+            f'<a class="card" href="{BASE}/{m["slug"]}/" data-name="">'
+            f'<h3>{m["title"]}</h3><p>{m["description"]}</p></a>'
+            for m in popular
+        )
+        parts.append(
+            f'<section class="cat" id="popular"><h2>Popular tools</h2>'
+            f'<div class="grid">{cards}</div></section>'
+        )
+
     for slug, name in config.CATEGORIES:
         items = by_cat.get(slug, [])
         if not items:
@@ -289,7 +341,8 @@ def home_html(tools):
             for m in items
         )
         parts.append(
-            f'<section class="cat" id="{slug}"><h2>{name}</h2>'
+            f'<section class="cat" id="{slug}"><h2>{name} '
+            f'<span class="cat-count">{len(items)} tools</span></h2>'
             f'<div class="grid">{cards}</div></section>'
         )
     return "\n".join(parts)
