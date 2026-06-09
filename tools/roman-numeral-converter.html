@@ -1,0 +1,94 @@
+<!--META
+{
+  "title": "Roman Numeral Converter",
+  "slug": "roman-numeral-converter",
+  "category": "everyday",
+  "h1": "Roman Numeral Converter",
+  "description": "Convert numbers to Roman numerals and Roman numerals back to numbers. Supports 1 to 3999 with instant, two-way conversion in your browser.",
+  "keywords": "roman numeral converter, number to roman numerals, roman numerals to number, convert roman numerals, roman numeral translator",
+  "faq": [
+    {"q": "What range of numbers is supported?", "a": "Standard Roman numerals cover 1 to 3999. There's no symbol for zero, and numbers above 3999 require bars over letters (vinculum notation) that aren't part of the basic system, so this converter sticks to the classic 1–3999 range."},
+    {"q": "How do Roman numerals work?", "a": "Seven letters stand for values: I=1, V=5, X=10, L=50, C=100, D=500, M=1000. Letters are added together, but a smaller letter before a larger one is subtracted — so IV is 4 and IX is 9. The converter applies these rules automatically."},
+    {"q": "Why is my Roman numeral marked invalid?", "a": "It must use only the letters I, V, X, L, C, D, and M and follow the standard subtractive rules. Strings like 'IIII' or 'VX' aren't valid standard numerals. The tool checks that your input round-trips to a proper numeral and flags it if not."},
+    {"q": "Is there a Roman numeral for zero?", "a": "No. The Roman system has no symbol for zero — the concept simply wasn't represented. That's why this and other converters start at 1."}
+  ]
+}
+META-->
+<div class="field">
+  <label for="rn-num">Number → Roman (1–3999)</label>
+  <input type="number" id="rn-num" value="2026" min="1" max="3999" step="1">
+</div>
+<div class="result" id="rn-num-out"></div>
+
+<div class="field" style="margin-top:18px">
+  <label for="rn-rom">Roman → Number</label>
+  <input type="text" id="rn-rom" value="MMXXVI" autocomplete="off" spellcheck="false">
+</div>
+<div class="result" id="rn-rom-out"></div>
+
+<script>
+(function () {
+  var MAP = [[1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'], [100, 'C'], [90, 'XC'],
+             [50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']];
+  var VAL = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+
+  function toRoman(n) {
+    var out = '';
+    for (var i = 0; i < MAP.length; i++) {
+      while (n >= MAP[i][0]) { out += MAP[i][1]; n -= MAP[i][0]; }
+    }
+    return out;
+  }
+  function fromRoman(s) {
+    var total = 0, prev = 0;
+    for (var i = s.length - 1; i >= 0; i--) {
+      var cur = VAL[s[i]];
+      if (cur < prev) total -= cur; else { total += cur; prev = cur; }
+    }
+    return total;
+  }
+
+  var numEl = document.getElementById('rn-num'), numOut = document.getElementById('rn-num-out');
+  var romEl = document.getElementById('rn-rom'), romOut = document.getElementById('rn-rom-out');
+
+  function calcNum() {
+    var raw = numEl.value.trim();
+    if (raw === '') { numOut.innerHTML = '<p class="note">Enter a whole number from 1 to 3999.</p>'; return; }
+    var n = Number(raw);
+    if (!Number.isInteger(n) || n < 1 || n > 3999) {
+      numOut.innerHTML = '<p class="note warn">Enter a whole number from 1 to 3999.</p>';
+      return;
+    }
+    numOut.innerHTML =
+      '<div class="result-sub">' + n + ' in Roman numerals</div>' +
+      '<div class="result-big">' + toRoman(n) + '</div>';
+  }
+
+  function calcRom() {
+    var raw = romEl.value.trim().toUpperCase();
+    if (raw === '') { romOut.innerHTML = '<p class="note">Enter a Roman numeral.</p>'; return; }
+    if (!/^[IVXLCDM]+$/.test(raw)) {
+      romOut.innerHTML = '<p class="note warn">Use only the letters I, V, X, L, C, D, and M.</p>';
+      return;
+    }
+    var n = fromRoman(raw);
+    if (n < 1 || n > 3999 || toRoman(n) !== raw) {
+      romOut.innerHTML = '<p class="note warn">That isn’t a valid standard Roman numeral.</p>';
+      return;
+    }
+    romOut.innerHTML =
+      '<div class="result-sub">' + raw + ' as a number</div>' +
+      '<div class="result-big">' + n + '</div>';
+  }
+
+  numEl.addEventListener('input', calcNum);
+  romEl.addEventListener('input', calcRom);
+  calcNum();
+  calcRom();
+})();
+</script>
+
+<h2>Reading and writing Roman numerals</h2>
+<p>Roman numerals build numbers from seven letters — <strong>I, V, X, L, C, D, M</strong> — worth 1, 5, 10, 50, 100, 500, and 1000. Most of the time you add the values together, reading left to right from largest to smallest. The clever twist is the <strong>subtractive rule</strong>: when a smaller letter sits before a larger one, you subtract it, so IV is 4, IX is 9, and XL is 40. This keeps numerals compact and avoids long runs of repeated letters.</p>
+<p>This converter works both ways and updates instantly as you type. Enter any number from 1 to 3999 to see its numeral, or paste a numeral to get the number back. It validates as it goes, flagging anything outside the range or that doesn't follow standard form — useful for checking clock faces, movie copyright dates, book chapters, and Super Bowl numbers.</p>
+<p>Everything runs locally in your browser, so nothing you type is uploaded or stored.</p>

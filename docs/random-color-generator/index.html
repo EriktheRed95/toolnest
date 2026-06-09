@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Random Color Generator</title>
+<meta name="description" content="Generate random colors with one click. See a swatch, HEX, and RGB for each, and copy all the HEX codes at once. Great for palettes, mockups, and placeholders.">
+<meta name="keywords" content="random color generator, random hex color, random rgb color, color palette generator, random color picker">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/random-color-generator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Random Color Generator">
+<meta property="og:description" content="Generate random colors with one click. See a swatch, HEX, and RGB for each, and copy all the HEX codes at once. Great for palettes, mockups, and placeholders.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/random-color-generator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Random Color Generator", "url": "https://erikthered95.github.io/toolnest/random-color-generator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Generate random colors with one click. See a swatch, HEX, and RGB for each, and copy all the HEX codes at once. Great for palettes, mockups, and placeholders."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How are the colors generated?", "acceptedAnswer": {"@type": "Answer", "text": "Each color is picked using your browser's cryptographically secure random number generator (window.crypto), then formatted as a six-digit HEX code and its equivalent RGB values. No two clicks should ever give the same set."}}, {"@type": "Question", "name": "What can I use random colors for?", "acceptedAnswer": {"@type": "Answer", "text": "They're handy for sparking design palettes, filling placeholder elements while building a layout, generating avatar or tag colors, testing how a UI handles different shades, or simply breaking creative block when you can't decide on a hue."}}, {"@type": "Question", "name": "What's the difference between HEX and RGB?", "acceptedAnswer": {"@type": "Answer", "text": "Both describe the same color. HEX is a six-digit code like #3A7BD5 used widely in CSS and design tools. RGB lists the red, green, and blue channels as numbers from 0 to 255, like rgb(58, 123, 213). This tool shows both for every swatch."}}, {"@type": "Question", "name": "Can I copy the colors?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every generated set lists its HEX codes in a copy box \u2014 click Copy to grab them all at once, then paste straight into your CSS, design file, or notes."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>Random Color Generator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://erikthered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "Random Color Generator"}]}</script>
+<article class="tool"><h1>Random Color Generator</h1><p class="lede">Generate random colors with one click. See a swatch, HEX, and RGB for each, and copy all the HEX codes at once. Great for palettes, mockups, and placeholders.</p><div class="row">
+  <div class="field">
+    <label for="rc-count">How many colors (1–12)</label>
+    <input type="number" id="rc-count" value="5" min="1" max="12" step="1">
+  </div>
+</div>
+<div class="btn-row">
+  <button class="btn" id="rc-go">Generate</button>
+  <button class="btn secondary" data-copy="#rc-hex" id="rc-copy">Copy HEX</button>
+</div>
+
+<div class="result">
+  <div id="rc-swatches"></div>
+  <div class="pw-out" id="rc-hex" style="margin-top:12px"></div>
+</div>
+
+<script>
+(function () {
+  var countEl = document.getElementById('rc-count');
+  var swatches = document.getElementById('rc-swatches');
+  var hexBox = document.getElementById('rc-hex');
+
+  function randByte() {
+    var buf = new Uint8Array(1);
+    window.crypto.getRandomValues(buf);
+    return buf[0];
+  }
+  function hex2(n) { return ('0' + n.toString(16)).slice(-2); }
+
+  function go() {
+    var n = Math.max(1, Math.min(12, Math.trunc(+countEl.value || 1)));
+    countEl.value = n;
+    var rows = '', hexLines = [];
+    for (var i = 0; i < n; i++) {
+      var r = randByte(), g = randByte(), b = randByte();
+      var hex = '#' + hex2(r) + hex2(g) + hex2(b);
+      var rgb = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+      hexLines.push(hex);
+      rows +=
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">' +
+          '<div style="flex:0 0 64px;height:48px;border-radius:8px;border:1px solid rgba(0,0,0,.15);background:' + hex + '"></div>' +
+          '<div><div class="v" style="font-weight:600">' + hex.toUpperCase() + '</div>' +
+          '<div class="hint">' + rgb + '</div></div>' +
+        '</div>';
+    }
+    swatches.innerHTML = rows;
+    hexBox.textContent = hexLines.join('\n');
+  }
+
+  document.getElementById('rc-go').addEventListener('click', go);
+  countEl.addEventListener('input', go);
+  go();
+})();
+</script>
+
+<h2>Random colors for design and testing</h2>
+<p>A random color generator is one of those small tools that turns out to be surprisingly useful. Designers reach for it to <strong>kick-start a palette</strong> when a blank canvas feels paralyzing, developers use it to fill <strong>placeholder</strong> blocks and to give tags, avatars, or chart series distinct shades, and anyone can use it just to discover a hue they wouldn't have picked themselves. Each click here produces a fresh set generated with your browser's secure random source.</p>
+<p>Every color comes with both its <strong>HEX</strong> code — the six-digit form like #3A7BD5 that CSS and design apps expect — and its <strong>RGB</strong> values, the red, green, and blue channels from 0 to 255. The swatch shows you the actual color, and the copy box collects all the HEX codes so you can paste a whole palette in one go.</p>
+<ul>
+  <li><strong>Palettes</strong> — generate a batch and keep the shades you like.</li>
+  <li><strong>Placeholders</strong> — fill blocks and components while building.</li>
+  <li><strong>Variety</strong> — assign unique colors to tags, users, or data series.</li>
+</ul><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How are the colors generated?</summary><div class="faq-a">Each color is picked using your browser's cryptographically secure random number generator (window.crypto), then formatted as a six-digit HEX code and its equivalent RGB values. No two clicks should ever give the same set.</div></details>
+<details class="faq-item"><summary>What can I use random colors for?</summary><div class="faq-a">They're handy for sparking design palettes, filling placeholder elements while building a layout, generating avatar or tag colors, testing how a UI handles different shades, or simply breaking creative block when you can't decide on a hue.</div></details>
+<details class="faq-item"><summary>What's the difference between HEX and RGB?</summary><div class="faq-a">Both describe the same color. HEX is a six-digit code like #3A7BD5 used widely in CSS and design tools. RGB lists the red, green, and blue channels as numbers from 0 to 255, like rgb(58, 123, 213). This tool shows both for every swatch.</div></details>
+<details class="faq-item"><summary>Can I copy the colors?</summary><div class="faq-a">Yes. Every generated set lists its HEX codes in a copy box — click Copy to grab them all at once, then paste straight into your CSS, design file, or notes.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/random-number-generator/"><h3>Random Number Generator</h3><p>Generate random numbers in any range — pick a min and max, choose how many, and toggle duplicates. Free, instant, works on any device.</p></a><a class="card" href="/toolnest/random-picker/"><h3>Random Picker (Decision Maker)</h3><p>Paste a list of names or options and let chance choose. Perfect for giveaways, raffles, picking a winner, or settling a decision. Free and instant.</p></a><a class="card" href="/toolnest/text-sorter/"><h3>Text Sorter & Deduplicator</h3><p>Sort lines of text alphabetically, reverse or shuffle them, and remove duplicate lines. Case-insensitive and trim options. Free, private, in-browser.</p></a><a class="card" href="/toolnest/slug-generator/"><h3>URL Slug Generator</h3><p>Turn any title into a clean, SEO-friendly URL slug. Lowercases text, strips accents, and replaces spaces and symbols with hyphens. Free and instant.</p></a><a class="card" href="/toolnest/uuid-generator/"><h3>UUID Generator</h3><p>Generate random RFC 4122 version-4 UUIDs in your browser. Choose how many you need and copy them all with one click. Cryptographically secure and completely private.</p></a><a class="card" href="/toolnest/username-generator/"><h3>Username Generator</h3><p>Generate fun, memorable usernames by combining an adjective and a noun, with optional numbers and capitalization. Cryptographically random and private.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

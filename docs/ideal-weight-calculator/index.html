@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ideal Weight Calculator</title>
+<meta name="description" content="Estimate your ideal body weight from your height and sex using the Devine, Robinson, and Miller formulas, plus the healthy weight range from BMI.">
+<meta name="keywords" content="ideal weight calculator, ideal body weight, Devine formula, Robinson formula, Miller formula, healthy weight range">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/ideal-weight-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Ideal Weight Calculator">
+<meta property="og:description" content="Estimate your ideal body weight from your height and sex using the Devine, Robinson, and Miller formulas, plus the healthy weight range from BMI.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/ideal-weight-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Ideal Weight Calculator", "url": "https://erikthered95.github.io/toolnest/ideal-weight-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Estimate your ideal body weight from your height and sex using the Devine, Robinson, and Miller formulas, plus the healthy weight range from BMI."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is ideal body weight?", "acceptedAnswer": {"@type": "Answer", "text": "Ideal body weight (IBW) is a reference figure estimated from your height and sex. Several classic formulas \u2014 Devine, Robinson, and Miller \u2014 each give a slightly different number. They were originally created for medication dosing, so treat them as rough guides rather than personal targets."}}, {"@type": "Question", "name": "Which formula should I use?", "acceptedAnswer": {"@type": "Answer", "text": "There's no single correct one. Devine is the most widely cited, Robinson tends to give slightly lower figures, and Miller higher. Because they differ, this tool shows all three side by side along with the healthy weight range from BMI, which accounts for a span rather than a single point."}}, {"@type": "Question", "name": "Why show a BMI range too?", "acceptedAnswer": {"@type": "Answer", "text": "The classic formulas return one number per height, but healthy weight is really a range. The BMI healthy band (18.5\u201324.9) for your height gives a realistic span of weights, which is usually more useful than any single 'ideal' figure."}}, {"@type": "Question", "name": "Are these formulas accurate?", "acceptedAnswer": {"@type": "Answer", "text": "They ignore body composition, frame size, age, and muscle mass, so they're approximations. A muscular person may sit well above their 'ideal' weight while being perfectly healthy. Use these numbers as a ballpark and consult a professional for personal goals."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Ideal Weight Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Ideal Weight Calculator"}]}</script>
+<article class="tool"><h1>Ideal Weight Calculator</h1><p class="lede">Estimate your ideal body weight from your height and sex using the Devine, Robinson, and Miller formulas, plus the healthy weight range from BMI.</p><div class="checks" style="margin-bottom:14px">
+  <label><input type="radio" name="iw-sex" value="male" checked> Male</label>
+  <label><input type="radio" name="iw-sex" value="female"> Female</label>
+</div>
+<div class="checks" style="margin-bottom:14px">
+  <label><input type="radio" name="iw-unit" value="metric" checked> Metric (cm)</label>
+  <label><input type="radio" name="iw-unit" value="imperial"> Imperial (ft/in)</label>
+</div>
+<div id="iw-metric">
+  <div class="row">
+    <div class="field"><label for="iw-cm">Height (cm)</label><input type="number" id="iw-cm" value="178" min="0" step="0.5"></div>
+  </div>
+</div>
+<div id="iw-imperial" style="display:none">
+  <div class="row">
+    <div class="field"><label for="iw-ft">Height (ft)</label><input type="number" id="iw-ft" value="5" min="0" step="1"></div>
+    <div class="field"><label for="iw-in">Height (in)</label><input type="number" id="iw-in" value="10" min="0" step="1"></div>
+  </div>
+</div>
+
+<div class="result" id="iw-out"></div>
+
+<script>
+(function () {
+  var ids = ['iw-cm', 'iw-ft', 'iw-in'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function sex() { return document.querySelector('input[name="iw-sex"]:checked').value; }
+  function unit() { return document.querySelector('input[name="iw-unit"]:checked').value; }
+
+  function lb(kg) { return (kg / 0.453592).toFixed(0); }
+  function row(name, kg) { return kv(name, kg.toFixed(1) + ' kg (' + lb(kg) + ' lb)'); }
+
+  function calc() {
+    var out = document.getElementById('iw-out');
+    var totalInches, heightM;
+    if (unit() === 'metric') {
+      var cm = v('iw-cm');
+      totalInches = cm / 2.54;
+      heightM = cm / 100;
+    } else {
+      totalInches = v('iw-ft') * 12 + v('iw-in');
+      heightM = totalInches * 0.0254;
+    }
+    if (totalInches <= 0) { out.innerHTML = '<p class="note">Enter your height.</p>'; return; }
+
+    var over = totalInches - 60;
+    var s = sex();
+    var devine = s === 'male' ? 50 + 2.3 * over : 45.5 + 2.3 * over;
+    var robinson = s === 'male' ? 52 + 1.9 * over : 49 + 1.7 * over;
+    var miller = s === 'male' ? 56.2 + 1.41 * over : 53.1 + 1.36 * over;
+
+    var lo = 18.5 * heightM * heightM, hi = 24.9 * heightM * heightM;
+    var rangeKg = lo.toFixed(1) + '–' + hi.toFixed(1) + ' kg';
+    var rangeLb = lb(lo) + '–' + lb(hi) + ' lb';
+
+    out.innerHTML =
+      '<div class="result-sub">Healthy weight range (BMI 18.5–24.9)</div>' +
+      '<div class="result-big" style="font-size:1.6rem">' + rangeKg + '</div>' +
+      '<div class="result-sub">' + rangeLb + '</div>' +
+      '<div style="margin-top:14px">' +
+        row('Devine formula', devine) +
+        row('Robinson formula', robinson) +
+        row('Miller formula', miller) +
+      '</div>' +
+      '<p class="note">These formulas give a single reference figure per height and are rough guides only — the BMI range above is usually more realistic.</p>';
+  }
+
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  document.querySelectorAll('input[name="iw-sex"]').forEach(function (r) { r.addEventListener('change', calc); });
+  document.querySelectorAll('input[name="iw-unit"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      document.getElementById('iw-metric').style.display = unit() === 'metric' ? '' : 'none';
+      document.getElementById('iw-imperial').style.display = unit() === 'imperial' ? '' : 'none';
+      calc();
+    });
+  });
+  calc();
+})();
+</script>
+
+<h2>What "ideal weight" really means</h2>
+<p>Ideal body weight formulas estimate a reference weight from your <strong>height and sex</strong>. The best-known — Devine, Robinson, and Miller — were developed decades ago, originally to help calculate medication doses, and each returns a slightly different figure. Showing all three together makes it obvious that there is no single magic number; rather, there is a reasonable band of healthy weights.</p>
+<p>That's why this calculator also displays the <strong>healthy weight range</strong> from body mass index, the span of weights that puts your BMI between 18.5 and 24.9 for your height. A range is usually more useful than a single target because it acknowledges natural variation in build and body composition. None of these methods account for muscle mass, frame size, or age.</p>
+<ul>
+  <li><strong>Devine</strong> — the most commonly cited formula in clinical settings.</li>
+  <li><strong>Robinson</strong> — tends to produce slightly lower estimates.</li>
+  <li><strong>Miller</strong> — tends to produce slightly higher estimates.</li>
+</ul>
+<p class="note"><strong>Not medical advice.</strong> These are rough estimates for general information only and aren't a substitute for evaluation by a qualified healthcare provider.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is ideal body weight?</summary><div class="faq-a">Ideal body weight (IBW) is a reference figure estimated from your height and sex. Several classic formulas — Devine, Robinson, and Miller — each give a slightly different number. They were originally created for medication dosing, so treat them as rough guides rather than personal targets.</div></details>
+<details class="faq-item"><summary>Which formula should I use?</summary><div class="faq-a">There's no single correct one. Devine is the most widely cited, Robinson tends to give slightly lower figures, and Miller higher. Because they differ, this tool shows all three side by side along with the healthy weight range from BMI, which accounts for a span rather than a single point.</div></details>
+<details class="faq-item"><summary>Why show a BMI range too?</summary><div class="faq-a">The classic formulas return one number per height, but healthy weight is really a range. The BMI healthy band (18.5–24.9) for your height gives a realistic span of weights, which is usually more useful than any single 'ideal' figure.</div></details>
+<details class="faq-item"><summary>Are these formulas accurate?</summary><div class="faq-a">They ignore body composition, frame size, age, and muscle mass, so they're approximations. A muscular person may sit well above their 'ideal' weight while being perfectly healthy. Use these numbers as a ballpark and consult a professional for personal goals.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/loan-calculator/"><h3>Loan Calculator</h3><p>Calculate the monthly payment, total interest, and total cost of any loan — personal, student, or installment. Enter the amount, rate, and term to see your numbers.</p></a><a class="card" href="/toolnest/percentage-calculator/"><h3>Percentage Calculator</h3><p>Work out percentages three ways: what is X% of Y, X is what percent of Y, and the percent increase or decrease between two numbers. Free and instant.</p></a><a class="card" href="/toolnest/roman-numeral-converter/"><h3>Roman Numeral Converter</h3><p>Convert numbers to Roman numerals and Roman numerals back to numbers. Supports 1 to 3999 with instant, two-way conversion in your browser.</p></a><a class="card" href="/toolnest/salary-to-hourly-calculator/"><h3>Salary to Hourly Calculator</h3><p>Convert an annual salary to an hourly wage, or an hourly rate to a yearly salary. See weekly, biweekly, monthly, and daily pay based on your hours and weeks worked.</p></a><a class="card" href="/toolnest/sales-tax-calculator/"><h3>Sales Tax Calculator</h3><p>Add sales tax to a price or work backward from a tax-included total. Enter the amount and tax rate to see the tax owed and the final total instantly.</p></a><a class="card" href="/toolnest/square-footage-calculator/"><h3>Square Footage Calculator</h3><p>Calculate square footage from length and width in feet. See the area in square feet, square yards, and square meters, plus total cost from a price per square foot.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

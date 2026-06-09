@@ -1,0 +1,107 @@
+<!--META
+{
+  "title": "Mortgage Amortization Schedule Calculator",
+  "slug": "mortgage-amortization-schedule",
+  "category": "finance",
+  "h1": "Mortgage Amortization Schedule Calculator",
+  "description": "Build a full year-by-year mortgage amortization schedule. See your monthly payment, total interest, and how extra principal payments shorten your payoff time.",
+  "keywords": "amortization schedule, mortgage amortization calculator, amortization table, extra principal payment, mortgage payoff calculator, loan amortization",
+  "faq": [
+    {"q": "What is an amortization schedule?", "a": "It's a table that shows how each payment on a fixed-rate loan is split between interest and principal over the life of the loan, and how the balance falls to zero. Early payments are mostly interest; later payments are mostly principal. This tool sums the 12 months in each year so you can see the trend at a glance."},
+    {"q": "How do extra principal payments help?", "a": "Adding money to your payment beyond the scheduled amount goes straight to the balance. Because interest is charged on the remaining balance, a smaller balance means less interest every month after, which both saves money and shortens the loan. The schedule recalculates the payoff time when you add an extra monthly amount."},
+    {"q": "How is the monthly payment calculated?", "a": "It uses the standard amortization formula: M = P × r(1+r)^n ÷ ((1+r)^n − 1), where P is the loan amount, r is the monthly rate (annual rate ÷ 12), and n is the number of months. The extra principal you enter is added on top of this fixed payment."},
+    {"q": "Is this schedule exact?", "a": "It's a close estimate for planning. Real loans may round payments, apply payments on specific dates, or include escrow for taxes and insurance. Confirm the exact numbers with your lender's amortization schedule."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="am-amount">Loan amount ($)</label><input type="number" id="am-amount" value="320000" min="0" step="1000"></div>
+  <div class="field"><label for="am-rate">Interest rate (% APR)</label><input type="number" id="am-rate" value="6.5" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="am-term">Loan term (years)</label><input type="number" id="am-term" value="30" min="1" step="1"></div>
+  <div class="field"><label for="am-extra">Extra monthly principal ($) <span class="hint">optional</span></label><input type="number" id="am-extra" value="0" min="0" step="25"></div>
+</div>
+
+<div class="result" id="am-out"></div>
+<div class="btn-row"><button class="btn secondary" id="am-toggle">Show amortization schedule</button></div>
+<div id="am-sched" style="display:none"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['am-amount', 'am-rate', 'am-term', 'am-extra'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function schedule(P, r, n, extra) {
+    var rows = [], bal = P, totalInt = 0;
+    var pay = r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    for (var i = 1; i <= n && bal > 0.005; i++) {
+      var interest = bal * r;
+      var principal = pay - interest + extra;
+      if (principal > bal) principal = bal;
+      bal -= principal; totalInt += interest;
+      if (bal < 0) bal = 0;
+      rows.push({ m: i, interest: interest, principal: principal, bal: bal });
+    }
+    return { pay: pay, totalInt: totalInt, rows: rows };
+  }
+
+  function calc() {
+    var P = v('am-amount');
+    var r = v('am-rate') / 100 / 12;
+    var n = Math.round(v('am-term')) * 12;
+    var extra = v('am-extra');
+    var out = document.getElementById('am-out');
+    if (P <= 0 || n <= 0) { out.innerHTML = '<p class="note">Enter a loan amount and term.</p>'; document.getElementById('am-sched').innerHTML = ''; return; }
+
+    var s = schedule(P, r, n, extra);
+    var months = s.rows.length;
+    var totalPaid = P + s.totalInt;
+    var savedMonths = n - months;
+
+    out.innerHTML =
+      '<div class="result-sub">Monthly payment (principal &amp; interest)</div>' +
+      '<div class="result-big">' + money2.format(s.pay + extra) + '</div>' +
+      '<div style="margin-top:12px">' +
+        (extra ? kv('Base payment', money2.format(s.pay)) + kv('Extra principal', money2.format(extra)) : '') +
+        kv('Loan amount', money.format(P)) +
+        kv('Total interest', money.format(s.totalInt)) +
+        kv('Total paid', money.format(totalPaid)) +
+        kv('Payoff time', (Math.floor(months / 12)) + ' yrs ' + (months % 12) + ' mo') +
+      '</div>' +
+      (extra && savedMonths > 0 ? '<p class="note ok">Extra payments pay the loan off ' + (Math.floor(savedMonths / 12)) + ' yrs ' + (savedMonths % 12) + ' mo early.</p>' : '');
+
+    renderSched(s);
+  }
+
+  function renderSched(s) {
+    var box = document.getElementById('am-sched');
+    var yrs = Math.ceil(s.rows.length / 12);
+    var html = '<div class="scroll"><table class="amort"><thead><tr>' +
+      '<th>Year</th><th>Principal paid</th><th>Interest paid</th><th>Balance</th></tr></thead><tbody>';
+    for (var y = 1; y <= yrs; y++) {
+      var pr = 0, intr = 0, bal = 0;
+      for (var m = (y - 1) * 12; m < y * 12 && m < s.rows.length; m++) { pr += s.rows[m].principal; intr += s.rows[m].interest; bal = s.rows[m].bal; }
+      html += '<tr><td>' + y + '</td><td>' + money.format(pr) + '</td><td>' + money.format(intr) + '</td><td>' + money.format(bal) + '</td></tr>';
+    }
+    box.innerHTML = html + '</tbody></table></div>';
+  }
+
+  document.getElementById('am-toggle').addEventListener('click', function () {
+    var box = document.getElementById('am-sched');
+    var show = box.style.display === 'none';
+    box.style.display = show ? '' : 'none';
+    this.textContent = show ? 'Hide amortization schedule' : 'Show amortization schedule';
+  });
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How amortization works</h2>
+<p>An amortizing loan is repaid in equal monthly payments, but the split between interest and principal shifts over time. Each month, interest is charged on the remaining balance first; whatever is left of your payment reduces the principal. Because the balance is largest at the start, your earliest payments are mostly interest. As the balance shrinks, more of every payment goes to principal — which is why progress feels slow in the early years and accelerates later.</p>
+<p>This is also why <strong>extra principal payments</strong> are so powerful early in the loan. Every extra dollar permanently removes future interest on that dollar for the rest of the term. The year-by-year table above groups the twelve monthly payments into annual totals so you can see the balance fall and the interest share decline, and the payoff estimate shows how much sooner you'd be debt-free if you add to each payment.</p>
+<p class="note"><strong>Estimate only.</strong> Actual schedules may round payments, apply them on specific dates, or include escrow. This is not financial advice.</p>

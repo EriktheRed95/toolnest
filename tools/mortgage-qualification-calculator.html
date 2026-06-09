@@ -1,0 +1,83 @@
+<!--META
+{
+  "title": "Mortgage Qualification Calculator",
+  "slug": "mortgage-qualification-calculator",
+  "category": "finance",
+  "h1": "Mortgage Qualification Calculator",
+  "description": "Find out how much income you need to qualify for a mortgage. Enter the home price, down payment, rate, taxes, insurance, and debts to see the required annual income and DTI.",
+  "keywords": "mortgage qualification calculator, how much income to buy a house, income needed for mortgage, debt to income ratio, DTI calculator, mortgage affordability",
+  "faq": [
+    {"q": "How much income do I need to buy a house?", "a": "Lenders compare your total monthly debts plus housing payment (PITI) to your gross income using a debt-to-income (DTI) ratio. Working backward, the income you need is your full housing payment plus other debts, divided by the maximum DTI the lender allows. This calculator does that math so you can see the annual income required for a given home."},
+    {"q": "What is DTI and why does it matter?", "a": "Debt-to-income ratio is your monthly debt payments divided by your gross monthly income. The back-end DTI includes housing plus all other debts; the front-end DTI is just housing. Many conventional loans cap back-end DTI around 43%, though some programs allow more with strong compensating factors."},
+    {"q": "What does PITI include?", "a": "PITI is Principal, Interest, Taxes, and Insurance — the four core parts of a monthly mortgage payment. Lenders qualify you on the full PITI, not just principal and interest, because taxes and insurance are required ongoing costs usually collected in escrow."},
+    {"q": "Will I actually qualify if I meet the income?", "a": "Income and DTI are central, but lenders also weigh your credit score, down payment, assets and reserves, employment history, and the specific loan program. Meeting the income target here is a strong sign, but only a lender's full underwriting confirms approval."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="mq-price">Home price ($)</label><input type="number" id="mq-price" value="400000" min="0" step="1000"></div>
+  <div class="field"><label for="mq-dp">Down payment ($)</label><input type="number" id="mq-dp" value="80000" min="0" step="1000"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="mq-rate">Interest rate (% APR)</label><input type="number" id="mq-rate" value="6.5" min="0" step="0.01"></div>
+  <div class="field"><label for="mq-term">Loan term (years)</label><input type="number" id="mq-term" value="30" min="1" step="1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="mq-tax">Property tax ($/yr)</label><input type="number" id="mq-tax" value="3600" min="0" step="100"></div>
+  <div class="field"><label for="mq-ins">Home insurance ($/yr)</label><input type="number" id="mq-ins" value="1400" min="0" step="100"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="mq-debts">Other monthly debts ($)</label><input type="number" id="mq-debts" value="500" min="0" step="50"></div>
+  <div class="field"><label for="mq-dti">Max DTI (%)</label><input type="number" id="mq-dti" value="43" min="1" max="100" step="1"></div>
+</div>
+
+<div class="result" id="mq-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['mq-price', 'mq-dp', 'mq-rate', 'mq-term', 'mq-tax', 'mq-ins', 'mq-debts', 'mq-dti'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var price = v('mq-price');
+    var dp = v('mq-dp');
+    var loan = Math.max(0, price - dp);
+    var r = v('mq-rate') / 100 / 12;
+    var n = Math.round(v('mq-term')) * 12;
+    var tax = v('mq-tax') / 12;
+    var ins = v('mq-ins') / 12;
+    var debts = v('mq-debts');
+    var maxDti = v('mq-dti');
+    var out = document.getElementById('mq-out');
+    if (loan <= 0 || n <= 0 || maxDti <= 0) { out.innerHTML = '<p class="note">Enter a home price, down payment, and term.</p>'; return; }
+
+    var pi = r === 0 ? loan / n : loan * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    var piti = pi + tax + ins;
+    var reqMonthlyIncome = (piti + debts) / (maxDti / 100);
+    var reqAnnualIncome = reqMonthlyIncome * 12;
+    var frontEnd = reqMonthlyIncome ? piti / reqMonthlyIncome * 100 : 0;
+
+    out.innerHTML =
+      '<div class="result-sub">Required annual income</div>' +
+      '<div class="result-big">' + money.format(reqAnnualIncome) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Required monthly income', money.format(reqMonthlyIncome)) +
+        kv('Monthly payment (PITI)', money2.format(piti)) +
+        kv('Loan amount', money.format(loan)) +
+        kv('Back-end DTI used', maxDti.toFixed(0) + '%') +
+        kv('Front-end (housing) ratio', frontEnd.toFixed(1) + '%') +
+      '</div>' +
+      '<p class="note">Lenders also weigh your credit score, assets and reserves, and the specific loan program — meeting this income is necessary but not the only requirement.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How lenders decide how much income you need</h2>
+<p>Mortgage qualification centers on your <strong>debt-to-income ratio (DTI)</strong> — the share of your gross monthly income that goes to debt payments. Lenders add your full housing payment (PITI: principal, interest, taxes, and insurance) to your other recurring debts like car loans, student loans, and minimum credit card payments, then check that total against a maximum percentage of your income. Many conventional loans cap the back-end DTI near 43%, so the income you need is simply your total obligations divided by that cap.</p>
+<p>This calculator runs that math in reverse: it builds the PITI from your home price, down payment, rate, taxes, and insurance, adds your other debts, and divides by the DTI ceiling to show the annual income required. The <strong>front-end ratio</strong> shows housing alone as a share of that income. Lowering the price, increasing the down payment, paying down other debts, or securing a lower rate all reduce the income you need to qualify.</p>
+<p class="note"><strong>Estimate only.</strong> Approval also depends on credit, assets, employment, and program rules. This is not financial advice.</p>

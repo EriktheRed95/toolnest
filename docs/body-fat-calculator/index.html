@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Body Fat Calculator (Navy Method)</title>
+<meta name="description" content="Estimate your body fat percentage with the US Navy circumference method. Enter a few tape measurements to see your body fat percentage and category.">
+<meta name="keywords" content="body fat calculator, navy method body fat, body fat percentage, tape measure body fat, body composition calculator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/body-fat-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Body Fat Calculator (Navy Method)">
+<meta property="og:description" content="Estimate your body fat percentage with the US Navy circumference method. Enter a few tape measurements to see your body fat percentage and category.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/body-fat-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Body Fat Calculator (Navy Method)", "url": "https://erikthered95.github.io/toolnest/body-fat-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Estimate your body fat percentage with the US Navy circumference method. Enter a few tape measurements to see your body fat percentage and category."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does the Navy method work?", "acceptedAnswer": {"@type": "Answer", "text": "The US Navy formula estimates body fat from circumference measurements \u2014 neck and waist (plus hip for women) along with height. It uses these tape measurements in a logarithmic equation, avoiding the need for calipers or special equipment."}}, {"@type": "Question", "name": "How accurate is it?", "acceptedAnswer": {"@type": "Answer", "text": "For most people it lands within about 3\u20134 percentage points of more precise methods like DEXA scans. Accuracy depends heavily on measuring in the right spots with a snug, level tape. It's a useful estimate for tracking trends, not a clinical measurement."}}, {"@type": "Question", "name": "Where do I measure?", "acceptedAnswer": {"@type": "Answer", "text": "Measure your neck just below the larynx, your waist at the navel for men or at the narrowest point for women, and (for women) the hips at the widest point. Keep the tape level and snug without compressing the skin, and measure relaxed after exhaling."}}, {"@type": "Question", "name": "What is a healthy body fat percentage?", "acceptedAnswer": {"@type": "Answer", "text": "Healthy ranges differ by sex. Men are generally considered fit around 14\u201317% and average around 18\u201324%; women are fit around 21\u201324% and average around 25\u201331%. Athletes are lower, and there is an essential minimum your body needs to function."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Body Fat Calculator (Navy Method)</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Body Fat Calculator (Navy Method)"}]}</script>
+<article class="tool"><h1>Body Fat Calculator (Navy Method)</h1><p class="lede">Estimate your body fat percentage with the US Navy circumference method. Enter a few tape measurements to see your body fat percentage and category.</p><div class="checks" style="margin-bottom:14px">
+  <label><input type="radio" name="bf-sex" value="male" checked> Male</label>
+  <label><input type="radio" name="bf-sex" value="female"> Female</label>
+</div>
+<div class="row">
+  <div class="field"><label for="bf-height">Height (cm)</label><input type="number" id="bf-height" value="178" min="0" step="0.5"></div>
+  <div class="field"><label for="bf-neck">Neck (cm)</label><input type="number" id="bf-neck" value="38" min="0" step="0.5"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="bf-waist">Waist (cm)</label><input type="number" id="bf-waist" value="86" min="0" step="0.5"></div>
+  <div class="field" id="bf-hip-field"><label for="bf-hip">Hip (cm)</label><input type="number" id="bf-hip" value="98" min="0" step="0.5"></div>
+</div>
+
+<div class="result" id="bf-out"></div>
+
+<script>
+(function () {
+  var ids = ['bf-height', 'bf-neck', 'bf-waist', 'bf-hip'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function sex() { return document.querySelector('input[name="bf-sex"]:checked').value; }
+  var hipField = document.getElementById('bf-hip-field');
+
+  function category(bf, s) {
+    var bands = s === 'male'
+      ? [[6, 'Essential fat'], [14, 'Athletes'], [18, 'Fitness'], [25, 'Average'], [Infinity, 'Obese']]
+      : [[14, 'Essential fat'], [21, 'Athletes'], [25, 'Fitness'], [32, 'Average'], [Infinity, 'Obese']];
+    for (var i = 0; i < bands.length; i++) if (bf < bands[i][0]) return bands[i][1];
+    return 'Obese';
+  }
+
+  function calc() {
+    var out = document.getElementById('bf-out');
+    var s = sex();
+    hipField.style.display = s === 'female' ? '' : 'none';
+    var h = v('bf-height'), neck = v('bf-neck'), waist = v('bf-waist'), hip = v('bf-hip');
+    if (h <= 0 || neck <= 0 || waist <= 0 || (s === 'female' && hip <= 0)) {
+      out.innerHTML = '<p class="note">Enter your height, neck, waist' + (s === 'female' ? ', and hip' : '') + ' measurements.</p>';
+      return;
+    }
+    var bf;
+    if (s === 'male') {
+      if (waist - neck <= 0) { out.innerHTML = '<p class="note warn">Waist must be larger than neck for a valid estimate.</p>'; return; }
+      bf = 495 / (1.0324 - 0.19077 * Math.log10(waist - neck) + 0.15456 * Math.log10(h)) - 450;
+    } else {
+      if (waist + hip - neck <= 0) { out.innerHTML = '<p class="note warn">Waist plus hip must be larger than neck for a valid estimate.</p>'; return; }
+      bf = 495 / (1.29579 - 0.35004 * Math.log10(waist + hip - neck) + 0.22100 * Math.log10(h)) - 450;
+    }
+    if (!isFinite(bf) || bf <= 0 || bf > 70) {
+      out.innerHTML = '<p class="note warn">Those measurements don’t produce a valid estimate. Double-check your tape readings.</p>';
+      return;
+    }
+    var cat = category(bf, s);
+    out.innerHTML =
+      '<div class="result-sub">Estimated body fat &mdash; ' + cat + '</div>' +
+      '<div class="result-big">' + bf.toFixed(1) + '%</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Category', cat) +
+        kv('Method', 'US Navy circumference') +
+      '</div>' +
+      '<p class="note">Categories (' + (s === 'male' ? 'men' : 'women') + '): ' +
+      (s === 'male'
+        ? 'Essential 2–5% · Athletes 6–13% · Fitness 14–17% · Average 18–24% · Obese 25%+'
+        : 'Essential 10–13% · Athletes 14–20% · Fitness 21–24% · Average 25–31% · Obese 32%+') +
+      '. This is an estimate, not a clinical measurement.</p>';
+  }
+
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  document.querySelectorAll('input[name="bf-sex"]').forEach(function (r) { r.addEventListener('change', calc); });
+  calc();
+})();
+</script>
+
+<h2>Estimating body fat with a tape measure</h2>
+<p>The <strong>US Navy method</strong> estimates your body fat percentage from a handful of body circumferences instead of skinfold calipers or a lab scan. By plugging your neck, waist, and height — plus hips for women — into a logarithmic formula, it produces a number you can track over time using nothing more than a flexible tape measure. It's the same approach the Navy uses for body composition screening.</p>
+<p>Measurement technique matters more than anything else here. Keep the tape level and snug without digging into the skin, measure relaxed after a normal exhale, and take each reading in the same spot every time. Men measure the waist at the navel; women measure at the narrowest point and the hips at the widest. Consistency is what makes the trend meaningful.</p>
+<ul>
+  <li><strong>Neck</strong> — just below the larynx, tape sloping slightly downward at the front.</li>
+  <li><strong>Waist</strong> — men at the navel, women at the natural narrowest point.</li>
+  <li><strong>Hip</strong> — women only, at the widest part of the buttocks.</li>
+</ul>
+<p class="note"><strong>Not medical advice.</strong> This is a rough estimate for general information only and isn't a substitute for evaluation by a qualified healthcare provider.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How does the Navy method work?</summary><div class="faq-a">The US Navy formula estimates body fat from circumference measurements — neck and waist (plus hip for women) along with height. It uses these tape measurements in a logarithmic equation, avoiding the need for calipers or special equipment.</div></details>
+<details class="faq-item"><summary>How accurate is it?</summary><div class="faq-a">For most people it lands within about 3–4 percentage points of more precise methods like DEXA scans. Accuracy depends heavily on measuring in the right spots with a snug, level tape. It's a useful estimate for tracking trends, not a clinical measurement.</div></details>
+<details class="faq-item"><summary>Where do I measure?</summary><div class="faq-a">Measure your neck just below the larynx, your waist at the navel for men or at the narrowest point for women, and (for women) the hips at the widest point. Keep the tape level and snug without compressing the skin, and measure relaxed after exhaling.</div></details>
+<details class="faq-item"><summary>What is a healthy body fat percentage?</summary><div class="faq-a">Healthy ranges differ by sex. Men are generally considered fit around 14–17% and average around 18–24%; women are fit around 21–24% and average around 25–31%. Athletes are lower, and there is an essential minimum your body needs to function.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/compound-interest-calculator/"><h3>Compound Interest Calculator</h3><p>See how your savings grow with compound interest. Enter a starting amount, monthly contributions, rate, and time to project your future balance and total interest earned.</p></a><a class="card" href="/toolnest/date-difference-calculator/"><h3>Date Difference Calculator</h3><p>Calculate the difference between two dates in years, months, and days, plus the total number of days, weeks, hours, and minutes between them.</p></a><a class="card" href="/toolnest/discount-calculator/"><h3>Discount Calculator</h3><p>Calculate the sale price and how much you save with a percent-off discount. Stack a second discount or add sales tax to find your real final price.</p></a><a class="card" href="/toolnest/final-grade-calculator/"><h3>Final Grade Calculator</h3><p>Find out the score you need on your final exam to reach your target overall grade, based on your current grade and the exam's weight.</p></a><a class="card" href="/toolnest/fraction-calculator/"><h3>Fraction Calculator</h3><p>Add, subtract, multiply, and divide fractions. Get the simplified result, its decimal value, and the mixed-number form, all calculated instantly.</p></a><a class="card" href="/toolnest/fuel-cost-calculator/"><h3>Fuel Cost Calculator</h3><p>Estimate the fuel cost of a trip from distance, MPG, and gas price. See total cost, gallons used, and cost per person when splitting a road trip.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>
