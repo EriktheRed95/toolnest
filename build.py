@@ -274,6 +274,9 @@ def build():
     # ---- homepage ----
     write("index", render(home_meta(), home_html(tools), url_for("index")))
 
+    # ---- 404 (GitHub Pages serves docs/404.html for unknown paths) ----
+    build_404({m["slug"]: m for m in tools})
+
     # ---- sitemap / robots / ads.txt / nojekyll / CNAME ----
     extras(tools, pages)
 
@@ -346,6 +349,29 @@ def home_html(tools):
             f'<div class="grid">{cards}</div></section>'
         )
     return "\n".join(parts)
+
+
+def build_404(by_slug):
+    meta = {
+        "title": f"Page not found — {config.SITE_NAME}",
+        "description": "Sorry, that page doesn't exist. Browse our free calculators and tools instead.",
+        "keywords": "", "h1": "", "category": None, "faq": [],
+    }
+    popular = [by_slug[s] for s in POPULAR if s in by_slug][:6]
+    cards = "".join(
+        f'<a class="card" href="{BASE}/{m["slug"]}/"><h3>{m["title"]}</h3>'
+        f'<p>{m["description"]}</p></a>'
+        for m in popular
+    )
+    content = (
+        '<section class="hero"><h1>404 — Page not found</h1>'
+        '<p class="lede">That page doesn’t exist or may have moved. Try a popular tool below, '
+        'or head back to the homepage.</p>'
+        f'<p><a class="btn" href="{BASE}/">Go to homepage</a></p></section>'
+        f'<section class="cat"><h2>Popular tools</h2><div class="grid">{cards}</div></section>'
+    )
+    html = render(meta, content, config.DOMAIN + BASE + "/404.html")
+    open(os.path.join(OUT, "404.html"), "w", encoding="utf-8").write(html)
 
 
 def extras(tools, pages):
