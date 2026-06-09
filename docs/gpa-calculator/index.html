@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GPA Calculator</title>
+<meta name="description" content="Calculate your grade point average on the 4.0 scale. Enter each course's letter grade and credit hours to get your weighted GPA instantly.">
+<meta name="keywords" content="GPA calculator, grade point average, 4.0 scale calculator, college GPA, weighted GPA, semester GPA calculator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/gpa-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="GPA Calculator">
+<meta property="og:description" content="Calculate your grade point average on the 4.0 scale. Enter each course's letter grade and credit hours to get your weighted GPA instantly.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/gpa-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "GPA Calculator", "url": "https://erikthered95.github.io/toolnest/gpa-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Calculate your grade point average on the 4.0 scale. Enter each course's letter grade and credit hours to get your weighted GPA instantly."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How is GPA calculated?", "acceptedAnswer": {"@type": "Answer", "text": "Each letter grade maps to grade points on a 4.0 scale (A = 4.0, B = 3.0, and so on). Multiply each course's grade points by its credit hours to get quality points, add those up, and divide by the total credit hours. The result is your weighted grade point average."}}, {"@type": "Question", "name": "What is the standard 4.0 GPA scale?", "acceptedAnswer": {"@type": "Answer", "text": "A common scale is A = 4.0, A\u2212 = 3.7, B+ = 3.3, B = 3.0, B\u2212 = 2.7, C+ = 2.3, C = 2.0, C\u2212 = 1.7, D+ = 1.3, D = 1.0, and F = 0.0. Some schools use a simpler whole-letter scale or add pluses and minuses differently, so check your institution's official scale."}}, {"@type": "Question", "name": "Why do credit hours matter?", "acceptedAnswer": {"@type": "Answer", "text": "GPA is weighted by credit hours, so a grade in a 4-credit course affects your average more than the same grade in a 1-credit course. That's why an A in a heavy course helps more \u2014 and a poor grade in one hurts more \u2014 than in a light one."}}, {"@type": "Question", "name": "What's the difference between weighted and unweighted GPA?", "acceptedAnswer": {"@type": "Answer", "text": "An unweighted GPA caps every course at 4.0. A weighted GPA (common in high school) gives extra points for honors or AP/IB courses, sometimes on a 5.0 scale. This calculator computes a credit-hour-weighted GPA on the standard 4.0 scale; it doesn't add bonus points for course difficulty."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>GPA Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "GPA Calculator"}]}</script>
+<article class="tool"><h1>GPA Calculator</h1><p class="lede">Calculate your grade point average on the 4.0 scale. Enter each course's letter grade and credit hours to get your weighted GPA instantly.</p><p class="lede">Enter your courses. Leave credits blank to skip a row.</p>
+<div class="scroll">
+<table class="amort" style="margin-bottom:14px">
+  <thead><tr><th>Course</th><th>Grade</th><th>Credits</th></tr></thead>
+  <tbody id="gp-rows"></tbody>
+</table>
+</div>
+<div class="btn-row"><button class="btn secondary" id="gp-add">+ Add course</button></div>
+
+<div class="result" id="gp-out"></div>
+
+<script>
+(function () {
+  var GRADES = { 'A': 4.0, 'A-': 3.7, 'B+': 3.3, 'B': 3.0, 'B-': 2.7, 'C+': 2.3, 'C': 2.0, 'C-': 1.7, 'D+': 1.3, 'D': 1.0, 'D-': 0.7, 'F': 0.0 };
+  var rowsEl = document.getElementById('gp-rows');
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function gradeOptions() {
+    return Object.keys(GRADES).map(function (g) { return '<option value="' + g + '">' + g + '</option>'; }).join('');
+  }
+  var rowCount = 0;
+  function addRow(name, grade, credits) {
+    var i = rowCount++;
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><input type="text" value="' + (name || '') + '" placeholder="Course ' + (i + 1) + '" style="width:100%"></td>' +
+      '<td><select class="gp-grade" style="width:100%">' + gradeOptions() + '</select></td>' +
+      '<td><input type="number" class="gp-cred" value="' + (credits != null ? credits : '') + '" min="0" step="0.5" style="width:100%"></td>';
+    rowsEl.appendChild(tr);
+    tr.querySelector('.gp-grade').value = grade || 'A';
+    tr.querySelector('.gp-grade').addEventListener('change', calc);
+    tr.querySelector('.gp-cred').addEventListener('input', calc);
+  }
+
+  function calc() {
+    var grades = rowsEl.querySelectorAll('.gp-grade');
+    var creds = rowsEl.querySelectorAll('.gp-cred');
+    var totalCred = 0, totalPoints = 0;
+    for (var i = 0; i < grades.length; i++) {
+      var c = +creds[i].value || 0;
+      if (c <= 0) continue;
+      totalCred += c;
+      totalPoints += GRADES[grades[i].value] * c;
+    }
+    var out = document.getElementById('gp-out');
+    if (totalCred === 0) { out.innerHTML = '<p class="note">Enter credit hours to calculate your GPA.</p>'; return; }
+    var gpa = totalPoints / totalCred;
+    out.innerHTML =
+      '<div class="result-sub">Your GPA</div>' +
+      '<div class="result-big">' + gpa.toFixed(2) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Total credit hours', totalCred) +
+        kv('Total quality points', totalPoints.toFixed(1)) +
+      '</div>';
+  }
+
+  document.getElementById('gp-add').addEventListener('click', function () { addRow(); });
+  [['Calculus', 'A', 4], ['English', 'B+', 3], ['History', 'A-', 3], ['Chemistry', 'B', 4]].forEach(function (d) { addRow(d[0], d[1], d[2]); });
+  calc();
+})();
+</script>
+
+<h2>How your GPA is calculated</h2>
+<p>Your <strong>grade point average</strong> condenses every course grade into a single number on a 4.0 scale. The process is a weighted average: each letter grade converts to <strong>grade points</strong> (A = 4.0, B = 3.0, and so on), which are multiplied by the course's <strong>credit hours</strong> to get quality points. Add up all the quality points, divide by the total credit hours, and you have your GPA.</p>
+<p>This calculator handles the weighting automatically. Pick each course's grade, enter its credits, and add as many courses as you need — your GPA updates instantly. To project a future GPA, just add the courses you're taking with the grades you're aiming for.</p>
+<h2>Why credit hours change everything</h2>
+<p>Because GPA is weighted by credits, not all grades carry equal influence. An A in a 4-credit lab boosts your average more than an A in a 1-credit seminar — and a stumble in a heavy course costs you more. Understanding this helps you prioritize: when time is tight, the credit-heavy courses are where grades move your GPA the most.</p>
+<p class="note">Grade scales vary by school — some use plus/minus values, some don't, and weighted high-school GPAs add bonus points for honors or AP courses. This tool uses the common 4.0 scale shown above; check your institution's official policy for exact values.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How is GPA calculated?</summary><div class="faq-a">Each letter grade maps to grade points on a 4.0 scale (A = 4.0, B = 3.0, and so on). Multiply each course's grade points by its credit hours to get quality points, add those up, and divide by the total credit hours. The result is your weighted grade point average.</div></details>
+<details class="faq-item"><summary>What is the standard 4.0 GPA scale?</summary><div class="faq-a">A common scale is A = 4.0, A− = 3.7, B+ = 3.3, B = 3.0, B− = 2.7, C+ = 2.3, C = 2.0, C− = 1.7, D+ = 1.3, D = 1.0, and F = 0.0. Some schools use a simpler whole-letter scale or add pluses and minuses differently, so check your institution's official scale.</div></details>
+<details class="faq-item"><summary>Why do credit hours matter?</summary><div class="faq-a">GPA is weighted by credit hours, so a grade in a 4-credit course affects your average more than the same grade in a 1-credit course. That's why an A in a heavy course helps more — and a poor grade in one hurts more — than in a light one.</div></details>
+<details class="faq-item"><summary>What's the difference between weighted and unweighted GPA?</summary><div class="faq-a">An unweighted GPA caps every course at 4.0. A weighted GPA (common in high school) gives extra points for honors or AP/IB courses, sometimes on a 5.0 scale. This calculator computes a credit-hour-weighted GPA on the standard 4.0 scale; it doesn't add bonus points for course difficulty.</div></details></section></article>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

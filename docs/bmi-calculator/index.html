@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BMI Calculator</title>
+<meta name="description" content="Calculate your body mass index (BMI) in metric or imperial units. See your BMI number, weight category, and the healthy weight range for your height.">
+<meta name="keywords" content="BMI calculator, body mass index, healthy weight calculator, BMI metric imperial, weight category calculator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/bmi-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="BMI Calculator">
+<meta property="og:description" content="Calculate your body mass index (BMI) in metric or imperial units. See your BMI number, weight category, and the healthy weight range for your height.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/bmi-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "BMI Calculator", "url": "https://erikthered95.github.io/toolnest/bmi-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Calculate your body mass index (BMI) in metric or imperial units. See your BMI number, weight category, and the healthy weight range for your height."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How is BMI calculated?", "acceptedAnswer": {"@type": "Answer", "text": "BMI is your weight in kilograms divided by your height in meters squared (kg/m\u00b2). In imperial units, it's 703 \u00d7 weight in pounds \u00f7 height in inches squared. This calculator does either for you and shows the resulting category."}}, {"@type": "Question", "name": "What is a healthy BMI?", "acceptedAnswer": {"@type": "Answer", "text": "The standard adult categories are: under 18.5 is underweight, 18.5\u201324.9 is a healthy weight, 25\u201329.9 is overweight, and 30 or above is obese. These ranges apply to most adults aged 20 and over, regardless of sex."}}, {"@type": "Question", "name": "Is BMI accurate?", "acceptedAnswer": {"@type": "Answer", "text": "BMI is a useful, quick screening tool but not a complete measure of health. It doesn't distinguish muscle from fat, so very muscular people may read as 'overweight,' and it doesn't account for fat distribution, age, or ethnicity. Treat it as one data point and talk to a doctor for a fuller picture."}}, {"@type": "Question", "name": "Does BMI work for children or athletes?", "acceptedAnswer": {"@type": "Answer", "text": "Not directly. Children and teens use age- and sex-specific BMI percentiles rather than the adult categories. Highly muscular athletes can have a high BMI despite low body fat. For these groups, BMI is best interpreted with professional guidance."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>BMI Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "BMI Calculator"}]}</script>
+<article class="tool"><h1>BMI Calculator</h1><p class="lede">Calculate your body mass index (BMI) in metric or imperial units. See your BMI number, weight category, and the healthy weight range for your height.</p><div class="checks" style="margin-bottom:14px">
+  <label><input type="radio" name="bmi-unit" value="metric" checked> Metric (cm, kg)</label>
+  <label><input type="radio" name="bmi-unit" value="imperial"> Imperial (ft/in, lb)</label>
+</div>
+<div id="bmi-metric">
+  <div class="row">
+    <div class="field"><label for="bmi-cm">Height (cm)</label><input type="number" id="bmi-cm" value="175" min="0" step="0.5"></div>
+    <div class="field"><label for="bmi-kg">Weight (kg)</label><input type="number" id="bmi-kg" value="72" min="0" step="0.1"></div>
+  </div>
+</div>
+<div id="bmi-imperial" style="display:none">
+  <div class="row">
+    <div class="field"><label for="bmi-ft">Height (ft)</label><input type="number" id="bmi-ft" value="5" min="0" step="1"></div>
+    <div class="field"><label for="bmi-in">Height (in)</label><input type="number" id="bmi-in" value="9" min="0" step="1"></div>
+    <div class="field"><label for="bmi-lb">Weight (lb)</label><input type="number" id="bmi-lb" value="159" min="0" step="1"></div>
+  </div>
+</div>
+
+<div class="result" id="bmi-out"></div>
+
+<script>
+(function () {
+  var ids = ['bmi-cm', 'bmi-kg', 'bmi-ft', 'bmi-in', 'bmi-lb'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function unit() { return document.querySelector('input[name="bmi-unit"]:checked').value; }
+
+  function category(bmi) {
+    if (bmi < 18.5) return { label: 'Underweight', cls: 'warn' };
+    if (bmi < 25) return { label: 'Healthy weight', cls: 'ok' };
+    if (bmi < 30) return { label: 'Overweight', cls: 'warn' };
+    return { label: 'Obese', cls: 'warn' };
+  }
+
+  function calc() {
+    var heightM, weightKg;
+    if (unit() === 'metric') {
+      heightM = v('bmi-cm') / 100;
+      weightKg = v('bmi-kg');
+    } else {
+      heightM = (v('bmi-ft') * 12 + v('bmi-in')) * 0.0254;
+      weightKg = v('bmi-lb') * 0.453592;
+    }
+    var out = document.getElementById('bmi-out');
+    if (heightM <= 0 || weightKg <= 0) { out.innerHTML = '<p class="note">Enter your height and weight.</p>'; return; }
+    var bmi = weightKg / (heightM * heightM);
+    var cat = category(bmi);
+    var lo = 18.5 * heightM * heightM, hi = 24.9 * heightM * heightM;
+    var range = unit() === 'metric'
+      ? lo.toFixed(1) + '–' + hi.toFixed(1) + ' kg'
+      : (lo / 0.453592).toFixed(0) + '–' + (hi / 0.453592).toFixed(0) + ' lb';
+
+    out.innerHTML =
+      '<div class="result-sub">Your BMI &mdash; ' + cat.label + '</div>' +
+      '<div class="result-big">' + bmi.toFixed(1) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Category', cat.label) +
+        kv('Healthy weight for your height', range) +
+      '</div>' +
+      '<p class="note ' + cat.cls + '">Underweight &lt;18.5 · Healthy 18.5–24.9 · Overweight 25–29.9 · Obese ≥30. BMI is a screening tool, not a diagnosis.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  document.querySelectorAll('input[name="bmi-unit"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      document.getElementById('bmi-metric').style.display = unit() === 'metric' ? '' : 'none';
+      document.getElementById('bmi-imperial').style.display = unit() === 'imperial' ? '' : 'none';
+      calc();
+    });
+  });
+  calc();
+})();
+</script>
+
+<h2>What BMI tells you</h2>
+<p><strong>Body mass index (BMI)</strong> is a quick way to gauge whether your weight is in a healthy range for your height. It's calculated as weight divided by height squared, and the result places you in one of four categories: underweight, healthy weight, overweight, or obese. Because it needs only two easy measurements, it's the most widely used screening tool for weight-related health risk.</p>
+<p>This calculator works in metric or imperial units and also shows the <strong>healthy weight range</strong> for your height — the span of weights that would put your BMI between 18.5 and 24.9 — which is often more useful than the number itself.</p>
+<h2>The limits of BMI</h2>
+<p>BMI is a starting point, not the whole story. It measures total weight without distinguishing <strong>muscle from fat</strong>, so a muscular athlete can register as "overweight" despite low body fat, while someone with little muscle might read as healthy while carrying excess fat. It also doesn't capture where fat sits on the body — abdominal fat carries more risk — or account for age and ethnicity, both of which affect how BMI relates to health.</p>
+<p>For children and teens, BMI is interpreted using age- and sex-specific percentiles instead of the adult cutoffs. Whatever your number, use it as one signal among many, and rely on a healthcare professional for guidance specific to you.</p>
+<p class="note"><strong>Not medical advice.</strong> This tool is for general information only and isn't a substitute for evaluation by a qualified healthcare provider.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How is BMI calculated?</summary><div class="faq-a">BMI is your weight in kilograms divided by your height in meters squared (kg/m²). In imperial units, it's 703 × weight in pounds ÷ height in inches squared. This calculator does either for you and shows the resulting category.</div></details>
+<details class="faq-item"><summary>What is a healthy BMI?</summary><div class="faq-a">The standard adult categories are: under 18.5 is underweight, 18.5–24.9 is a healthy weight, 25–29.9 is overweight, and 30 or above is obese. These ranges apply to most adults aged 20 and over, regardless of sex.</div></details>
+<details class="faq-item"><summary>Is BMI accurate?</summary><div class="faq-a">BMI is a useful, quick screening tool but not a complete measure of health. It doesn't distinguish muscle from fat, so very muscular people may read as 'overweight,' and it doesn't account for fat distribution, age, or ethnicity. Treat it as one data point and talk to a doctor for a fuller picture.</div></details>
+<details class="faq-item"><summary>Does BMI work for children or athletes?</summary><div class="faq-a">Not directly. Children and teens use age- and sex-specific BMI percentiles rather than the adult categories. Highly muscular athletes can have a high BMI despite low body fat. For these groups, BMI is best interpreted with professional guidance.</div></details></section></article>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

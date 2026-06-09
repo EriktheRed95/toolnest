@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coin Flip</title>
+<meta name="description" content="Flip a virtual coin online. Get a fair, random heads or tails result, flip several at once, and keep a running tally. Free instant coin toss.">
+<meta name="keywords" content="coin flip, flip a coin, heads or tails, coin toss online, random coin flip, virtual coin">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/coin-flip/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Coin Flip">
+<meta property="og:description" content="Flip a virtual coin online. Get a fair, random heads or tails result, flip several at once, and keep a running tally. Free instant coin toss.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/coin-flip/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Coin Flip", "url": "https://erikthered95.github.io/toolnest/coin-flip/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Flip a virtual coin online. Get a fair, random heads or tails result, flip several at once, and keep a running tally. Free instant coin toss."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is this coin flip truly random?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Each flip uses your browser's built-in random number generator to pick heads or tails with an equal 50/50 chance, independent of previous flips. There's no bias and no pattern \u2014 just like a fair physical coin."}}, {"@type": "Question", "name": "Can I flip more than one coin?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Set the number of coins and flip them all at once. The tool shows each result and a running tally of how many heads and tails you've gotten across all your flips this session."}}, {"@type": "Question", "name": "Does a previous result affect the next flip?", "acceptedAnswer": {"@type": "Answer", "text": "No. Each flip is independent \u2014 a coin has no memory. Even after five heads in a row, the next flip is still a 50/50 chance. Expecting tails to be 'due' is the gambler's fallacy."}}, {"@type": "Question", "name": "What can I use a coin flip for?", "acceptedAnswer": {"@type": "Answer", "text": "Settling a decision between two options, breaking a tie, choosing who goes first in a game, or any time you want an unbiased yes/no or this/that answer. It's the simplest fair way to let chance decide."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>Coin Flip — Heads or Tails</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://erikthered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "Coin Flip \u2014 Heads or Tails"}]}</script>
+<article class="tool"><h1>Coin Flip — Heads or Tails</h1><p class="lede">Flip a virtual coin online. Get a fair, random heads or tails result, flip several at once, and keep a running tally. Free instant coin toss.</p><div class="row">
+  <div class="field"><label for="cf-count">Number of coins</label><input type="number" id="cf-count" value="1" min="1" max="100" step="1"></div>
+</div>
+<div class="btn-row">
+  <button class="btn" id="cf-go">Flip</button>
+  <button class="btn secondary" id="cf-reset">Reset tally</button>
+</div>
+
+<div class="result">
+  <div class="result-big" id="cf-result" style="font-size:2.4rem">Ready</div>
+  <div id="cf-list" style="margin-top:8px"></div>
+  <div style="margin-top:12px" id="cf-tally"></div>
+</div>
+
+<script>
+(function () {
+  var heads = 0, tails = 0;
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function rand() { var b = new Uint32Array(1); window.crypto.getRandomValues(b); return b[0] / 4294967296; }
+
+  function flip() {
+    var n = Math.max(1, Math.min(100, +document.getElementById('cf-count').value || 1));
+    var results = [], h = 0;
+    for (var i = 0; i < n; i++) {
+      var isHeads = rand() < 0.5;
+      results.push(isHeads ? 'Heads' : 'Tails');
+      if (isHeads) h++;
+    }
+    heads += h; tails += (n - h);
+
+    document.getElementById('cf-result').textContent = n === 1 ? results[0] : h + ' Heads / ' + (n - h) + ' Tails';
+    document.getElementById('cf-list').innerHTML = n > 1
+      ? results.map(function (r) { return '<span class="chip">' + r + '</span>'; }).join(' ')
+      : '';
+    document.getElementById('cf-tally').innerHTML =
+      kv('Total heads', heads) + kv('Total tails', tails) +
+      kv('Total flips', heads + tails);
+  }
+  document.getElementById('cf-go').addEventListener('click', flip);
+  document.getElementById('cf-reset').addEventListener('click', function () {
+    heads = tails = 0;
+    document.getElementById('cf-result').textContent = 'Ready';
+    document.getElementById('cf-list').innerHTML = '';
+    document.getElementById('cf-tally').innerHTML = '';
+  });
+})();
+</script>
+
+<h2>Flip a coin online</h2>
+<p>Need a quick, fair way to decide between two options? Flip a virtual coin and let chance settle it. Each toss uses your browser's <strong>cryptographically secure</strong> random generator to return heads or tails with a true 50/50 probability — no bias, no patterns, just like a real coin but always within reach. You can flip a single coin or set several and toss them all at once, with a running <strong>tally</strong> of heads and tails across your session.</p>
+<h2>A coin has no memory</h2>
+<p>If you've just seen five heads in a row, it's tempting to feel that tails is "due." It isn't. Each flip is <strong>independent</strong> of every flip before it, so the odds reset to 50/50 every single time. Believing past results change future ones is the classic <em>gambler's fallacy</em> — and it's exactly why a coin flip is such an honest tiebreaker: nothing you or the coin did earlier can tilt the next outcome.</p>
+<p>Use it to choose who goes first, settle a friendly debate, break a deadlock between two equally good choices, or simply add a little chance to your day. It's the simplest unbiased decision-maker there is.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>Is this coin flip truly random?</summary><div class="faq-a">Yes. Each flip uses your browser's built-in random number generator to pick heads or tails with an equal 50/50 chance, independent of previous flips. There's no bias and no pattern — just like a fair physical coin.</div></details>
+<details class="faq-item"><summary>Can I flip more than one coin?</summary><div class="faq-a">Yes. Set the number of coins and flip them all at once. The tool shows each result and a running tally of how many heads and tails you've gotten across all your flips this session.</div></details>
+<details class="faq-item"><summary>Does a previous result affect the next flip?</summary><div class="faq-a">No. Each flip is independent — a coin has no memory. Even after five heads in a row, the next flip is still a 50/50 chance. Expecting tails to be 'due' is the gambler's fallacy.</div></details>
+<details class="faq-item"><summary>What can I use a coin flip for?</summary><div class="faq-a">Settling a decision between two options, breaking a tie, choosing who goes first in a game, or any time you want an unbiased yes/no or this/that answer. It's the simplest fair way to let chance decide.</div></details></section></article>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

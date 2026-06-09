@@ -1,0 +1,90 @@
+<!--META
+{
+  "title": "Lorem Ipsum Generator",
+  "slug": "lorem-ipsum-generator",
+  "category": "random",
+  "h1": "Lorem Ipsum Generator",
+  "description": "Generate placeholder lorem ipsum text by paragraphs, sentences, or words. Copy classic dummy text instantly for mockups, designs, and layouts.",
+  "keywords": "lorem ipsum generator, placeholder text, dummy text generator, filler text, lipsum, mockup text",
+  "faq": [
+    {"q": "What is lorem ipsum?", "a": "Lorem ipsum is scrambled, meaningless Latin-like text used as placeholder content in design and publishing. It lets you see how a layout looks with text in place before the real copy is written, without the distraction of readable words. It dates back to printing in the 1500s and remains the industry standard for dummy text."},
+    {"q": "Why use placeholder text instead of real words?", "a": "Real text pulls the eye and invites people to read and critique the writing during a design review. Lorem ipsum keeps the focus on layout, spacing, and typography by filling the space with neutral, non-distracting content that has a natural word-length distribution."},
+    {"q": "How much text can I generate?", "a": "Choose how many paragraphs, sentences, or words you need and generate as much as you like. The generator builds the text instantly in your browser, and you can copy it with one click to paste into your design or document."},
+    {"q": "Is lorem ipsum always the same?", "a": "It traditionally starts with 'Lorem ipsum dolor sit amet…' and draws from a standard pool of Latin-like words. This generator can begin with the classic opening and then assembles varied sentences from that word pool, so each generation looks natural while staying recognizable."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="li-count">Amount</label><input type="number" id="li-count" value="3" min="1" max="100" step="1"></div>
+  <div class="field"><label for="li-type">Generate</label>
+    <select id="li-type"><option value="paragraphs">Paragraphs</option><option value="sentences">Sentences</option><option value="words">Words</option></select></div>
+</div>
+<div class="checks"><label><input type="checkbox" id="li-classic" checked> Start with “Lorem ipsum dolor sit amet…”</label></div>
+<div class="btn-row">
+  <button class="btn" id="li-go">Generate</button>
+  <button class="btn secondary" data-copy="#li-out" id="li-copy">Copy</button>
+</div>
+
+<div class="result"><div class="pw-out" id="li-out" style="white-space:pre-wrap;text-align:left">Click “Generate”.</div></div>
+
+<script>
+(function () {
+  var WORDS = ('lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et ' +
+    'dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo ' +
+    'consequat duis aute irure in reprehenderit voluptate velit esse cillum eu fugiat nulla pariatur excepteur sint ' +
+    'occaecat cupidatat non proident sunt culpa qui officia deserunt mollit anim id est laborum perspiciatis unde ' +
+    'omnis iste natus error voluptatem accusantium doloremque laudantium totam rem aperiam eaque ipsa quae ab illo ' +
+    'inventore veritatis quasi architecto beatae vitae dicta explicabo nemo enim').split(' ');
+  var out = document.getElementById('li-out');
+  function rnd(n) { var b = new Uint32Array(1); window.crypto.getRandomValues(b); return b[0] % n; }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  function word() { return WORDS[rnd(WORDS.length)]; }
+  function sentence() {
+    var len = 8 + rnd(10), parts = [];
+    for (var i = 0; i < len; i++) parts.push(word());
+    // occasional comma
+    if (len > 10) parts[4 + rnd(3)] += ',';
+    return cap(parts.join(' ')) + '.';
+  }
+  function paragraph() {
+    var n = 3 + rnd(4), s = [];
+    for (var i = 0; i < n; i++) s.push(sentence());
+    return s.join(' ');
+  }
+
+  function go() {
+    var n = Math.max(1, Math.min(100, +document.getElementById('li-count').value || 1));
+    var type = document.getElementById('li-type').value;
+    var classic = document.getElementById('li-classic').checked;
+    var result;
+    if (type === 'words') {
+      var w = [];
+      for (var i = 0; i < n; i++) w.push(word());
+      result = cap(w.join(' ')) + '.';
+    } else if (type === 'sentences') {
+      var ss = [];
+      for (var j = 0; j < n; j++) ss.push(sentence());
+      result = ss.join(' ');
+    } else {
+      var ps = [];
+      for (var k = 0; k < n; k++) ps.push(paragraph());
+      result = ps.join('\n\n');
+    }
+    if (classic) {
+      var lead = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+      result = lead + (type === 'words' ? '' : ' ') + result.replace(/^./, function (c) { return type === 'words' ? c : c.toLowerCase(); });
+      if (type === 'words') result = lead;
+    }
+    out.textContent = result;
+  }
+  document.getElementById('li-go').addEventListener('click', go);
+  go();
+})();
+</script>
+
+<h2>Placeholder text for your designs</h2>
+<p><strong>Lorem ipsum</strong> is the classic filler text designers reach for when a layout needs words but the real copy isn't ready. Its scrambled, Latin-like phrases have no meaning, which is precisely the point: they fill space with realistic-looking text so you can judge <strong>spacing, typography, and layout</strong> without getting drawn into reading. Generate as many <strong>paragraphs, sentences, or words</strong> as you need and copy them with one click.</p>
+<h2>Why meaningless text is useful</h2>
+<p>Drop real writing into a draft layout and everyone in the room starts editing the words instead of reviewing the design. Lorem ipsum sidesteps that. Because it's neutral and unreadable, it keeps attention on the visual structure — column widths, line height, heading hierarchy, and how text wraps — while still mimicking the natural rhythm and word lengths of genuine prose.</p>
+<p>The tradition stretches back to the 1500s, when a printer scrambled a passage of Cicero to make a type specimen, and it's been the publishing and web-design standard ever since. Tick the option above to begin with the familiar "Lorem ipsum dolor sit amet…" opening, or turn it off for freshly assembled filler every time.</p>

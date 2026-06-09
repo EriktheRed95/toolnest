@@ -1,0 +1,70 @@
+<!--META
+{
+  "title": "Compound Interest Calculator",
+  "slug": "compound-interest-calculator",
+  "category": "everyday",
+  "h1": "Compound Interest Calculator",
+  "description": "See how your savings grow with compound interest. Enter a starting amount, monthly contributions, rate, and time to project your future balance and total interest earned.",
+  "keywords": "compound interest calculator, savings growth calculator, investment calculator, future value calculator, interest compounding, retirement savings",
+  "faq": [
+    {"q": "What is compound interest?", "a": "Compound interest is interest earned on both your original money and the interest it has already earned. Over time this 'interest on interest' effect snowballs, which is why money invested early grows far more than the same amount invested later — the hallmark of long-term saving and investing."},
+    {"q": "How is compound interest calculated?", "a": "For a lump sum, future value = principal × (1 + rate/n)^(n×years), where n is how many times per year interest compounds. When you also add regular contributions, each deposit compounds from the date it's made. This calculator compounds monthly and adds your monthly contributions along the way."},
+    {"q": "Does compounding frequency matter?", "a": "Somewhat. More frequent compounding (daily vs. annually) earns a little more, but the effect is small compared to the rate, the time invested, and how much you contribute. Time is the most powerful variable — decades of compounding dwarf small differences in frequency."},
+    {"q": "What's a realistic return to assume?", "a": "It depends on where the money is. Savings accounts and CDs offer low, safe returns; a diversified stock-market portfolio has historically averaged higher returns over long periods but with year-to-year ups and downs. Use a conservative figure and remember past returns don't guarantee future ones."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="ci-principal">Starting amount ($)</label><input type="number" id="ci-principal" value="5000" min="0" step="100"></div>
+  <div class="field"><label for="ci-monthly">Monthly contribution ($)</label><input type="number" id="ci-monthly" value="300" min="0" step="25"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="ci-rate">Annual return (%)</label><input type="number" id="ci-rate" value="7" min="0" step="0.1"></div>
+  <div class="field"><label for="ci-years">Years</label><input type="number" id="ci-years" value="25" min="1" max="80" step="1"></div>
+</div>
+
+<div class="result" id="ci-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['ci-principal', 'ci-monthly', 'ci-rate', 'ci-years'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var P = v('ci-principal');
+    var PMT = v('ci-monthly');
+    var i = v('ci-rate') / 100 / 12;
+    var N = Math.round(v('ci-years') * 12);
+
+    var fvPrincipal = P * Math.pow(1 + i, N);
+    var fvContrib = i === 0 ? PMT * N : PMT * ((Math.pow(1 + i, N) - 1) / i);
+    var fv = fvPrincipal + fvContrib;
+    var contributed = P + PMT * N;
+    var interest = fv - contributed;
+
+    document.getElementById('ci-out').innerHTML =
+      '<div class="result-sub">Future balance after ' + v('ci-years') + ' years</div>' +
+      '<div class="result-big">' + money.format(fv) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Total contributed', money.format(contributed)) +
+        kv('&nbsp;&nbsp;Starting amount', money.format(P)) +
+        kv('&nbsp;&nbsp;Contributions', money.format(PMT * N)) +
+        kv('<strong>Interest earned</strong>', '<strong>' + money.format(interest) + '</strong>') +
+        kv('Growth multiple', contributed ? (fv / contributed).toFixed(2) + '×' : '—') +
+      '</div>' +
+      '<p class="note">Of your final ' + money.format(fv) + ', ' + money.format(interest) + ' is compound growth — money you didn’t deposit. The longer you stay invested, the larger that share becomes.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>The eighth wonder of the world</h2>
+<p>Compound interest is the engine behind nearly all long-term wealth building. The idea is simple: you earn returns not just on your original money, but on all the returns it has already generated. That "interest on interest" compounds on itself, and over decades the effect becomes dramatic — the bulk of a long-term balance is usually growth, not deposits.</p>
+<p>This calculator projects your <strong>future balance</strong> from a starting amount, regular monthly contributions, an annual return, and a time horizon. It compounds monthly and shows how much of the result came from your own deposits versus how much the compounding added on top.</p>
+<h2>Why starting early beats saving more</h2>
+<p>Time is compound interest's most powerful ingredient — more than the rate, and often more than the amount you contribute. Money invested in your twenties has decades to multiply; the same amount invested later simply has fewer compounding cycles to work with. That's why financial advice so often stresses <em>starting</em>, even with small amounts, over waiting until you can contribute more.</p>
+<p>Try it yourself: nudge the years up or down and watch the interest figure swing far more than a similar change to the monthly contribution. That sensitivity to time is the whole point.</p>
+<p class="note"><strong>Estimate only.</strong> This assumes a steady annual return, but real investments fluctuate year to year and aren't guaranteed. It also ignores taxes, fees, and inflation, which reduce real-world results. Use conservative assumptions and treat this as a projection, not a promise. This is not financial advice.</p>

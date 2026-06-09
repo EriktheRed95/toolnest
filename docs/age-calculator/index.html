@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Age Calculator</title>
+<meta name="description" content="Calculate your exact age in years, months, and days from your date of birth. See your total days lived and a countdown to your next birthday.">
+<meta name="keywords" content="age calculator, how old am I, exact age calculator, date of birth age, age in days, days until birthday">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/age-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Age Calculator">
+<meta property="og:description" content="Calculate your exact age in years, months, and days from your date of birth. See your total days lived and a countdown to your next birthday.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/age-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Age Calculator", "url": "https://erikthered95.github.io/toolnest/age-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Calculate your exact age in years, months, and days from your date of birth. See your total days lived and a countdown to your next birthday."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How is exact age calculated?", "acceptedAnswer": {"@type": "Answer", "text": "Your age is the time elapsed from your date of birth to today (or any date you choose), expressed in whole years, then the leftover months, then the leftover days. This calculator counts the actual calendar months and days \u2014 accounting for different month lengths and leap years \u2014 rather than just dividing total days."}}, {"@type": "Question", "name": "How many days have I been alive?", "acceptedAnswer": {"@type": "Answer", "text": "It's the number of calendar days between your birth date and today, including leap days. This calculator shows your total days lived alongside your age in years and months, which is a fun figure for milestones like your 10,000th day."}}, {"@type": "Question", "name": "Does the calculator handle leap years?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. It works directly with calendar dates, so February 29 and the varying lengths of months are handled automatically. The day and month breakdown reflects the real calendar, not an approximation."}}, {"@type": "Question", "name": "Can I calculate age on a future or past date?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Change the 'as of' date to any date \u2014 past or future \u2014 to find how old you (or anyone) were or will be then. It's handy for figuring out someone's age at a specific event."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Age Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Age Calculator"}]}</script>
+<article class="tool"><h1>Age Calculator</h1><p class="lede">Calculate your exact age in years, months, and days from your date of birth. See your total days lived and a countdown to your next birthday.</p><div class="row">
+  <div class="field"><label for="ag-dob">Date of birth</label><input type="date" id="ag-dob"></div>
+  <div class="field"><label for="ag-as">As of date</label><input type="date" id="ag-as"></div>
+</div>
+
+<div class="result" id="ag-out"></div>
+
+<script>
+(function () {
+  var nf = new Intl.NumberFormat('en-US');
+  var dob = document.getElementById('ag-dob'), asOf = document.getElementById('ag-as');
+  // default as-of = today
+  var t = new Date();
+  asOf.value = t.toISOString().slice(0, 10);
+  dob.value = '1990-01-01';
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var out = document.getElementById('ag-out');
+    if (!dob.value || !asOf.value) { out.innerHTML = '<p class="note">Enter a date of birth.</p>'; return; }
+    var b = new Date(dob.value + 'T00:00:00'), a = new Date(asOf.value + 'T00:00:00');
+    if (a < b) { out.innerHTML = '<p class="note warn">The "as of" date is before the date of birth.</p>'; return; }
+
+    var years = a.getFullYear() - b.getFullYear();
+    var months = a.getMonth() - b.getMonth();
+    var days = a.getDate() - b.getDate();
+    if (days < 0) { months--; var prevMonth = new Date(a.getFullYear(), a.getMonth(), 0); days += prevMonth.getDate(); }
+    if (months < 0) { years--; months += 12; }
+
+    var totalDays = Math.floor((a - b) / 86400000);
+    var totalMonths = years * 12 + months;
+
+    // next birthday
+    var next = new Date(a.getFullYear(), b.getMonth(), b.getDate());
+    if (next < a) next = new Date(a.getFullYear() + 1, b.getMonth(), b.getDate());
+    var daysToBday = Math.ceil((next - a) / 86400000);
+
+    out.innerHTML =
+      '<div class="result-sub">Your age</div>' +
+      '<div class="result-big">' + years + ' yr ' + months + ' mo ' + days + ' d</div>' +
+      '<div style="margin-top:12px">' +
+        kv('In total months', nf.format(totalMonths) + ' months') +
+        kv('In total days', nf.format(totalDays) + ' days') +
+        kv('In total weeks', nf.format(Math.floor(totalDays / 7)) + ' weeks') +
+        kv('In total hours', nf.format(totalDays * 24) + ' hours') +
+        kv('Next birthday', daysToBday === 0 ? '🎉 Today!' : 'in ' + daysToBday + ' day' + (daysToBday === 1 ? '' : 's')) +
+      '</div>';
+  }
+  [dob, asOf].forEach(function (el) { el.addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Your exact age, down to the day</h2>
+<p>"How old am I?" sounds simple, but an exact answer means more than a single number. This calculator breaks your age into <strong>years, months, and days</strong> by working directly with the calendar — so the varying lengths of months and every leap day are accounted for, not approximated. Enter your date of birth and it does the rest instantly.</p>
+<p>It also translates your age into other units: total months, days, weeks, and even hours lived. These are perfect for spotting fun milestones — your 10,000th day, your 500th month — that ordinary birthdays skip right over.</p>
+<h2>Age on any date</h2>
+<p>By default the calculator measures your age as of today, but you can set the <strong>"as of" date</strong> to anything. Pick a future date to see how old you'll be at a wedding or graduation, or a past date to find someone's age at a historical event. Change the date of birth to any person's and you can calculate their age just as easily. Everything updates the moment you change a field, and the countdown shows exactly how many days remain until the next birthday.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How is exact age calculated?</summary><div class="faq-a">Your age is the time elapsed from your date of birth to today (or any date you choose), expressed in whole years, then the leftover months, then the leftover days. This calculator counts the actual calendar months and days — accounting for different month lengths and leap years — rather than just dividing total days.</div></details>
+<details class="faq-item"><summary>How many days have I been alive?</summary><div class="faq-a">It's the number of calendar days between your birth date and today, including leap days. This calculator shows your total days lived alongside your age in years and months, which is a fun figure for milestones like your 10,000th day.</div></details>
+<details class="faq-item"><summary>Does the calculator handle leap years?</summary><div class="faq-a">Yes. It works directly with calendar dates, so February 29 and the varying lengths of months are handled automatically. The day and month breakdown reflects the real calendar, not an approximation.</div></details>
+<details class="faq-item"><summary>Can I calculate age on a future or past date?</summary><div class="faq-a">Yes. Change the 'as of' date to any date — past or future — to find how old you (or anyone) were or will be then. It's handy for figuring out someone's age at a specific event.</div></details></section></article>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

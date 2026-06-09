@@ -1,0 +1,71 @@
+<!--META
+{
+  "title": "Dice Roller",
+  "slug": "dice-roller",
+  "category": "random",
+  "h1": "Online Dice Roller",
+  "description": "Roll virtual dice online — any number of dice with any number of sides (d4, d6, d8, d10, d12, d20). See each die, the total, and a running roll history.",
+  "keywords": "dice roller, roll dice online, d20 roller, virtual dice, d6 d20 dice, random dice roll, tabletop dice",
+  "faq": [
+    {"q": "Is this dice roller random?", "a": "Yes. Each die uses your browser's cryptographically secure random generator, so every face has an equal chance and rolls are independent. It behaves like fair physical dice, with no bias toward any number."},
+    {"q": "What dice can I roll?", "a": "Any combination you like — set the number of dice and the number of sides. Common tabletop dice are d4, d6, d8, d10, d12, and d20, but you can enter any number of sides for custom games or unusual needs."},
+    {"q": "Can I roll multiple dice at once?", "a": "Yes. Choose how many dice to roll and the tool rolls them together, showing each individual result plus the combined total — exactly what you need for tabletop games that call for rolls like 3d6 or 2d20."},
+    {"q": "What does notation like 2d6 mean?", "a": "In tabletop gaming, '2d6' means roll two six-sided dice and add them together; 'd20' means one twenty-sided die. The first number is how many dice, the 'd' stands for die, and the second number is the sides. Set those two values above to match any notation."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="dr-count">Number of dice</label><input type="number" id="dr-count" value="2" min="1" max="50" step="1"></div>
+  <div class="field"><label for="dr-sides">Sides per die</label>
+    <select id="dr-sides"><option>6</option><option>4</option><option>8</option><option>10</option><option>12</option><option>20</option><option>100</option></select></div>
+</div>
+<div class="btn-row">
+  <button class="btn" id="dr-go">Roll</button>
+  <button class="btn secondary" id="dr-clear">Clear history</button>
+</div>
+
+<div class="result">
+  <div class="result-sub">Total</div>
+  <div class="result-big" id="dr-total">—</div>
+  <div id="dr-dice" style="margin-top:8px"></div>
+  <div class="result-sub" style="margin-top:14px" id="dr-hist-label"></div>
+  <div id="dr-hist"></div>
+</div>
+
+<script>
+(function () {
+  var history = [];
+  function rand(max) { var b = new Uint32Array(1); window.crypto.getRandomValues(b); return b[0] % max + 1; }
+
+  function roll() {
+    var n = Math.max(1, Math.min(50, +document.getElementById('dr-count').value || 1));
+    var sides = +document.getElementById('dr-sides').value || 6;
+    var rolls = [], total = 0;
+    for (var i = 0; i < n; i++) { var r = rand(sides); rolls.push(r); total += r; }
+
+    document.getElementById('dr-total').textContent = total;
+    document.getElementById('dr-dice').innerHTML = rolls.map(function (r) { return '<span class="chip">' + r + '</span>'; }).join(' ');
+
+    history.unshift(n + 'd' + sides + ' = ' + total + (n > 1 ? '  (' + rolls.join(', ') + ')' : ''));
+    history = history.slice(0, 10);
+    document.getElementById('dr-hist-label').textContent = history.length ? 'Recent rolls' : '';
+    document.getElementById('dr-hist').innerHTML = history.map(function (h) {
+      return '<div class="kv"><span>' + h + '</span><span class="v"></span></div>';
+    }).join('');
+  }
+  document.getElementById('dr-go').addEventListener('click', roll);
+  document.getElementById('dr-clear').addEventListener('click', function () {
+    history = [];
+    document.getElementById('dr-total').textContent = '—';
+    document.getElementById('dr-dice').innerHTML = '';
+    document.getElementById('dr-hist-label').textContent = '';
+    document.getElementById('dr-hist').innerHTML = '';
+  });
+})();
+</script>
+
+<h2>Roll dice online</h2>
+<p>Lost your dice, or just need a quick roll? This virtual dice roller handles any combination — set how many dice and how many sides, then roll. It shows <strong>each die's result</strong> and the <strong>combined total</strong>, plus a history of your recent rolls. Every die uses your browser's <strong>cryptographically secure</strong> random generator, so the results are genuinely fair and independent, with each face equally likely.</p>
+<h2>From board games to tabletop RPGs</h2>
+<p>Standard board games use the familiar six-sided die (d6), but tabletop role-playing games like Dungeons &amp; Dragons rely on a whole set: the four-sided d4, eight-sided d8, ten-sided d10, twelve-sided d12, and the iconic twenty-sided d20, plus the d100 for percentile rolls. This tool covers them all.</p>
+<p>If you're new to the notation, it's simple: <strong>2d6</strong> means "roll two six-sided dice and add them," while <strong>d20</strong> means a single twenty-sided die. The first number is the quantity, and the number after the "d" is the sides. Match those two fields above to any roll your game calls for, and let the dice decide.</p>

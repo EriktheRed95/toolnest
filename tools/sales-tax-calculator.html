@@ -1,0 +1,67 @@
+<!--META
+{
+  "title": "Sales Tax Calculator",
+  "slug": "sales-tax-calculator",
+  "category": "everyday",
+  "h1": "Sales Tax Calculator",
+  "description": "Add sales tax to a price or work backward from a tax-included total. Enter the amount and tax rate to see the tax owed and the final total instantly.",
+  "keywords": "sales tax calculator, add sales tax, reverse sales tax, tax included calculator, price plus tax, how much is sales tax",
+  "faq": [
+    {"q": "How do I calculate sales tax?", "a": "Multiply the price by the tax rate as a decimal. For an 8% rate on a $50 item: 50 × 0.08 = $4.00 tax, for a $54.00 total. This calculator does it instantly and also works in reverse if you only know the tax-included total."},
+    {"q": "How do I find the price before tax?", "a": "Divide the tax-included total by (1 + the tax rate as a decimal). If a receipt total is $54.00 at 8% tax, the pre-tax price is 54 ÷ 1.08 = $50.00, and the tax was $4.00. Use the reverse mode above for this."},
+    {"q": "Why is sales tax different everywhere?", "a": "In the U.S., sales tax is set by states, counties, and cities, so the combined rate varies widely by location — and some items (like groceries or clothing) are taxed differently or exempt. Enter your local combined rate for an accurate result."},
+    {"q": "Is sales tax based on the discounted price?", "a": "Usually yes — tax is typically applied to the final price after store discounts and coupons, not the original price. Manufacturer rebates can be treated differently in some states. Calculate tax on the amount you actually pay."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="st-amount">Amount ($)</label><input type="number" id="st-amount" value="50" min="0" step="0.01"></div>
+  <div class="field"><label for="st-rate">Sales tax rate (%)</label><input type="number" id="st-rate" value="8" min="0" step="0.01"></div>
+</div>
+<div class="checks"><label><input type="checkbox" id="st-reverse"> The amount already includes tax (work backward)</label></div>
+
+<div class="result" id="st-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['st-amount', 'st-rate'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var amount = v('st-amount');
+    var rate = v('st-rate') / 100;
+    var reverse = document.getElementById('st-reverse').checked;
+    var pretax, tax, total;
+    if (reverse) {
+      total = amount;
+      pretax = rate > -1 ? amount / (1 + rate) : amount;
+      tax = total - pretax;
+    } else {
+      pretax = amount;
+      tax = amount * rate;
+      total = amount + tax;
+    }
+
+    document.getElementById('st-out').innerHTML =
+      '<div class="result-sub">' + (reverse ? 'Price before tax' : 'Total with tax') + '</div>' +
+      '<div class="result-big">' + money.format(reverse ? pretax : total) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Price before tax', money.format(pretax)) +
+        kv('Sales tax (' + v('st-rate') + '%)', money.format(tax)) +
+        kv('Total with tax', money.format(total)) +
+      '</div>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  document.getElementById('st-reverse').addEventListener('change', calc);
+  calc();
+})();
+</script>
+
+<h2>Adding and removing sales tax</h2>
+<p>Sales tax is a percentage added to a purchase at checkout. To <strong>add</strong> it, multiply the price by the tax rate and add it back on — an 8% rate turns a $50 item into $54. This calculator handles that instantly, and it also runs the calculation <strong>in reverse</strong>: if you only know the tax-included total (say, from a receipt), tick the box above and it backs out the original price and the tax portion.</p>
+<p>The reverse math trips people up because you can't just subtract 8%. Instead you divide the total by 1.08, since the total represents 108% of the original price. A $54 total at 8% comes from a $50 item, not $49.68.</p>
+<h2>Why rates vary so much</h2>
+<p>In the U.S., there's no single national sales tax. States set a base rate, and counties and cities often add their own, so the <strong>combined rate</strong> at a given address can range from zero (a few states have no sales tax) to over 10%. On top of that, categories like groceries, prescriptions, and clothing are sometimes taxed at lower rates or exempt entirely. For an accurate result, enter the combined local rate that applies to what you're buying.</p>
+<p class="note">This tool is for quick estimates. For exact tax on a specific purchase, rely on the merchant's checkout or your local tax authority's published rates.</p>
