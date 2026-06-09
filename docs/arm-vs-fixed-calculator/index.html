@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARM vs. Fixed Mortgage Calculator</title>
+<meta name="description" content="Compare an adjustable-rate mortgage (ARM) against a fixed-rate loan. See the intro-period savings, the payment after the rate adjusts, total cost, and the break-even point.">
+<meta name="keywords" content="ARM vs fixed calculator, adjustable rate mortgage calculator, 5/1 ARM vs 30 year fixed, ARM mortgage comparison, fixed vs adjustable rate">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/arm-vs-fixed-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="ARM vs. Fixed Mortgage Calculator">
+<meta property="og:description" content="Compare an adjustable-rate mortgage (ARM) against a fixed-rate loan. See the intro-period savings, the payment after the rate adjusts, total cost, and the break-even point.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/arm-vs-fixed-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "ARM vs. Fixed Mortgage Calculator", "url": "https://erikthered95.github.io/toolnest/arm-vs-fixed-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Compare an adjustable-rate mortgage (ARM) against a fixed-rate loan. See the intro-period savings, the payment after the rate adjusts, total cost, and the break-even point."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is an adjustable-rate mortgage (ARM)?", "acceptedAnswer": {"@type": "Answer", "text": "An ARM has a fixed introductory rate for an initial period \u2014 like the '5' in a 5/1 ARM means 5 years \u2014 after which the rate adjusts periodically based on a market index plus a margin. The intro rate is usually lower than a comparable fixed rate, trading early savings for uncertainty later."}}, {"@type": "Question", "name": "When does an ARM make sense?", "acceptedAnswer": {"@type": "Answer", "text": "An ARM can pay off if you expect to sell, refinance, or pay off the loan before or shortly after the intro period ends, since you capture the lower intro rate and leave before the risk arrives. If you plan to stay long-term, a fixed rate removes the uncertainty of future adjustments."}}, {"@type": "Question", "name": "How high can an ARM payment go?", "acceptedAnswer": {"@type": "Answer", "text": "ARMs have caps that limit how much the rate can rise at the first adjustment, at each later adjustment, and over the life of the loan. The worst case is the start rate plus the lifetime cap. Enter a realistic \u2014 or worst-case \u2014 adjusted rate to stress-test what your payment could become."}}, {"@type": "Question", "name": "What does 5/1 or 7/6 mean on an ARM?", "acceptedAnswer": {"@type": "Answer", "text": "The first number is the years the rate stays fixed; the second is how often it adjusts afterward. A 5/1 ARM is fixed for 5 years, then adjusts once a year. A 7/6 ARM is fixed for 7 years, then adjusts every 6 months. This calculator models the fixed intro period and a single representative rate afterward."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>ARM vs. Fixed Mortgage Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "ARM vs. Fixed Mortgage Calculator"}]}</script>
+<article class="tool"><h1>ARM vs. Fixed Mortgage Calculator</h1><p class="lede">Compare an adjustable-rate mortgage (ARM) against a fixed-rate loan. See the intro-period savings, the payment after the rate adjusts, total cost, and the break-even point.</p><div class="row">
+  <div class="field"><label for="av-loan">Loan amount ($)</label><input type="number" id="av-loan" value="400000" min="0" step="1000"></div>
+  <div class="field"><label for="av-term">Loan term (years)</label>
+    <select id="av-term"><option>30</option><option>20</option><option>15</option></select></div>
+</div>
+<div class="row">
+  <div class="field"><label for="av-fixed">Fixed rate (%)</label><input type="number" id="av-fixed" value="6.75" min="0" step="0.01"></div>
+  <div class="field"><label for="av-armrate">ARM intro rate (%)</label><input type="number" id="av-armrate" value="5.75" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="av-intro">ARM intro period (years)</label>
+    <select id="av-intro"><option>5</option><option>7</option><option>3</option><option>10</option></select></div>
+  <div class="field"><label for="av-adjrate">Rate after adjustment (%)</label><input type="number" id="av-adjrate" value="8" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="av-horizon">Years you'll keep the loan</label><input type="number" id="av-horizon" value="7" min="1" max="40" step="1"></div>
+</div>
+
+<div class="result" id="av-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['av-loan', 'av-term', 'av-fixed', 'av-armrate', 'av-intro', 'av-adjrate', 'av-horizon'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function pmt(P, r, n) { return r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1); }
+
+  // amortize `months`, return {paid, balance}
+  function run(P, monthlyRate, payment, months) {
+    var bal = P, paid = 0;
+    for (var m = 1; m <= months; m++) {
+      var interest = bal * monthlyRate;
+      var principal = Math.min(payment - interest, bal);
+      bal -= principal; if (bal < 0) bal = 0;
+      paid += payment;
+    }
+    return { paid: paid, balance: bal };
+  }
+
+  function calc() {
+    var loan = v('av-loan');
+    var n = v('av-term') * 12;
+    var fixedR = v('av-fixed') / 100 / 12;
+    var armR = v('av-armrate') / 100 / 12;
+    var adjR = v('av-adjrate') / 100 / 12;
+    var introM = v('av-intro') * 12;
+    var horizonM = Math.min(v('av-horizon') * 12, n);
+
+    var fixedPay = pmt(loan, fixedR, n);
+    var armIntroPay = pmt(loan, armR, n);
+
+    // Fixed: simple over horizon
+    var fixedRun = run(loan, fixedR, fixedPay, horizonM);
+
+    // ARM: intro period, then re-amortize remaining balance at adjusted rate over remaining term
+    var armPaid = 0, armBal = loan, armAdjPay = armIntroPay;
+    var introUsed = Math.min(introM, horizonM);
+    var r1 = run(loan, armR, armIntroPay, introUsed);
+    armPaid += r1.paid; armBal = r1.balance;
+    if (horizonM > introM) {
+      var remainTerm = n - introM;
+      armAdjPay = pmt(armBal, adjR, remainTerm);
+      var r2 = run(armBal, adjR, armAdjPay, horizonM - introM);
+      armPaid += r2.paid; armBal = r2.balance;
+    }
+
+    var fixedNetCost = fixedRun.paid - (loan - fixedRun.balance); // interest only essentially
+    var armNetCost = armPaid - (loan - armBal);
+    var savings = fixedNetCost - armNetCost; // positive = ARM cheaper over horizon
+
+    document.getElementById('av-out').innerHTML =
+      '<div class="result-sub">Over ' + v('av-horizon') + ' years, ' + (savings >= 0 ? 'the ARM' : 'the fixed loan') + ' costs less by</div>' +
+      '<div class="result-big">' + money.format(Math.abs(savings)) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Fixed payment', money2.format(fixedPay)) +
+        kv('ARM intro payment (' + v('av-intro') + ' yrs)', money2.format(armIntroPay)) +
+        kv('&nbsp;&nbsp;Monthly intro savings', money2.format(fixedPay - armIntroPay)) +
+        kv('ARM payment after adjustment', money2.format(armAdjPay)) +
+        kv('Interest paid (fixed)', money.format(fixedNetCost)) +
+        kv('Interest paid (ARM)', money.format(armNetCost)) +
+        kv('Balance after ' + v('av-horizon') + ' yrs (fixed)', money.format(fixedRun.balance)) +
+        kv('Balance after ' + v('av-horizon') + ' yrs (ARM)', money.format(armBal)) +
+      '</div>' +
+      (v('av-horizon') * 12 <= introM
+        ? '<p class="note ok">You plan to be out within the ' + v('av-intro') + '-year intro period, so the ARM’s lower rate applies the whole time and the adjusted rate never hits you.</p>'
+        : '<p class="note">You hold the loan past the ' + v('av-intro') + '-year intro period, so the payment jumps to ' + money2.format(armAdjPay) + ' at the assumed ' + v('av-adjrate') + '% rate. Try a worst-case rate to stress-test it.</p>');
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>ARM or fixed — which mortgage wins?</h2>
+<p>A <strong>fixed-rate mortgage</strong> locks your rate and payment for the entire loan: total predictability. An <strong>adjustable-rate mortgage (ARM)</strong> offers a lower rate for an introductory period — the "5" in a 5/1 ARM means five years — then adjusts with the market. The trade is simple to state and hard to judge: the ARM saves you money now in exchange for uncertainty later. This calculator quantifies both sides over the time you actually expect to keep the loan.</p>
+<h2>It comes down to how long you'll stay</h2>
+<p>The single biggest factor is your <strong>time horizon</strong>:</p>
+<ul>
+  <li><strong>If you'll sell, refinance, or pay off before the intro period ends</strong>, the ARM is often the clear winner — you bank the lower intro rate and leave before the rate ever adjusts.</li>
+  <li><strong>If you'll stay well past the intro period</strong>, the fixed rate's certainty usually wins, because the ARM payment can jump once it starts adjusting, and you can't count on being able to refinance away from it.</li>
+</ul>
+<p>Set your holding period and an honest estimate for the post-adjustment rate. ARMs have caps that limit increases, but the prudent move is to stress-test the worst case (the start rate plus the lifetime cap) and make sure you could still afford the payment if rates rise.</p>
+<p class="note"><strong>Estimate only.</strong> This model uses a single representative rate after the intro period; real ARMs adjust on a schedule against an index plus margin, within caps. It also doesn't include taxes, insurance, or refinance costs. Read the loan's terms and confirm caps and index with your lender. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is an adjustable-rate mortgage (ARM)?</summary><div class="faq-a">An ARM has a fixed introductory rate for an initial period — like the '5' in a 5/1 ARM means 5 years — after which the rate adjusts periodically based on a market index plus a margin. The intro rate is usually lower than a comparable fixed rate, trading early savings for uncertainty later.</div></details>
+<details class="faq-item"><summary>When does an ARM make sense?</summary><div class="faq-a">An ARM can pay off if you expect to sell, refinance, or pay off the loan before or shortly after the intro period ends, since you capture the lower intro rate and leave before the risk arrives. If you plan to stay long-term, a fixed rate removes the uncertainty of future adjustments.</div></details>
+<details class="faq-item"><summary>How high can an ARM payment go?</summary><div class="faq-a">ARMs have caps that limit how much the rate can rise at the first adjustment, at each later adjustment, and over the life of the loan. The worst case is the start rate plus the lifetime cap. Enter a realistic — or worst-case — adjusted rate to stress-test what your payment could become.</div></details>
+<details class="faq-item"><summary>What does 5/1 or 7/6 mean on an ARM?</summary><div class="faq-a">The first number is the years the rate stays fixed; the second is how often it adjusts afterward. A 5/1 ARM is fixed for 5 years, then adjusts once a year. A 7/6 ARM is fixed for 7 years, then adjusts every 6 months. This calculator models the fixed intro period and a single representative rate afterward.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/auto-loan-calculator/"><h3>Auto Loan Calculator</h3><p>Calculate your monthly car payment including sales tax, trade-in, down payment, and fees. See total interest and the full cost of financing your vehicle.</p></a><a class="card" href="/toolnest/biweekly-mortgage-calculator/"><h3>Biweekly Mortgage Payment Calculator</h3><p>See how switching to biweekly mortgage payments pays off your loan faster. Compare biweekly vs monthly payments and the time and interest you'd save.</p></a><a class="card" href="/toolnest/cd-calculator/"><h3>CD Calculator</h3><p>Calculate the maturity value and total interest of a certificate of deposit from your deposit, APY, and term length.</p></a><a class="card" href="/toolnest/cap-rate-calculator/"><h3>Cap Rate, GRM & 1% Rule Calculator</h3><p>Screen a rental property fast with three classic metrics: capitalization rate, gross rent multiplier, and the 1% rule.</p></a><a class="card" href="/toolnest/cash-out-refinance-calculator/"><h3>Cash-Out Refinance Calculator</h3><p>Estimate your new loan amount, monthly payment, and loan-to-value when you refinance and pull cash out of your home's equity.</p></a><a class="card" href="/toolnest/closing-cost-calculator/"><h3>Closing Cost Calculator</h3><p>Estimate the closing costs and total cash to close when buying a home — loan fees, title insurance, appraisal, escrow, and prepaid taxes and insurance.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

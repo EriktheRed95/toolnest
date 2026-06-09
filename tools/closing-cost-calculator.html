@@ -1,0 +1,94 @@
+<!--META
+{
+  "title": "Closing Cost Calculator",
+  "slug": "closing-cost-calculator",
+  "category": "finance",
+  "h1": "Buyer Closing Cost Calculator",
+  "description": "Estimate the closing costs and total cash to close when buying a home — loan fees, title insurance, appraisal, escrow, and prepaid taxes and insurance.",
+  "keywords": "closing cost calculator, buyer closing costs, cash to close calculator, how much are closing costs, home buying closing costs estimate",
+  "faq": [
+    {"q": "How much are closing costs for a buyer?", "a": "Buyer closing costs typically run about 2%–5% of the loan amount. On a $300,000 loan that's roughly $6,000–$15,000, covering lender fees, title insurance, appraisal, escrow, recording, and prepaid taxes and insurance. The exact figure depends heavily on your state and loan program."},
+    {"q": "What is 'cash to close'?", "a": "Cash to close is the total amount you need to bring to settlement: your down payment plus closing costs, minus any deposit (earnest money) you already paid and any lender or seller credits. It's the real out-of-pocket number for buying the home."},
+    {"q": "Are closing costs separate from the down payment?", "a": "Yes. The down payment goes toward the home's price and builds your equity. Closing costs are fees for processing the loan and transferring ownership. You need both at closing, which is why the total cash required is more than just the down payment."},
+    {"q": "Can I get help paying closing costs?", "a": "Often, yes. You can negotiate 'seller concessions' where the seller credits some costs, accept a slightly higher rate in exchange for lender credits, or use down-payment-assistance and first-time-buyer programs. Enter any credits you expect to see your true cash to close."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="c-price">Home price ($)</label><input type="number" id="c-price" value="350000" min="0" step="1000"></div>
+  <div class="field"><label for="c-dp">Down payment (%)</label><input type="number" id="c-dp" value="10" min="0" max="100" step="0.5"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="c-orig">Loan origination (% of loan)</label><input type="number" id="c-orig" value="1" min="0" step="0.125"></div>
+  <div class="field"><label for="c-points">Discount points (% of loan)</label><input type="number" id="c-points" value="0" min="0" step="0.125"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="c-appraisal">Appraisal &amp; inspection ($)</label><input type="number" id="c-appraisal" value="800" min="0" step="50"></div>
+  <div class="field"><label for="c-title">Title insurance &amp; escrow ($)</label><input type="number" id="c-title" value="2200" min="0" step="100"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="c-recording">Recording &amp; transfer fees ($)</label><input type="number" id="c-recording" value="600" min="0" step="50"></div>
+  <div class="field"><label for="c-prepaid">Prepaid taxes &amp; insurance ($)</label><input type="number" id="c-prepaid" value="2400" min="0" step="100"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="c-earnest">Earnest money deposit ($) <span class="hint">already paid</span></label><input type="number" id="c-earnest" value="5000" min="0" step="500"></div>
+  <div class="field"><label for="c-credits">Lender / seller credits ($)</label><input type="number" id="c-credits" value="0" min="0" step="500"></div>
+</div>
+
+<div class="result" id="c-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['c-price', 'c-dp', 'c-orig', 'c-points', 'c-appraisal', 'c-title', 'c-recording', 'c-prepaid', 'c-earnest', 'c-credits'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var price = v('c-price');
+    var dp = price * v('c-dp') / 100;
+    var loan = Math.max(0, price - dp);
+    var origFee = loan * v('c-orig') / 100;
+    var pointsFee = loan * v('c-points') / 100;
+    var fixedFees = v('c-appraisal') + v('c-title') + v('c-recording') + v('c-prepaid');
+    var closing = origFee + pointsFee + fixedFees;
+    var credits = v('c-earnest') + v('c-credits');
+    var cashToClose = dp + closing - credits;
+    var closingPct = loan ? closing / loan * 100 : 0;
+
+    document.getElementById('c-out').innerHTML =
+      '<div class="result-sub">Estimated cash to close</div>' +
+      '<div class="result-big">' + money.format(Math.max(0, cashToClose)) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Down payment', money.format(dp)) +
+        kv('Loan amount', money.format(loan)) +
+        kv('Loan origination', money.format(origFee)) +
+        (pointsFee ? kv('Discount points', money.format(pointsFee)) : '') +
+        kv('Appraisal &amp; inspection', money.format(v('c-appraisal'))) +
+        kv('Title insurance &amp; escrow', money.format(v('c-title'))) +
+        kv('Recording &amp; transfer', money.format(v('c-recording'))) +
+        kv('Prepaid taxes &amp; insurance', money.format(v('c-prepaid'))) +
+        kv('<strong>Total closing costs</strong>', '<strong>' + money.format(closing) + '</strong>') +
+        (credits ? kv('Less deposit &amp; credits', '&minus; ' + money.format(credits)) : '') +
+        kv('<strong>Cash to close</strong>', '<strong>' + money.format(Math.max(0, cashToClose)) + '</strong>') +
+      '</div>' +
+      (loan ? '<p class="note">Closing costs are about ' + closingPct.toFixed(1) + '% of the loan amount — within the typical 2%–5% range.</p>' : '');
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>What goes into closing costs</h2>
+<p>When you buy a home, the down payment is only part of what you bring to the closing table. <strong>Closing costs</strong> are the fees charged to originate your loan and legally transfer the property — usually <strong>2%–5% of the loan amount</strong>. Together with the down payment, they make up your <strong>cash to close</strong>: the real out-of-pocket total for buying the home.</p>
+<p>The main pieces this calculator covers:</p>
+<ul>
+  <li><strong>Loan origination &amp; points</strong> — what the lender charges to make the loan. Discount points are optional prepaid interest that buy down your rate.</li>
+  <li><strong>Appraisal &amp; inspection</strong> — third-party reports confirming the home's value and condition.</li>
+  <li><strong>Title insurance &amp; escrow</strong> — protects against ownership disputes and pays the settlement agent who handles the closing.</li>
+  <li><strong>Recording &amp; transfer fees</strong> — government charges to record the deed and transfer ownership. These vary widely by state and county.</li>
+  <li><strong>Prepaid taxes &amp; insurance</strong> — the initial escrow deposit so your account can cover the first tax and insurance bills.</li>
+</ul>
+<h2>Lowering your cash to close</h2>
+<p>You can reduce what you owe at closing in a few ways. Your <strong>earnest money deposit</strong> — the good-faith money you put down when your offer was accepted — counts toward the total, so it's subtracted here. You can also negotiate <strong>seller concessions</strong> or accept <strong>lender credits</strong> (a slightly higher rate in exchange for the lender covering some costs). Enter any of these to see your true number.</p>
+<p class="note"><strong>Estimate only.</strong> Closing costs vary substantially by state, county, lender, and loan program, and your official figures appear on the Loan Estimate and Closing Disclosure. Use this for planning, not as a quote. This is not financial advice.</p>

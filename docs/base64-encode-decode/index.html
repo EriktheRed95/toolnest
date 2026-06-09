@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Base64 Encode & Decode</title>
+<meta name="description" content="Encode text to Base64 or decode Base64 back to text, right in your browser. UTF-8 safe, handles emoji and accents, and never sends your data anywhere.">
+<meta name="keywords" content="base64 encode, base64 decode, base64 converter, encode decode text, utf-8 base64">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/base64-encode-decode/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Base64 Encode & Decode">
+<meta property="og:description" content="Encode text to Base64 or decode Base64 back to text, right in your browser. UTF-8 safe, handles emoji and accents, and never sends your data anywhere.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/base64-encode-decode/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Base64 Encode & Decode", "url": "https://erikthered95.github.io/toolnest/base64-encode-decode/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Encode text to Base64 or decode Base64 back to text, right in your browser. UTF-8 safe, handles emoji and accents, and never sends your data anywhere."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is Base64 encoding?", "acceptedAnswer": {"@type": "Answer", "text": "Base64 represents binary or text data using 64 safe ASCII characters (A\u2013Z, a\u2013z, 0\u20139, + and /). It's used to embed data in places that expect text, like JSON, data URLs, and email attachments. It is encoding, not encryption \u2014 anyone can decode it."}}, {"@type": "Question", "name": "Does this handle emoji and accented characters?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The tool encodes through UTF-8 first, so emoji, accents, and non-Latin scripts round-trip correctly. Plain btoa would break on those characters, which is why we wrap it with proper UTF-8 handling."}}, {"@type": "Question", "name": "Why did decoding fail?", "acceptedAnswer": {"@type": "Answer", "text": "If the input isn't valid Base64 \u2014 wrong characters, bad padding, or truncated data \u2014 decoding can't proceed and you'll see a warning. Check that you pasted the complete string and that it only contains Base64 characters."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>Base64 Encode & Decode</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://erikthered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "Base64 Encode & Decode"}]}</script>
+<article class="tool"><h1>Base64 Encode & Decode</h1><p class="lede">Encode text to Base64 or decode Base64 back to text, right in your browser. UTF-8 safe, handles emoji and accents, and never sends your data anywhere.</p><div class="field">
+  <label for="b64-in">Input</label>
+  <textarea id="b64-in" rows="5" style="width:100%;resize:vertical" placeholder="Type or paste text…">Hello, ToolNest! 🚀</textarea>
+</div>
+<div class="btn-row">
+  <button class="btn" id="b64-enc">Encode</button>
+  <button class="btn" id="b64-dec">Decode</button>
+  <button class="btn secondary" data-copy="#b64-out" id="b64-copy">Copy result</button>
+</div>
+<div id="b64-msg"></div>
+<div class="field">
+  <label for="b64-out">Output</label>
+  <textarea id="b64-out" rows="5" readonly style="width:100%;resize:vertical"></textarea>
+</div>
+
+<script>
+(function () {
+  var inEl = document.getElementById('b64-in'), out = document.getElementById('b64-out'),
+      msg = document.getElementById('b64-msg');
+  function clear() { msg.innerHTML = ''; }
+  document.getElementById('b64-enc').addEventListener('click', function () {
+    clear();
+    try {
+      out.value = btoa(unescape(encodeURIComponent(inEl.value)));
+    } catch (e) {
+      msg.innerHTML = '<div class="note warn">Could not encode this input.</div>';
+    }
+  });
+  document.getElementById('b64-dec').addEventListener('click', function () {
+    clear();
+    try {
+      out.value = decodeURIComponent(escape(atob(inEl.value.trim())));
+    } catch (e) {
+      out.value = '';
+      msg.innerHTML = '<div class="note warn">Not valid Base64.</div>';
+    }
+  });
+})();
+</script>
+
+<h2>Encode and decode Base64 the easy way</h2>
+<p>Base64 turns any text or binary data into a string of 64 plain ASCII characters that survive transports built for text — JSON payloads, data URLs, HTTP headers, and email. Paste your content and hit <strong>Encode</strong> to get the Base64 form, or paste a Base64 string and hit <strong>Decode</strong> to recover the original. This tool is UTF-8 aware, so emoji, accents, and non-Latin alphabets convert correctly in both directions.</p>
+<p>Remember that Base64 is <strong>encoding, not encryption</strong>: it hides nothing and adds no security, since anyone can reverse it. Use it to move data safely through text-only channels, not to protect secrets. Everything here runs in your browser with no network calls, so even sensitive strings stay on your machine.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is Base64 encoding?</summary><div class="faq-a">Base64 represents binary or text data using 64 safe ASCII characters (A–Z, a–z, 0–9, + and /). It's used to embed data in places that expect text, like JSON, data URLs, and email attachments. It is encoding, not encryption — anyone can decode it.</div></details>
+<details class="faq-item"><summary>Does this handle emoji and accented characters?</summary><div class="faq-a">Yes. The tool encodes through UTF-8 first, so emoji, accents, and non-Latin scripts round-trip correctly. Plain btoa would break on those characters, which is why we wrap it with proper UTF-8 handling.</div></details>
+<details class="faq-item"><summary>Why did decoding fail?</summary><div class="faq-a">If the input isn't valid Base64 — wrong characters, bad padding, or truncated data — decoding can't proceed and you'll see a warning. Check that you pasted the complete string and that it only contains Base64 characters.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/case-converter/"><h3>Case Converter</h3><p>Convert text between UPPERCASE, lowercase, Title Case, Sentence case, camelCase, snake_case, and kebab-case. Fast, free, and private — runs in your browser.</p></a><a class="card" href="/toolnest/coin-flip/"><h3>Coin Flip</h3><p>Flip a virtual coin online. Get a fair, random heads or tails result, flip several at once, and keep a running tally. Free instant coin toss.</p></a><a class="card" href="/toolnest/color-converter/"><h3>Color Converter (HEX, RGB, HSL)</h3><p>Convert colors between HEX, RGB, and HSL with a live preview swatch and a color picker. Pick a color or type a hex code and copy the values you need.</p></a><a class="card" href="/toolnest/dice-roller/"><h3>Dice Roller</h3><p>Roll virtual dice online — any number of dice with any number of sides (d4, d6, d8, d10, d12, d20). See each die, the total, and a running roll history.</p></a><a class="card" href="/toolnest/hash-generator/"><h3>Hash Generator (SHA-256, SHA-1, SHA-512)</h3><p>Generate SHA-1, SHA-256, and SHA-512 hashes of any text directly in your browser. Live results, hex output, and one-click copy. Nothing is uploaded.</p></a><a class="card" href="/toolnest/json-formatter/"><h3>JSON Formatter & Validator</h3><p>Format, minify, and validate JSON in your browser. Pretty-print with clean indentation, compress to one line, and get clear error messages. Private and instant.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

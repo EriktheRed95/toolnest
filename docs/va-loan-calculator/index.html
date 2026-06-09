@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VA Loan Calculator</title>
+<meta name="description" content="Estimate your VA mortgage payment including the VA funding fee, property taxes, and insurance — with no down payment and no monthly mortgage insurance.">
+<meta name="keywords" content="va loan calculator, va mortgage calculator, va funding fee calculator, veteran home loan, va loan monthly payment">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/va-loan-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="VA Loan Calculator">
+<meta property="og:description" content="Estimate your VA mortgage payment including the VA funding fee, property taxes, and insurance — with no down payment and no monthly mortgage insurance.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/va-loan-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "VA Loan Calculator", "url": "https://erikthered95.github.io/toolnest/va-loan-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Estimate your VA mortgage payment including the VA funding fee, property taxes, and insurance \u2014 with no down payment and no monthly mortgage insurance."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Do VA loans require a down payment?", "acceptedAnswer": {"@type": "Answer", "text": "No. One of the biggest benefits of a VA loan is 100% financing \u2014 eligible veterans, service members, and surviving spouses can buy with zero down. You can still put money down if you choose, which lowers your loan amount and may reduce the funding fee."}}, {"@type": "Question", "name": "What is the VA funding fee?", "acceptedAnswer": {"@type": "Answer", "text": "The VA funding fee is a one-time charge that helps keep the loan program running without monthly mortgage insurance. It's a percentage of the loan (commonly around 2.15% for a first-use, no-down-payment purchase) and can be paid at closing or financed into the loan."}}, {"@type": "Question", "name": "Can the funding fee be waived?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Veterans receiving VA disability compensation, certain Purple Heart recipients, and some surviving spouses are exempt from the funding fee entirely. If that applies to you, set the funding fee to 0% to see your payment without it."}}, {"@type": "Question", "name": "Do VA loans have monthly mortgage insurance?", "acceptedAnswer": {"@type": "Answer", "text": "No. Unlike FHA loans and low-down-payment conventional loans, VA loans carry no monthly mortgage insurance at all. That's a major monthly savings, which is why this calculator's payment includes only principal, interest, taxes, and homeowners insurance."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>VA Loan Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "VA Loan Calculator"}]}</script>
+<article class="tool"><h1>VA Loan Calculator</h1><p class="lede">Estimate your VA mortgage payment including the VA funding fee, property taxes, and insurance — with no down payment and no monthly mortgage insurance.</p><div class="row">
+  <div class="field"><label for="va-price">Home price ($)</label><input type="number" id="va-price" value="350000" min="0" step="1000"></div>
+  <div class="field"><label for="va-down">Down payment ($)</label><input type="number" id="va-down" value="0" min="0" step="1000"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="va-rate">Interest rate (%)</label><input type="number" id="va-rate" value="6.5" min="0" step="0.01"></div>
+  <div class="field"><label for="va-term">Term (years)</label><input type="number" id="va-term" value="30" min="1" step="1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="va-ff">VA funding fee (%)</label><input type="number" id="va-ff" value="2.15" min="0" step="0.05"></div>
+  <div class="field">
+    <label>Funding fee</label>
+    <div class="checks"><label><input type="checkbox" id="va-finance" checked> Finance the funding fee into the loan</label></div>
+  </div>
+</div>
+<div class="row">
+  <div class="field"><label for="va-tax">Property tax ($/yr)</label><input type="number" id="va-tax" value="3600" min="0" step="100"></div>
+  <div class="field"><label for="va-ins">Home insurance ($/yr)</label><input type="number" id="va-ins" value="1400" min="0" step="100"></div>
+</div>
+
+<div class="result" id="va-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['va-price', 'va-down', 'va-rate', 'va-term', 'va-ff', 'va-tax', 'va-ins'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function pmt(P, ratePct, n) {
+    var r = ratePct / 100 / 12;
+    if (r === 0) return P / n;
+    return P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+  }
+
+  function calc() {
+    var price = v('va-price');
+    var down = v('va-down');
+    var rate = v('va-rate');
+    var years = v('va-term');
+    var ffPct = v('va-ff');
+    var financed = document.getElementById('va-finance').checked;
+    var tax = v('va-tax');
+    var ins = v('va-ins');
+    var out = document.getElementById('va-out');
+    if (price <= 0 || years <= 0) { out.innerHTML = '<p class="note">Enter a home price and term.</p>'; return; }
+
+    var baseLoan = Math.max(0, price - down);
+    var fundingFee = baseLoan * ffPct / 100;
+    var totalLoan = baseLoan + (financed ? fundingFee : 0);
+    var n = Math.round(years * 12);
+    var pi = pmt(totalLoan, rate, n);
+    var monthlyTax = tax / 12;
+    var monthlyIns = ins / 12;
+    var total = pi + monthlyTax + monthlyIns;
+
+    out.innerHTML =
+      '<div class="result-sub">Total monthly payment</div>' +
+      '<div class="result-big">' + money2.format(total) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('VA funding fee', money.format(fundingFee) + (financed ? ' (financed)' : ' (paid at closing)')) +
+        kv('Loan amount', money.format(totalLoan)) +
+        kv('Principal &amp; interest', money2.format(pi)) +
+        kv('Property tax', money2.format(monthlyTax)) +
+        kv('Home insurance', money2.format(monthlyIns)) +
+        kv('<strong>Total monthly payment</strong>', '<strong>' + money2.format(total) + '</strong>') +
+      '</div>' +
+      '<p class="note ok">VA loans require <strong>no down payment</strong> and carry <strong>no monthly mortgage insurance</strong>. The funding fee can be waived for some disabled veterans.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  document.getElementById('va-finance').addEventListener('change', calc);
+  calc();
+})();
+</script>
+
+<h2>Why VA loans are different</h2>
+<p>VA loans are backed by the Department of Veterans Affairs for eligible veterans, active service members, and certain surviving spouses. Two features set them apart: you can buy with <strong>zero down</strong>, and there's <strong>no monthly mortgage insurance</strong> — ever. That second point is a real monthly savings compared with FHA or low-down conventional loans, which tack on mortgage insurance for years.</p>
+<p>In place of ongoing insurance, VA loans charge a one-time <strong>funding fee</strong>, a percentage of the loan that most borrowers finance into the balance rather than pay in cash. The fee helps sustain the program. This calculator builds your payment from principal and interest plus property taxes and homeowners insurance.</p>
+<ul>
+  <li><strong>Funding fee waivers</strong> apply to many veterans receiving disability compensation — set it to 0% to model that.</li>
+  <li><strong>Putting money down</strong> is optional but lowers both your loan and your funding fee.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> Funding fee percentages depend on down payment, service type, and whether it's your first use. Confirm your fee and eligibility with a VA-approved lender. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>Do VA loans require a down payment?</summary><div class="faq-a">No. One of the biggest benefits of a VA loan is 100% financing — eligible veterans, service members, and surviving spouses can buy with zero down. You can still put money down if you choose, which lowers your loan amount and may reduce the funding fee.</div></details>
+<details class="faq-item"><summary>What is the VA funding fee?</summary><div class="faq-a">The VA funding fee is a one-time charge that helps keep the loan program running without monthly mortgage insurance. It's a percentage of the loan (commonly around 2.15% for a first-use, no-down-payment purchase) and can be paid at closing or financed into the loan.</div></details>
+<details class="faq-item"><summary>Can the funding fee be waived?</summary><div class="faq-a">Yes. Veterans receiving VA disability compensation, certain Purple Heart recipients, and some surviving spouses are exempt from the funding fee entirely. If that applies to you, set the funding fee to 0% to see your payment without it.</div></details>
+<details class="faq-item"><summary>Do VA loans have monthly mortgage insurance?</summary><div class="faq-a">No. Unlike FHA loans and low-down-payment conventional loans, VA loans carry no monthly mortgage insurance at all. That's a major monthly savings, which is why this calculator's payment includes only principal, interest, taxes, and homeowners insurance.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/1031-exchange-calculator/"><h3>1031 Exchange Calculator</h3><p>Estimate the taxes deferred by a 1031 like-kind exchange of investment property. See your realized gain, capital gains and depreciation recapture tax, and net proceeds to reinvest.</p></a><a class="card" href="/toolnest/2-1-buydown-calculator/"><h3>2-1 Buydown Calculator</h3><p>See your reduced mortgage payment in years 1 and 2 of a 2-1 temporary buydown, the monthly savings, and the upfront buydown cost.</p></a><a class="card" href="/toolnest/arm-vs-fixed-calculator/"><h3>ARM vs. Fixed Mortgage Calculator</h3><p>Compare an adjustable-rate mortgage (ARM) against a fixed-rate loan. See the intro-period savings, the payment after the rate adjusts, total cost, and the break-even point.</p></a><a class="card" href="/toolnest/auto-loan-calculator/"><h3>Auto Loan Calculator</h3><p>Calculate your monthly car payment including sales tax, trade-in, down payment, and fees. See total interest and the full cost of financing your vehicle.</p></a><a class="card" href="/toolnest/biweekly-mortgage-calculator/"><h3>Biweekly Mortgage Payment Calculator</h3><p>See how switching to biweekly mortgage payments pays off your loan faster. Compare biweekly vs monthly payments and the time and interest you'd save.</p></a><a class="card" href="/toolnest/cd-calculator/"><h3>CD Calculator</h3><p>Calculate the maturity value and total interest of a certificate of deposit from your deposit, APY, and term length.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

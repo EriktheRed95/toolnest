@@ -1,0 +1,136 @@
+<!--META
+{
+  "title": "Debt Payoff Calculator (Snowball vs. Avalanche)",
+  "slug": "debt-payoff-calculator",
+  "category": "finance",
+  "h1": "Debt Payoff Calculator",
+  "description": "Compare the debt snowball and debt avalanche methods. Enter your debts and an extra monthly payment to see which strategy pays off your debt faster and saves the most interest.",
+  "keywords": "debt payoff calculator, debt snowball calculator, debt avalanche calculator, snowball vs avalanche, pay off debt faster, debt free calculator",
+  "faq": [
+    {"q": "What is the debt snowball method?", "a": "The snowball method pays minimums on every debt and throws all extra money at the smallest balance first. When it's gone, you roll its payment into the next-smallest, and so on. It's slower mathematically but delivers quick early wins that keep many people motivated to stay the course."},
+    {"q": "What is the debt avalanche method?", "a": "The avalanche method pays minimums on everything and directs all extra money to the debt with the highest interest rate first, then the next highest. It minimizes total interest and usually pays everything off fastest, though the first win can take longer if your highest-rate debt has a large balance."},
+    {"q": "Which is better, snowball or avalanche?", "a": "Avalanche saves the most money and time on paper. Snowball can save your motivation, which matters because the best plan is the one you actually finish. This calculator shows both so you can see the dollar difference and decide whether the avalanche's savings outweigh the snowball's psychological boost."},
+    {"q": "How much faster will extra payments clear my debt?", "a": "A lot. Minimum payments are designed to keep you in debt for years; even a modest extra amount each month, focused on one debt at a time, can cut the payoff timeline dramatically and save thousands in interest. The bigger the extra payment, the larger the effect."}
+  ]
+}
+META-->
+<p class="lede">Enter up to five debts. Leave a row blank to ignore it.</p>
+<div class="scroll">
+<table class="amort" style="margin-bottom:14px">
+  <thead><tr><th>Debt</th><th>Balance ($)</th><th>APR (%)</th><th>Min payment ($/mo)</th></tr></thead>
+  <tbody id="dp-rows"></tbody>
+</table>
+</div>
+<div class="row">
+  <div class="field"><label for="dp-extra">Extra payment ($/mo)</label><input type="number" id="dp-extra" value="300" min="0" step="50"></div>
+</div>
+
+<div class="result" id="dp-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var defaults = [
+    ['Credit card', 6000, 22, 150],
+    ['Car loan', 14000, 7, 320],
+    ['Personal loan', 4000, 12, 110],
+    ['Store card', 1500, 26, 45],
+    ['', '', '', '']
+  ];
+  var rowsEl = document.getElementById('dp-rows');
+  defaults.forEach(function (d, i) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><input type="text" value="' + d[0] + '" id="dp-name' + i + '" style="width:100%" placeholder="Debt ' + (i + 1) + '"></td>' +
+      '<td><input type="number" value="' + d[1] + '" id="dp-bal' + i + '" min="0" step="100" style="width:100%"></td>' +
+      '<td><input type="number" value="' + d[2] + '" id="dp-apr' + i + '" min="0" step="0.1" style="width:100%"></td>' +
+      '<td><input type="number" value="' + d[3] + '" id="dp-min' + i + '" min="0" step="10" style="width:100%"></td>';
+    rowsEl.appendChild(tr);
+  });
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function fmtMonths(m) { var y = Math.floor(m / 12), mo = m % 12; return (y ? y + ' yr ' : '') + mo + ' mo'; }
+
+  function getDebts() {
+    var list = [];
+    for (var i = 0; i < 5; i++) {
+      var bal = v('dp-bal' + i);
+      if (bal > 0) list.push({ bal: bal, apr: v('dp-apr' + i) / 100 / 12, min: v('dp-min' + i) });
+    }
+    return list;
+  }
+
+  // strategy: "snowball" (smallest balance first) or "avalanche" (highest apr first)
+  function simulate(debtsIn, extra, strategy) {
+    var debts = debtsIn.map(function (d) { return { bal: d.bal, apr: d.apr, min: d.min }; });
+    // total payment stays constant; freed-up minimums roll into the target automatically
+    var budget = debts.reduce(function (s, d) { return s + d.min; }, 0) + extra;
+    var months = 0, totalInterest = 0;
+    while (debts.some(function (d) { return d.bal > 0.005; }) && months < 1200) {
+      months++;
+      // accrue interest
+      debts.forEach(function (d) { if (d.bal > 0) { var it = d.bal * d.apr; d.bal += it; totalInterest += it; } });
+      var pool = budget;
+      // pay minimums on active debts first
+      debts.forEach(function (d) {
+        if (d.bal > 0) { var p = Math.min(d.min, d.bal, pool); d.bal -= p; pool -= p; }
+      });
+      // cascade any remaining budget to the target order
+      var active = debts.filter(function (d) { return d.bal > 0.005; });
+      active.sort(function (a, b) { return strategy === 'snowball' ? a.bal - b.bal : b.apr - a.apr; });
+      for (var k = 0; k < active.length && pool > 0.005; k++) {
+        var pay = Math.min(pool, active[k].bal);
+        active[k].bal -= pay; pool -= pay;
+      }
+    }
+    return { months: months, interest: totalInterest };
+  }
+
+  function calc() {
+    var debts = getDebts();
+    var extra = v('dp-extra');
+    var out = document.getElementById('dp-out');
+    if (!debts.length) { out.innerHTML = '<p class="note">Enter at least one debt balance to compare strategies.</p>'; return; }
+
+    var totalBal = debts.reduce(function (s, d) { return s + d.bal; }, 0);
+    var totalMin = debts.reduce(function (s, d) { return s + d.min; }, 0);
+
+    var snow = simulate(debts, extra, 'snowball');
+    var aval = simulate(debts, extra, 'avalanche');
+    var interestSaved = snow.interest - aval.interest;
+    var monthsSaved = snow.months - aval.months;
+
+    out.innerHTML =
+      '<div class="result-sub">Avalanche pays off in</div>' +
+      '<div class="result-big">' + fmtMonths(aval.months) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Total debt', money.format(totalBal)) +
+        kv('Total minimum payments', money.format(totalMin) + '/mo') +
+        kv('Plus extra', money.format(extra) + '/mo') +
+        kv('<strong>Avalanche (highest APR first)</strong>', '<strong>' + fmtMonths(aval.months) + ' · ' + money.format(aval.interest) + ' interest</strong>') +
+        kv('<strong>Snowball (smallest balance first)</strong>', '<strong>' + fmtMonths(snow.months) + ' · ' + money.format(snow.interest) + ' interest</strong>') +
+      '</div>' +
+      '<p class="note">' +
+        (interestSaved > 0.5
+          ? 'The <strong>avalanche</strong> saves ' + money.format(interestSaved) + ' in interest' + (monthsSaved > 0 ? ' and finishes ' + fmtMonths(monthsSaved) + ' sooner' : '') + ' versus the snowball. If quick wins keep you motivated, the snowball’s extra cost may still be worth it.'
+          : 'Both methods finish about the same here. Pick whichever keeps you motivated — the snowball’s early wins or the avalanche’s efficiency.') +
+      '</p>';
+  }
+  for (var i = 0; i < 5; i++) {
+    ['dp-bal', 'dp-apr', 'dp-min'].forEach(function (p) { document.getElementById(p + i).addEventListener('input', calc); });
+  }
+  document.getElementById('dp-extra').addEventListener('input', calc);
+  calc();
+})();
+</script>
+
+<h2>Snowball or avalanche — get out of debt faster</h2>
+<p>When you're juggling several debts, the order you attack them in matters more than most people realize. Two strategies dominate, and they optimize for different things:</p>
+<ul>
+  <li><strong>Debt avalanche</strong> — pay minimums on everything, then throw every extra dollar at the <strong>highest-interest</strong> debt first. This minimizes total interest and is almost always the fastest, cheapest path mathematically.</li>
+  <li><strong>Debt snowball</strong> — pay minimums on everything, then attack the <strong>smallest balance</strong> first. You clear individual debts quickly, and those early wins build momentum that helps many people stick with the plan.</li>
+</ul>
+<p>This calculator simulates both on your actual debts and shows the difference in months and interest, so you can weigh the avalanche's savings against the snowball's motivational payoff.</p>
+<h2>The real engine: extra payments</h2>
+<p>Minimum payments are structured to keep you in debt for years, especially on high-rate credit cards. The single biggest factor in how fast you get free isn't which method you pick — it's how much <strong>extra</strong> you can put toward the target debt each month. As each debt is cleared, roll its payment into the next one; that growing payment is what gives the snowball (and avalanche) their power.</p>
+<p class="note"><strong>Estimate only.</strong> This is a simplified model assuming fixed balances, rates, and minimum payments, and constant extra payments. Real cards have changing minimums and rates. Use it to compare strategies, not as an exact schedule. This is not financial advice.</p>

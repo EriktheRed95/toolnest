@@ -1,0 +1,74 @@
+<!--META
+{
+  "title": "Age Calculator",
+  "slug": "age-calculator",
+  "category": "everyday",
+  "h1": "Age Calculator",
+  "description": "Calculate your exact age in years, months, and days from your date of birth. See your total days lived and a countdown to your next birthday.",
+  "keywords": "age calculator, how old am I, exact age calculator, date of birth age, age in days, days until birthday",
+  "faq": [
+    {"q": "How is exact age calculated?", "a": "Your age is the time elapsed from your date of birth to today (or any date you choose), expressed in whole years, then the leftover months, then the leftover days. This calculator counts the actual calendar months and days — accounting for different month lengths and leap years — rather than just dividing total days."},
+    {"q": "How many days have I been alive?", "a": "It's the number of calendar days between your birth date and today, including leap days. This calculator shows your total days lived alongside your age in years and months, which is a fun figure for milestones like your 10,000th day."},
+    {"q": "Does the calculator handle leap years?", "a": "Yes. It works directly with calendar dates, so February 29 and the varying lengths of months are handled automatically. The day and month breakdown reflects the real calendar, not an approximation."},
+    {"q": "Can I calculate age on a future or past date?", "a": "Yes. Change the 'as of' date to any date — past or future — to find how old you (or anyone) were or will be then. It's handy for figuring out someone's age at a specific event."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="ag-dob">Date of birth</label><input type="date" id="ag-dob"></div>
+  <div class="field"><label for="ag-as">As of date</label><input type="date" id="ag-as"></div>
+</div>
+
+<div class="result" id="ag-out"></div>
+
+<script>
+(function () {
+  var nf = new Intl.NumberFormat('en-US');
+  var dob = document.getElementById('ag-dob'), asOf = document.getElementById('ag-as');
+  // default as-of = today
+  var t = new Date();
+  asOf.value = t.toISOString().slice(0, 10);
+  dob.value = '1990-01-01';
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var out = document.getElementById('ag-out');
+    if (!dob.value || !asOf.value) { out.innerHTML = '<p class="note">Enter a date of birth.</p>'; return; }
+    var b = new Date(dob.value + 'T00:00:00'), a = new Date(asOf.value + 'T00:00:00');
+    if (a < b) { out.innerHTML = '<p class="note warn">The "as of" date is before the date of birth.</p>'; return; }
+
+    var years = a.getFullYear() - b.getFullYear();
+    var months = a.getMonth() - b.getMonth();
+    var days = a.getDate() - b.getDate();
+    if (days < 0) { months--; var prevMonth = new Date(a.getFullYear(), a.getMonth(), 0); days += prevMonth.getDate(); }
+    if (months < 0) { years--; months += 12; }
+
+    var totalDays = Math.floor((a - b) / 86400000);
+    var totalMonths = years * 12 + months;
+
+    // next birthday
+    var next = new Date(a.getFullYear(), b.getMonth(), b.getDate());
+    if (next < a) next = new Date(a.getFullYear() + 1, b.getMonth(), b.getDate());
+    var daysToBday = Math.ceil((next - a) / 86400000);
+
+    out.innerHTML =
+      '<div class="result-sub">Your age</div>' +
+      '<div class="result-big">' + years + ' yr ' + months + ' mo ' + days + ' d</div>' +
+      '<div style="margin-top:12px">' +
+        kv('In total months', nf.format(totalMonths) + ' months') +
+        kv('In total days', nf.format(totalDays) + ' days') +
+        kv('In total weeks', nf.format(Math.floor(totalDays / 7)) + ' weeks') +
+        kv('In total hours', nf.format(totalDays * 24) + ' hours') +
+        kv('Next birthday', daysToBday === 0 ? '🎉 Today!' : 'in ' + daysToBday + ' day' + (daysToBday === 1 ? '' : 's')) +
+      '</div>';
+  }
+  [dob, asOf].forEach(function (el) { el.addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Your exact age, down to the day</h2>
+<p>"How old am I?" sounds simple, but an exact answer means more than a single number. This calculator breaks your age into <strong>years, months, and days</strong> by working directly with the calendar — so the varying lengths of months and every leap day are accounted for, not approximated. Enter your date of birth and it does the rest instantly.</p>
+<p>It also translates your age into other units: total months, days, weeks, and even hours lived. These are perfect for spotting fun milestones — your 10,000th day, your 500th month — that ordinary birthdays skip right over.</p>
+<h2>Age on any date</h2>
+<p>By default the calculator measures your age as of today, but you can set the <strong>"as of" date</strong> to anything. Pick a future date to see how old you'll be at a wedding or graduation, or a past date to find someone's age at a historical event. Change the date of birth to any person's and you can calculate their age just as easily. Everything updates the moment you change a field, and the countdown shows exactly how many days remain until the next birthday.</p>

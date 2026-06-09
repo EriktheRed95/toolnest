@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loan-to-Value (LTV) Calculator</title>
+<meta name="description" content="Calculate your loan-to-value (LTV) ratio from a loan amount and property value. See your equity and equity percentage, and whether you'll owe PMI.">
+<meta name="keywords" content="loan to value calculator, LTV calculator, LTV ratio, home equity calculator, PMI calculator, loan to value ratio">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/loan-to-value-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Loan-to-Value (LTV) Calculator">
+<meta property="og:description" content="Calculate your loan-to-value (LTV) ratio from a loan amount and property value. See your equity and equity percentage, and whether you'll owe PMI.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/loan-to-value-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Loan-to-Value (LTV) Calculator", "url": "https://erikthered95.github.io/toolnest/loan-to-value-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Calculate your loan-to-value (LTV) ratio from a loan amount and property value. See your equity and equity percentage, and whether you'll owe PMI."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is loan-to-value (LTV)?", "acceptedAnswer": {"@type": "Answer", "text": "LTV is the loan amount divided by the property's appraised value or purchase price, expressed as a percentage. A $320,000 loan on a $400,000 home is an 80% LTV. Lower LTV means you have more equity and represent less risk to a lender, which can earn you better rates and terms."}}, {"@type": "Question", "name": "Why does LTV affect PMI?", "acceptedAnswer": {"@type": "Answer", "text": "On conventional loans, an LTV above 80% (less than 20% down) usually requires private mortgage insurance (PMI), which protects the lender if you default. Once your LTV drops to about 80% through payments or appreciation, you can typically request PMI removal, and lenders must cancel it at 78% based on the original schedule."}}, {"@type": "Question", "name": "What LTV do different loans allow?", "acceptedAnswer": {"@type": "Answer", "text": "Conventional loans can go up to about 97% LTV (3% down) with PMI. FHA loans allow up to 96.5% LTV (3.5% down). VA and USDA loans can reach 100% for eligible borrowers. The lower your LTV, the more loan programs and pricing you'll qualify for."}}, {"@type": "Question", "name": "How do I lower my LTV?", "acceptedAnswer": {"@type": "Answer", "text": "Make a larger down payment, pay down the loan balance, or benefit from rising property value (which raises the denominator). A new appraisal showing a higher value can lower your LTV and may let you drop PMI sooner."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Loan-to-Value (LTV) Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Loan-to-Value (LTV) Calculator"}]}</script>
+<article class="tool"><h1>Loan-to-Value (LTV) Calculator</h1><p class="lede">Calculate your loan-to-value (LTV) ratio from a loan amount and property value. See your equity and equity percentage, and whether you'll owe PMI.</p><div class="row">
+  <div class="field"><label for="ltv-loan">Loan amount ($)</label><input type="number" id="ltv-loan" value="320000" min="0" step="1000"></div>
+  <div class="field"><label for="ltv-value">Appraised value / purchase price ($)</label><input type="number" id="ltv-value" value="400000" min="0" step="1000"></div>
+</div>
+
+<div class="result" id="ltv-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['ltv-loan', 'ltv-value'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var loan = v('ltv-loan');
+    var value = v('ltv-value');
+    var out = document.getElementById('ltv-out');
+    if (value <= 0) { out.innerHTML = '<p class="note">Enter an appraised value or purchase price.</p>'; return; }
+
+    var ltv = loan / value * 100;
+    var equity = value - loan;
+    var equityPct = 100 - ltv;
+
+    var note;
+    if (ltv <= 80) note = '<p class="note ok">At 80% LTV or below, you generally avoid PMI on a conventional loan.</p>';
+    else if (ltv <= 96.5) note = '<p class="note warn">Above 80% LTV, conventional loans typically require PMI until you reach about 20% equity. FHA loans allow up to 96.5% LTV.</p>';
+    else note = '<p class="note warn">This LTV is above the 96.5% FHA limit and the ~97% conventional limit. You may need a larger down payment or a special program (VA/USDA can reach 100%).</p>';
+
+    out.innerHTML =
+      '<div class="result-sub">Loan-to-value ratio</div>' +
+      '<div class="result-big">' + ltv.toFixed(1) + '%</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Equity', money.format(equity)) +
+        kv('Equity %', equityPct.toFixed(1) + '%') +
+        kv('Loan amount', money.format(loan)) +
+        kv('Property value', money.format(value)) +
+      '</div>' +
+      note;
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Understanding loan-to-value</h2>
+<p>Loan-to-value compares how much you owe to what the property is worth. It's one of the first numbers a lender looks at, because it measures their risk: a high LTV means you have little equity cushion, so a default is more likely to leave the lender short. That's why a lower LTV usually unlocks better interest rates, more loan options, and — on conventional loans — freedom from private mortgage insurance.</p>
+<p>The 80% threshold is the one to remember. At or below 80% LTV (at least 20% equity), conventional borrowers generally skip PMI. Between 80% and roughly 97%, you can still get a conventional loan but typically pay PMI until your equity grows; FHA loans go up to 96.5% LTV, and VA or USDA loans can reach 100% for eligible buyers. You lower your LTV by putting more down, paying down the balance, or benefiting from rising home value.</p>
+<p class="note"><strong>Estimate only.</strong> Lender rules and program limits vary. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is loan-to-value (LTV)?</summary><div class="faq-a">LTV is the loan amount divided by the property's appraised value or purchase price, expressed as a percentage. A $320,000 loan on a $400,000 home is an 80% LTV. Lower LTV means you have more equity and represent less risk to a lender, which can earn you better rates and terms.</div></details>
+<details class="faq-item"><summary>Why does LTV affect PMI?</summary><div class="faq-a">On conventional loans, an LTV above 80% (less than 20% down) usually requires private mortgage insurance (PMI), which protects the lender if you default. Once your LTV drops to about 80% through payments or appreciation, you can typically request PMI removal, and lenders must cancel it at 78% based on the original schedule.</div></details>
+<details class="faq-item"><summary>What LTV do different loans allow?</summary><div class="faq-a">Conventional loans can go up to about 97% LTV (3% down) with PMI. FHA loans allow up to 96.5% LTV (3.5% down). VA and USDA loans can reach 100% for eligible borrowers. The lower your LTV, the more loan programs and pricing you'll qualify for.</div></details>
+<details class="faq-item"><summary>How do I lower my LTV?</summary><div class="faq-a">Make a larger down payment, pay down the loan balance, or benefit from rising property value (which raises the denominator). A new appraisal showing a higher value can lower your LTV and may let you drop PMI sooner.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/mortgage-amortization-schedule/"><h3>Mortgage Amortization Schedule Calculator</h3><p>Build a full year-by-year mortgage amortization schedule. See your monthly payment, total interest, and how extra principal payments shorten your payoff time.</p></a><a class="card" href="/toolnest/mortgage-calculator/"><h3>Mortgage Calculator</h3><p>Estimate your monthly mortgage payment including principal, interest, property tax, insurance, PMI, and HOA. See total interest and a full amortization schedule.</p></a><a class="card" href="/toolnest/mortgage-comparison-calculator/"><h3>Mortgage Comparison Calculator</h3><p>Compare two mortgage offers side by side — monthly payment, total interest, and total cost — to see which loan actually costs less.</p></a><a class="card" href="/toolnest/mortgage-payoff-calculator/"><h3>Mortgage Payoff Calculator (Extra Payments)</h3><p>See how extra monthly or one-time payments pay off your mortgage faster. Calculate the time saved and total interest saved by paying extra principal.</p></a><a class="card" href="/toolnest/mortgage-points-calculator/"><h3>Mortgage Points Calculator</h3><p>Should you buy discount points to lower your mortgage rate? Calculate the cost of points, your monthly savings, and the break-even point to decide if it's worth it.</p></a><a class="card" href="/toolnest/mortgage-qualification-calculator/"><h3>Mortgage Qualification Calculator</h3><p>Find out how much income you need to qualify for a mortgage. Enter the home price, down payment, rate, taxes, insurance, and debts to see the required annual income and DTI.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

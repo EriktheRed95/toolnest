@@ -1,0 +1,84 @@
+<!--META
+{
+  "title": "Retirement Savings Calculator",
+  "slug": "retirement-calculator",
+  "category": "finance",
+  "h1": "Retirement Savings Calculator",
+  "description": "Project how much your retirement savings could grow. Enter your age, current balance, monthly contribution, and expected return to estimate your nest egg at retirement.",
+  "keywords": "retirement calculator, retirement savings calculator, 401k calculator, nest egg calculator, retirement planning, how much to retire",
+  "faq": [
+    {"q": "How does this retirement calculator work?", "a": "It compounds your current balance and your monthly contributions monthly until your chosen retirement age. The formula is future value = balance × (1 + i)^N + contribution × (((1 + i)^N − 1) / i), where i is the monthly return and N is the number of months until retirement. The result separates what you put in from what compounding added."},
+    {"q": "What return should I assume?", "a": "It depends on your investment mix. A diversified stock-heavy portfolio has historically averaged higher returns over long periods but swings year to year; bonds and cash are steadier but lower. The 7% default is a common long-run assumption for a balanced portfolio before inflation. Use a conservative figure and remember returns aren't guaranteed."},
+    {"q": "Does this account for inflation and taxes?", "a": "No. This is a nominal projection. Inflation reduces what your future balance can actually buy, and taxes may apply when you withdraw from accounts like a traditional 401(k) or IRA. A Roth account grows tax-free. Treat the figure as a gross estimate, not spendable, after-tax dollars."},
+    {"q": "How much do I need to retire?", "a": "A common rule of thumb is to save enough to withdraw about 4% of your balance per year in retirement, so you'd need roughly 25 times your desired annual spending. Your real number depends on your lifestyle, Social Security, pensions, and how long your retirement lasts. This tool estimates the balance side only."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="rc-age">Current age</label><input type="number" id="rc-age" value="35" min="0" max="100" step="1"></div>
+  <div class="field"><label for="rc-retire">Retirement age</label><input type="number" id="rc-retire" value="65" min="1" max="100" step="1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="rc-balance">Current balance ($)</label><input type="number" id="rc-balance" value="50000" min="0" step="1000"></div>
+  <div class="field"><label for="rc-monthly">Monthly contribution ($)</label><input type="number" id="rc-monthly" value="500" min="0" step="50"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="rc-rate">Annual return (%)</label><input type="number" id="rc-rate" value="7" min="0" step="0.1"></div>
+</div>
+
+<div class="result" id="rc-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['rc-age', 'rc-retire', 'rc-balance', 'rc-monthly', 'rc-rate'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var age = v('rc-age');
+    var retire = v('rc-retire');
+    var P = v('rc-balance');
+    var PMT = v('rc-monthly');
+    var i = v('rc-rate') / 100 / 12;
+    var out = document.getElementById('rc-out');
+
+    var years = retire - age;
+    if (years <= 0) {
+      out.innerHTML = '<p class="note warn">Your retirement age must be greater than your current age. Adjust the ages to see a projection.</p>';
+      return;
+    }
+    var N = Math.round(years * 12);
+
+    var fv = i === 0
+      ? P + PMT * N
+      : P * Math.pow(1 + i, N) + PMT * ((Math.pow(1 + i, N) - 1) / i);
+    var contributed = P + PMT * N;
+    var growth = fv - contributed;
+
+    out.innerHTML =
+      '<div class="result-sub">Projected balance at age ' + retire + '</div>' +
+      '<div class="result-big">' + money.format(fv) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Years until retirement', years) +
+        kv('Total contributed', money.format(contributed)) +
+        kv('&nbsp;&nbsp;Starting balance', money.format(P)) +
+        kv('&nbsp;&nbsp;Contributions', money.format(PMT * N)) +
+        kv('<strong>Investment growth</strong>', '<strong>' + money.format(growth) + '</strong>') +
+      '</div>' +
+      '<p class="note">Of your projected ' + money.format(fv) + ', ' + money.format(growth) + ' comes from compounding — money you never deposited. Starting earlier gives that growth more time to build.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Estimate your nest egg</h2>
+<p>This calculator projects how large your retirement savings could grow by the time you stop working. It takes your current balance and adds your monthly contributions, compounding everything monthly at your expected return until your chosen retirement age. The result shows not just the final figure, but how much of it came from your own deposits versus how much compounding added on top.</p>
+<p>The single most powerful variable is time. Money you invest in your thirties has decades of compounding cycles ahead of it; the same dollars added in your fifties simply have fewer. That's why even modest contributions, started early and left alone, often end up dwarfing larger contributions made later.</p>
+<ul>
+  <li><strong>Contribute consistently</strong> — automatic monthly deposits keep compounding working without relying on willpower.</li>
+  <li><strong>Capture any employer match</strong> — a 401(k) match is an immediate, guaranteed return you don't want to leave behind.</li>
+  <li><strong>Stay invested through dips</strong> — long horizons smooth out year-to-year swings.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> This assumes a steady annual return, but real investments fluctuate and aren't guaranteed. It ignores inflation, taxes, and fees, which reduce real-world results, and doesn't account for Social Security or pensions. Treat it as a projection, not a promise. This is not financial advice.</p>

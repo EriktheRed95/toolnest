@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Debt Payoff Calculator (Snowball vs. Avalanche)</title>
+<meta name="description" content="Compare the debt snowball and debt avalanche methods. Enter your debts and an extra monthly payment to see which strategy pays off your debt faster and saves the most interest.">
+<meta name="keywords" content="debt payoff calculator, debt snowball calculator, debt avalanche calculator, snowball vs avalanche, pay off debt faster, debt free calculator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/debt-payoff-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Debt Payoff Calculator (Snowball vs. Avalanche)">
+<meta property="og:description" content="Compare the debt snowball and debt avalanche methods. Enter your debts and an extra monthly payment to see which strategy pays off your debt faster and saves the most interest.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/debt-payoff-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Debt Payoff Calculator (Snowball vs. Avalanche)", "url": "https://erikthered95.github.io/toolnest/debt-payoff-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Compare the debt snowball and debt avalanche methods. Enter your debts and an extra monthly payment to see which strategy pays off your debt faster and saves the most interest."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is the debt snowball method?", "acceptedAnswer": {"@type": "Answer", "text": "The snowball method pays minimums on every debt and throws all extra money at the smallest balance first. When it's gone, you roll its payment into the next-smallest, and so on. It's slower mathematically but delivers quick early wins that keep many people motivated to stay the course."}}, {"@type": "Question", "name": "What is the debt avalanche method?", "acceptedAnswer": {"@type": "Answer", "text": "The avalanche method pays minimums on everything and directs all extra money to the debt with the highest interest rate first, then the next highest. It minimizes total interest and usually pays everything off fastest, though the first win can take longer if your highest-rate debt has a large balance."}}, {"@type": "Question", "name": "Which is better, snowball or avalanche?", "acceptedAnswer": {"@type": "Answer", "text": "Avalanche saves the most money and time on paper. Snowball can save your motivation, which matters because the best plan is the one you actually finish. This calculator shows both so you can see the dollar difference and decide whether the avalanche's savings outweigh the snowball's psychological boost."}}, {"@type": "Question", "name": "How much faster will extra payments clear my debt?", "acceptedAnswer": {"@type": "Answer", "text": "A lot. Minimum payments are designed to keep you in debt for years; even a modest extra amount each month, focused on one debt at a time, can cut the payoff timeline dramatically and save thousands in interest. The bigger the extra payment, the larger the effect."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Debt Payoff Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Debt Payoff Calculator"}]}</script>
+<article class="tool"><h1>Debt Payoff Calculator</h1><p class="lede">Compare the debt snowball and debt avalanche methods. Enter your debts and an extra monthly payment to see which strategy pays off your debt faster and saves the most interest.</p><p class="lede">Enter up to five debts. Leave a row blank to ignore it.</p>
+<div class="scroll">
+<table class="amort" style="margin-bottom:14px">
+  <thead><tr><th>Debt</th><th>Balance ($)</th><th>APR (%)</th><th>Min payment ($/mo)</th></tr></thead>
+  <tbody id="dp-rows"></tbody>
+</table>
+</div>
+<div class="row">
+  <div class="field"><label for="dp-extra">Extra payment ($/mo)</label><input type="number" id="dp-extra" value="300" min="0" step="50"></div>
+</div>
+
+<div class="result" id="dp-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var defaults = [
+    ['Credit card', 6000, 22, 150],
+    ['Car loan', 14000, 7, 320],
+    ['Personal loan', 4000, 12, 110],
+    ['Store card', 1500, 26, 45],
+    ['', '', '', '']
+  ];
+  var rowsEl = document.getElementById('dp-rows');
+  defaults.forEach(function (d, i) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><input type="text" value="' + d[0] + '" id="dp-name' + i + '" style="width:100%" placeholder="Debt ' + (i + 1) + '"></td>' +
+      '<td><input type="number" value="' + d[1] + '" id="dp-bal' + i + '" min="0" step="100" style="width:100%"></td>' +
+      '<td><input type="number" value="' + d[2] + '" id="dp-apr' + i + '" min="0" step="0.1" style="width:100%"></td>' +
+      '<td><input type="number" value="' + d[3] + '" id="dp-min' + i + '" min="0" step="10" style="width:100%"></td>';
+    rowsEl.appendChild(tr);
+  });
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function fmtMonths(m) { var y = Math.floor(m / 12), mo = m % 12; return (y ? y + ' yr ' : '') + mo + ' mo'; }
+
+  function getDebts() {
+    var list = [];
+    for (var i = 0; i < 5; i++) {
+      var bal = v('dp-bal' + i);
+      if (bal > 0) list.push({ bal: bal, apr: v('dp-apr' + i) / 100 / 12, min: v('dp-min' + i) });
+    }
+    return list;
+  }
+
+  // strategy: "snowball" (smallest balance first) or "avalanche" (highest apr first)
+  function simulate(debtsIn, extra, strategy) {
+    var debts = debtsIn.map(function (d) { return { bal: d.bal, apr: d.apr, min: d.min }; });
+    // total payment stays constant; freed-up minimums roll into the target automatically
+    var budget = debts.reduce(function (s, d) { return s + d.min; }, 0) + extra;
+    var months = 0, totalInterest = 0;
+    while (debts.some(function (d) { return d.bal > 0.005; }) && months < 1200) {
+      months++;
+      // accrue interest
+      debts.forEach(function (d) { if (d.bal > 0) { var it = d.bal * d.apr; d.bal += it; totalInterest += it; } });
+      var pool = budget;
+      // pay minimums on active debts first
+      debts.forEach(function (d) {
+        if (d.bal > 0) { var p = Math.min(d.min, d.bal, pool); d.bal -= p; pool -= p; }
+      });
+      // cascade any remaining budget to the target order
+      var active = debts.filter(function (d) { return d.bal > 0.005; });
+      active.sort(function (a, b) { return strategy === 'snowball' ? a.bal - b.bal : b.apr - a.apr; });
+      for (var k = 0; k < active.length && pool > 0.005; k++) {
+        var pay = Math.min(pool, active[k].bal);
+        active[k].bal -= pay; pool -= pay;
+      }
+    }
+    return { months: months, interest: totalInterest };
+  }
+
+  function calc() {
+    var debts = getDebts();
+    var extra = v('dp-extra');
+    var out = document.getElementById('dp-out');
+    if (!debts.length) { out.innerHTML = '<p class="note">Enter at least one debt balance to compare strategies.</p>'; return; }
+
+    var totalBal = debts.reduce(function (s, d) { return s + d.bal; }, 0);
+    var totalMin = debts.reduce(function (s, d) { return s + d.min; }, 0);
+
+    var snow = simulate(debts, extra, 'snowball');
+    var aval = simulate(debts, extra, 'avalanche');
+    var interestSaved = snow.interest - aval.interest;
+    var monthsSaved = snow.months - aval.months;
+
+    out.innerHTML =
+      '<div class="result-sub">Avalanche pays off in</div>' +
+      '<div class="result-big">' + fmtMonths(aval.months) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Total debt', money.format(totalBal)) +
+        kv('Total minimum payments', money.format(totalMin) + '/mo') +
+        kv('Plus extra', money.format(extra) + '/mo') +
+        kv('<strong>Avalanche (highest APR first)</strong>', '<strong>' + fmtMonths(aval.months) + ' · ' + money.format(aval.interest) + ' interest</strong>') +
+        kv('<strong>Snowball (smallest balance first)</strong>', '<strong>' + fmtMonths(snow.months) + ' · ' + money.format(snow.interest) + ' interest</strong>') +
+      '</div>' +
+      '<p class="note">' +
+        (interestSaved > 0.5
+          ? 'The <strong>avalanche</strong> saves ' + money.format(interestSaved) + ' in interest' + (monthsSaved > 0 ? ' and finishes ' + fmtMonths(monthsSaved) + ' sooner' : '') + ' versus the snowball. If quick wins keep you motivated, the snowball’s extra cost may still be worth it.'
+          : 'Both methods finish about the same here. Pick whichever keeps you motivated — the snowball’s early wins or the avalanche’s efficiency.') +
+      '</p>';
+  }
+  for (var i = 0; i < 5; i++) {
+    ['dp-bal', 'dp-apr', 'dp-min'].forEach(function (p) { document.getElementById(p + i).addEventListener('input', calc); });
+  }
+  document.getElementById('dp-extra').addEventListener('input', calc);
+  calc();
+})();
+</script>
+
+<h2>Snowball or avalanche — get out of debt faster</h2>
+<p>When you're juggling several debts, the order you attack them in matters more than most people realize. Two strategies dominate, and they optimize for different things:</p>
+<ul>
+  <li><strong>Debt avalanche</strong> — pay minimums on everything, then throw every extra dollar at the <strong>highest-interest</strong> debt first. This minimizes total interest and is almost always the fastest, cheapest path mathematically.</li>
+  <li><strong>Debt snowball</strong> — pay minimums on everything, then attack the <strong>smallest balance</strong> first. You clear individual debts quickly, and those early wins build momentum that helps many people stick with the plan.</li>
+</ul>
+<p>This calculator simulates both on your actual debts and shows the difference in months and interest, so you can weigh the avalanche's savings against the snowball's motivational payoff.</p>
+<h2>The real engine: extra payments</h2>
+<p>Minimum payments are structured to keep you in debt for years, especially on high-rate credit cards. The single biggest factor in how fast you get free isn't which method you pick — it's how much <strong>extra</strong> you can put toward the target debt each month. As each debt is cleared, roll its payment into the next one; that growing payment is what gives the snowball (and avalanche) their power.</p>
+<p class="note"><strong>Estimate only.</strong> This is a simplified model assuming fixed balances, rates, and minimum payments, and constant extra payments. Real cards have changing minimums and rates. Use it to compare strategies, not as an exact schedule. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is the debt snowball method?</summary><div class="faq-a">The snowball method pays minimums on every debt and throws all extra money at the smallest balance first. When it's gone, you roll its payment into the next-smallest, and so on. It's slower mathematically but delivers quick early wins that keep many people motivated to stay the course.</div></details>
+<details class="faq-item"><summary>What is the debt avalanche method?</summary><div class="faq-a">The avalanche method pays minimums on everything and directs all extra money to the debt with the highest interest rate first, then the next highest. It minimizes total interest and usually pays everything off fastest, though the first win can take longer if your highest-rate debt has a large balance.</div></details>
+<details class="faq-item"><summary>Which is better, snowball or avalanche?</summary><div class="faq-a">Avalanche saves the most money and time on paper. Snowball can save your motivation, which matters because the best plan is the one you actually finish. This calculator shows both so you can see the dollar difference and decide whether the avalanche's savings outweigh the snowball's psychological boost.</div></details>
+<details class="faq-item"><summary>How much faster will extra payments clear my debt?</summary><div class="faq-a">A lot. Minimum payments are designed to keep you in debt for years; even a modest extra amount each month, focused on one debt at a time, can cut the payoff timeline dramatically and save thousands in interest. The bigger the extra payment, the larger the effect.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/debt-to-income-calculator/"><h3>Debt-to-Income (DTI) Calculator</h3><p>Calculate your debt-to-income (DTI) ratio for a mortgage. Enter your income and monthly debts to see your front-end and back-end ratios and how lenders view them.</p></a><a class="card" href="/toolnest/down-payment-savings-calculator/"><h3>Down Payment Savings Calculator</h3><p>Find out how long it will take to save your target home down payment based on your current savings, monthly contributions, and interest earned.</p></a><a class="card" href="/toolnest/emergency-fund-calculator/"><h3>Emergency Fund Calculator</h3><p>Find out how big your emergency fund should be and how long it will take to reach it. Enter your monthly expenses, target months of coverage, current savings, and contribution.</p></a><a class="card" href="/toolnest/fha-loan-calculator/"><h3>FHA Loan Calculator</h3><p>Estimate your FHA mortgage payment including upfront and monthly MIP, property taxes, and insurance, plus the financed loan amount.</p></a><a class="card" href="/toolnest/fix-and-flip-calculator/"><h3>Fix and Flip Calculator (70% Rule)</h3><p>Run the numbers on a house flip: maximum allowable offer using the 70% rule, total project cost, projected profit, and return on investment from ARV, rehab, and holding costs.</p></a><a class="card" href="/toolnest/heloc-calculator/"><h3>HELOC & Home Equity Calculator</h3><p>Find out how much you can borrow against your home. Calculate your available home equity line of credit (HELOC) or loan based on your home value, mortgage balance, and lender's max loan-to-value.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!--META
+{
+  "title": "Word Counter",
+  "slug": "word-counter",
+  "category": "random",
+  "h1": "Word & Character Counter",
+  "description": "Count words, characters, sentences, and paragraphs in your text instantly. See reading time too. Everything runs in your browser — your text never leaves the page.",
+  "keywords": "word counter, character counter, word count tool, count words online, character count, reading time calculator",
+  "faq": [
+    {"q": "How does the word counter work?", "a": "As you type or paste text, the tool counts words (groups of characters separated by spaces), total characters, characters excluding spaces, sentences, and paragraphs. It updates live and runs entirely in your browser, so nothing you type is uploaded or stored."},
+    {"q": "How is reading time estimated?", "a": "Reading time is based on an average adult reading speed of about 200–250 words per minute; this tool uses 200 for a comfortable estimate. Actual speed varies with the difficulty of the text and the reader, so treat it as a rough guide."},
+    {"q": "What counts as a word?", "a": "A word is any sequence of non-space characters separated by whitespace, so hyphenated terms and contractions count as one word. Numbers and standalone symbols separated by spaces also count. This matches how most word processors tally words."},
+    {"q": "Is my text private?", "a": "Yes. All counting happens locally in your browser using JavaScript. Your text is never sent to a server, saved, or logged — close the tab and it's gone."}
+  ]
+}
+META-->
+<div class="field">
+  <label for="wc-text">Your text</label>
+  <textarea id="wc-text" rows="9" style="width:100%;resize:vertical" placeholder="Type or paste your text here…">The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.</textarea>
+</div>
+<div class="btn-row">
+  <button class="btn secondary" id="wc-clear">Clear</button>
+  <button class="btn secondary" data-copy="#wc-text" id="wc-copy">Copy text</button>
+</div>
+
+<div class="result" id="wc-out"></div>
+
+<script>
+(function () {
+  var nf = new Intl.NumberFormat('en-US');
+  var ta = document.getElementById('wc-text');
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var text = ta.value;
+    var trimmed = text.trim();
+    var words = trimmed ? trimmed.split(/\s+/).length : 0;
+    var chars = text.length;
+    var noSpaces = text.replace(/\s/g, '').length;
+    var sentences = (trimmed.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g) || []).filter(function (s) { return s.trim(); }).length;
+    var paragraphs = trimmed ? trimmed.split(/\n+/).filter(function (p) { return p.trim(); }).length : 0;
+    var minutes = words / 200;
+    var readTime = words === 0 ? '0 sec' : minutes < 1 ? Math.ceil(minutes * 60) + ' sec' : Math.round(minutes) + ' min';
+
+    document.getElementById('wc-out').innerHTML =
+      '<div class="result-sub">Words</div>' +
+      '<div class="result-big">' + nf.format(words) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Characters', nf.format(chars)) +
+        kv('Characters (no spaces)', nf.format(noSpaces)) +
+        kv('Sentences', nf.format(sentences)) +
+        kv('Paragraphs', nf.format(paragraphs)) +
+        kv('Reading time', readTime) +
+      '</div>';
+  }
+  ta.addEventListener('input', calc);
+  document.getElementById('wc-clear').addEventListener('click', function () { ta.value = ''; calc(); ta.focus(); });
+  calc();
+})();
+</script>
+
+<h2>Count words and characters instantly</h2>
+<p>Whether you're trimming an essay to a word limit, fitting a meta description under 160 characters, or checking a tweet's length, knowing your exact counts matters. This tool tallies <strong>words, characters, characters without spaces, sentences, and paragraphs</strong> the moment you type or paste — no button to press, no waiting.</p>
+<p>It also estimates <strong>reading time</strong> based on a typical pace of 200 words per minute, which is handy for blog posts, scripts, and presentations where you need to gauge how long your audience will spend.</p>
+<h2>Where word and character limits come up</h2>
+<ul>
+  <li><strong>Academic writing</strong> — essays and applications with strict word counts.</li>
+  <li><strong>SEO &amp; metadata</strong> — title tags (~60 characters) and meta descriptions (~155 characters) that get cut off if too long.</li>
+  <li><strong>Social media</strong> — posts with character caps.</li>
+  <li><strong>Forms and bios</strong> — fields that limit how much you can enter.</li>
+</ul>
+<p>Because everything runs locally in your browser, your text stays completely <strong>private</strong> — it's never uploaded, saved, or seen by anyone but you. Paste sensitive drafts without a second thought, and close the tab when you're done to clear it entirely.</p>

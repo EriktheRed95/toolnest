@@ -1,0 +1,91 @@
+<!--META
+{
+  "title": "Salary to Hourly Calculator",
+  "slug": "salary-to-hourly-calculator",
+  "category": "everyday",
+  "h1": "Salary to Hourly Calculator",
+  "description": "Convert an annual salary to an hourly wage, or an hourly rate to a yearly salary. See weekly, biweekly, monthly, and daily pay based on your hours and weeks worked.",
+  "keywords": "salary to hourly calculator, hourly to salary calculator, annual salary to hourly wage, hourly rate to yearly salary, pay converter",
+  "faq": [
+    {"q": "How do I convert salary to hourly pay?", "a": "Divide your annual salary by the number of hours you work in a year. This calculator does it for you: enter your salary, hours per week, and weeks per year, and it returns your hourly rate plus weekly, biweekly, monthly, and daily figures."},
+    {"q": "How do I convert hourly pay to a salary?", "a": "Multiply your hourly rate by hours worked per week, then by weeks worked per year. The second section does this and also breaks the result into monthly and weekly pay."},
+    {"q": "How many hours and weeks should I use?", "a": "A common full-time assumption is 40 hours a week for 52 weeks a year (2,080 hours). If you take unpaid time off, lower the weeks; if you work part-time or overtime, adjust the hours so the estimate fits your real schedule."},
+    {"q": "Are these figures before or after tax?", "a": "They're gross — before taxes, benefits, and other deductions. Your actual take-home pay will be lower and depends on where you live and your personal situation."}
+  ]
+}
+META-->
+<h2 style="margin-top:0">Salary &rarr; Hourly</h2>
+<div class="row">
+  <div class="field"><label for="sh-salary">Annual salary ($)</label><input type="number" id="sh-salary" value="60000" min="0" step="100"></div>
+  <div class="field"><label for="sh-a-hours">Hours per week</label><input type="number" id="sh-a-hours" value="40" min="0" step="0.5"></div>
+  <div class="field"><label for="sh-a-weeks">Weeks per year</label><input type="number" id="sh-a-weeks" value="52" min="0" step="1"></div>
+</div>
+<div class="result" id="sh-a-out"></div>
+
+<h2>Hourly &rarr; Salary</h2>
+<div class="row">
+  <div class="field"><label for="sh-rate">Hourly rate ($)</label><input type="number" id="sh-rate" value="25" min="0" step="0.01"></div>
+  <div class="field"><label for="sh-b-hours">Hours per week</label><input type="number" id="sh-b-hours" value="40" min="0" step="0.5"></div>
+  <div class="field"><label for="sh-b-weeks">Weeks per year</label><input type="number" id="sh-b-weeks" value="52" min="0" step="1"></div>
+</div>
+<div class="result" id="sh-b-out"></div>
+
+<script>
+(function () {
+  var cf = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calcA() {
+    var out = document.getElementById('sh-a-out');
+    var salary = v('sh-salary'), hours = v('sh-a-hours'), weeks = v('sh-a-weeks');
+    if (salary <= 0 || hours <= 0 || weeks <= 0) { out.innerHTML = '<p class="note">Enter a salary, hours per week, and weeks per year.</p>'; return; }
+    var hourly = salary / (hours * weeks);
+    var weekly = salary / weeks;
+    var biweekly = weekly * 2;
+    var monthly = salary / 12;
+    var daily = hourly * (hours / 5);
+    out.innerHTML =
+      '<div class="result-sub">Hourly rate</div>' +
+      '<div class="result-big">' + cf.format(hourly) + '/hr</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Hourly', cf.format(hourly)) +
+        kv('Daily', cf.format(daily)) +
+        kv('Weekly', cf.format(weekly)) +
+        kv('Biweekly', cf.format(biweekly)) +
+        kv('Monthly', cf.format(monthly)) +
+        kv('Annual', cf.format(salary)) +
+      '</div>';
+  }
+
+  function calcB() {
+    var out = document.getElementById('sh-b-out');
+    var rate = v('sh-rate'), hours = v('sh-b-hours'), weeks = v('sh-b-weeks');
+    if (rate <= 0 || hours <= 0 || weeks <= 0) { out.innerHTML = '<p class="note">Enter an hourly rate, hours per week, and weeks per year.</p>'; return; }
+    var annual = rate * hours * weeks;
+    var monthly = annual / 12;
+    var weekly = annual / weeks;
+    out.innerHTML =
+      '<div class="result-sub">Annual salary</div>' +
+      '<div class="result-big">' + cf.format(annual) + '/yr</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Annual', cf.format(annual)) +
+        kv('Monthly', cf.format(monthly)) +
+        kv('Weekly', cf.format(weekly)) +
+        kv('Hourly', cf.format(rate)) +
+      '</div>';
+  }
+
+  ['sh-salary', 'sh-a-hours', 'sh-a-weeks'].forEach(function (id) { document.getElementById(id).addEventListener('input', calcA); });
+  ['sh-rate', 'sh-b-hours', 'sh-b-weeks'].forEach(function (id) { document.getElementById(id).addEventListener('input', calcB); });
+  calcA();
+  calcB();
+})();
+</script>
+
+<h2>Salary and hourly pay, both directions</h2>
+<p>Salaried and hourly figures describe the same income from different angles, and switching between them is one of the most useful things you can do when comparing job offers or planning a budget. This tool works <strong>both ways</strong>: the top section turns an annual salary into an hourly rate, and the bottom section turns an hourly rate into a yearly salary. Each has its own result box, so you can use one or compare the two side by side.</p>
+<p>The key inputs are your <strong>hours per week</strong> and <strong>weeks per year</strong>. Standard full-time work is often modelled as 40 hours across 52 weeks — about 2,080 paid hours — but you can adjust both to match part-time schedules, unpaid leave, or overtime so the numbers reflect your real situation.</p>
+<h2>Reading the breakdown</h2>
+<p>Beyond the headline figure, each section breaks pay down into the periods you actually get paid in: hourly, daily, weekly, biweekly, monthly, and annual. That makes it easy to sanity-check a quoted rate against a paycheck or to see what a raise looks like per hour. Everything recalculates the moment you change a field.</p>
+<p class="note">All figures are gross estimates before taxes, benefits, and other deductions, which vary by location and circumstance.</p>

@@ -1,0 +1,68 @@
+<!--META
+{
+  "title": "Loan Calculator",
+  "slug": "loan-calculator",
+  "category": "everyday",
+  "h1": "Loan Calculator",
+  "description": "Calculate the monthly payment, total interest, and total cost of any loan — personal, student, or installment. Enter the amount, rate, and term to see your numbers.",
+  "keywords": "loan calculator, monthly payment calculator, personal loan calculator, loan interest calculator, installment loan payment",
+  "faq": [
+    {"q": "How is a loan payment calculated?", "a": "A fixed-rate loan uses the amortization formula: the payment is the loan amount times the monthly rate, times (1 + rate)^months, divided by ((1 + rate)^months − 1). Each payment covers that month's interest first, with the rest reducing the balance. Early payments are mostly interest; later ones mostly principal."},
+    {"q": "What's the difference between APR and interest rate?", "a": "The interest rate is the cost of borrowing the principal. The APR (annual percentage rate) also folds in certain fees, so it reflects the loan's true yearly cost and is better for comparing offers. This calculator uses the rate you enter as the periodic rate; enter the APR for the most accurate comparison."},
+    {"q": "Does a longer loan term save money?", "a": "A longer term lowers the monthly payment but increases the total interest you pay, because you're borrowing for longer. A shorter term costs more each month but far less overall. Try a few terms above to see the trade-off for your loan."},
+    {"q": "How can I pay less interest?", "a": "Borrow less, get a lower rate (often via better credit), choose a shorter term, or make extra principal payments. Even small extra payments early in the loan can meaningfully cut total interest, since they reduce the balance that interest is charged on."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="ln-amount">Loan amount ($)</label><input type="number" id="ln-amount" value="20000" min="0" step="100"></div>
+  <div class="field"><label for="ln-rate">Interest rate (% APR)</label><input type="number" id="ln-rate" value="9.5" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="ln-term">Term length</label><input type="number" id="ln-term" value="5" min="0.1" step="0.5"></div>
+  <div class="field"><label for="ln-unit">Term in</label>
+    <select id="ln-unit"><option value="12">Years</option><option value="1">Months</option></select></div>
+</div>
+
+<div class="result" id="ln-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['ln-amount', 'ln-rate', 'ln-term', 'ln-unit'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var P = v('ln-amount');
+    var r = v('ln-rate') / 100 / 12;
+    var n = Math.round(v('ln-term') * v('ln-unit'));
+    var out = document.getElementById('ln-out');
+    if (P <= 0 || n <= 0) { out.innerHTML = '<p class="note">Enter a loan amount and term.</p>'; return; }
+    var pay = r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    var total = pay * n;
+    var interest = total - P;
+
+    out.innerHTML =
+      '<div class="result-sub">Monthly payment</div>' +
+      '<div class="result-big">' + money2.format(pay) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Loan amount', money.format(P)) +
+        kv('Total interest', money.format(interest)) +
+        kv('Total of ' + n + ' payments', money.format(total)) +
+        kv('Interest as % of loan', P ? (interest / P * 100).toFixed(1) + '%' : '—') +
+      '</div>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  document.getElementById('ln-unit').addEventListener('change', calc);
+  calc();
+})();
+</script>
+
+<h2>Understanding your loan payment</h2>
+<p>Whether it's a personal loan, a student loan, or any fixed installment loan, the monthly payment is driven by three things: the <strong>amount</strong> you borrow, the <strong>interest rate</strong>, and the <strong>term</strong> (how long you take to repay). This calculator combines them using the standard amortization formula and shows not just the payment, but the <strong>total interest</strong> — often the more eye-opening number.</p>
+<p>Every payment is split: part covers the interest accrued that month, and the rest pays down the balance. Early in the loan the interest share is largest, which is why borrowing for longer — or at a higher rate — costs disproportionately more over time.</p>
+<h2>How to pay less</h2>
+<p>Four levers reduce what a loan costs you: borrow less, secure a lower rate (usually through stronger credit), choose a shorter term, or make extra principal payments. The first three are set when you sign; the last one you control for the life of the loan. Because extra payments attack the balance directly, even modest ones made early can save a surprising amount of interest.</p>
+<p class="note"><strong>Estimate only.</strong> This assumes a fixed rate and equal monthly payments, and treats the rate you enter as the periodic rate. Real loans may include fees, variable rates, or different compounding. Check your loan agreement for exact terms. This is not financial advice.</p>

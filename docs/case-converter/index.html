@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case Converter</title>
+<meta name="description" content="Convert text between UPPERCASE, lowercase, Title Case, Sentence case, camelCase, snake_case, and kebab-case. Fast, free, and private — runs in your browser.">
+<meta name="keywords" content="case converter, uppercase to lowercase, title case converter, sentence case, camelcase converter, snake case, change text case">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/case-converter/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Case Converter">
+<meta property="og:description" content="Convert text between UPPERCASE, lowercase, Title Case, Sentence case, camelCase, snake_case, and kebab-case. Fast, free, and private — runs in your browser.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/case-converter/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Case Converter", "url": "https://erikthered95.github.io/toolnest/case-converter/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Convert text between UPPERCASE, lowercase, Title Case, Sentence case, camelCase, snake_case, and kebab-case. Fast, free, and private \u2014 runs in your browser."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is Title Case vs. Sentence case?", "acceptedAnswer": {"@type": "Answer", "text": "Title Case capitalizes the first letter of each major word (\"The Quick Brown Fox\") and is used for headlines and titles. Sentence case capitalizes only the first word and proper nouns (\"The quick brown fox\"), like a normal sentence. This tool produces both."}}, {"@type": "Question", "name": "What are camelCase, snake_case, and kebab-case?", "acceptedAnswer": {"@type": "Answer", "text": "These are naming styles used in programming. camelCase joins words with no spaces and capitalizes each word after the first (myVariableName). snake_case joins words with underscores (my_variable_name). kebab-case joins them with hyphens (my-variable-name), common in URLs and CSS."}}, {"@type": "Question", "name": "Does converting case lose my formatting?", "acceptedAnswer": {"@type": "Answer", "text": "The converters change letter casing and, for the programming styles, remove spaces in favor of underscores or hyphens. Line breaks are preserved for the upper/lower/title/sentence conversions. If you need to keep exact formatting, copy your original text first."}}, {"@type": "Question", "name": "Is my text uploaded anywhere?", "acceptedAnswer": {"@type": "Answer", "text": "No. All conversions happen in your browser with JavaScript. Your text isn't sent to a server or stored, so it stays completely private."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>Text Case Converter</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://erikthered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "Text Case Converter"}]}</script>
+<article class="tool"><h1>Text Case Converter</h1><p class="lede">Convert text between UPPERCASE, lowercase, Title Case, Sentence case, camelCase, snake_case, and kebab-case. Fast, free, and private — runs in your browser.</p><div class="field">
+  <label for="cc-text">Your text</label>
+  <textarea id="cc-text" rows="6" style="width:100%;resize:vertical" placeholder="Type or paste text…">the quick brown fox jumps over the lazy dog</textarea>
+</div>
+<div class="btn-row">
+  <button class="btn" data-case="upper">UPPERCASE</button>
+  <button class="btn" data-case="lower">lowercase</button>
+  <button class="btn" data-case="title">Title Case</button>
+  <button class="btn" data-case="sentence">Sentence case</button>
+  <button class="btn" data-case="camel">camelCase</button>
+  <button class="btn" data-case="snake">snake_case</button>
+  <button class="btn" data-case="kebab">kebab-case</button>
+</div>
+<div class="btn-row">
+  <button class="btn secondary" data-copy="#cc-text" id="cc-copy">Copy result</button>
+</div>
+
+<script>
+(function () {
+  var ta = document.getElementById('cc-text');
+  function words(s) { return s.replace(/[_\-]+/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').trim().split(/\s+/).filter(Boolean); }
+
+  var converters = {
+    upper: function (s) { return s.toUpperCase(); },
+    lower: function (s) { return s.toLowerCase(); },
+    title: function (s) {
+      return s.replace(/\w\S*/g, function (w) { return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); });
+    },
+    sentence: function (s) {
+      var lower = s.toLowerCase();
+      return lower.replace(/(^\s*\w|[.!?]\s+\w)/g, function (c) { return c.toUpperCase(); });
+    },
+    camel: function (s) {
+      return words(s).map(function (w, i) {
+        w = w.toLowerCase();
+        return i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1);
+      }).join('');
+    },
+    snake: function (s) { return words(s).map(function (w) { return w.toLowerCase(); }).join('_'); },
+    kebab: function (s) { return words(s).map(function (w) { return w.toLowerCase(); }).join('-'); }
+  };
+
+  document.querySelectorAll('[data-case]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      ta.value = converters[btn.dataset.case](ta.value);
+      ta.focus();
+    });
+  });
+})();
+</script>
+
+<h2>Convert text to any case</h2>
+<p>Retyping text just to fix its capitalization is a waste of time. Paste it here and switch instantly between the cases you need — from a headline in <strong>Title Case</strong> to an all-caps heading, a clean <strong>Sentence case</strong> paragraph, or the programmer-friendly <strong>camelCase</strong>, <strong>snake_case</strong>, and <strong>kebab-case</strong> formats. Each button transforms the text in place; copy the result with one click.</p>
+<h2>Which case should you use?</h2>
+<ul>
+  <li><strong>UPPERCASE</strong> — emphasis, acronyms, or headings. Use sparingly; all-caps is harder to read in long stretches.</li>
+  <li><strong>lowercase</strong> — a uniform, casual look, or to normalize text before processing.</li>
+  <li><strong>Title Case</strong> — headlines, titles, and headings where each major word is capitalized.</li>
+  <li><strong>Sentence case</strong> — normal prose: capitalize the first word and proper nouns only.</li>
+  <li><strong>camelCase / snake_case / kebab-case</strong> — variable and file names in code, URLs, and CSS classes. Pick the convention your project uses.</li>
+</ul>
+<p>Everything runs locally in your browser, so your text is never uploaded or stored — paste freely and the content stays private to your device.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is Title Case vs. Sentence case?</summary><div class="faq-a">Title Case capitalizes the first letter of each major word ("The Quick Brown Fox") and is used for headlines and titles. Sentence case capitalizes only the first word and proper nouns ("The quick brown fox"), like a normal sentence. This tool produces both.</div></details>
+<details class="faq-item"><summary>What are camelCase, snake_case, and kebab-case?</summary><div class="faq-a">These are naming styles used in programming. camelCase joins words with no spaces and capitalizes each word after the first (myVariableName). snake_case joins words with underscores (my_variable_name). kebab-case joins them with hyphens (my-variable-name), common in URLs and CSS.</div></details>
+<details class="faq-item"><summary>Does converting case lose my formatting?</summary><div class="faq-a">The converters change letter casing and, for the programming styles, remove spaces in favor of underscores or hyphens. Line breaks are preserved for the upper/lower/title/sentence conversions. If you need to keep exact formatting, copy your original text first.</div></details>
+<details class="faq-item"><summary>Is my text uploaded anywhere?</summary><div class="faq-a">No. All conversions happen in your browser with JavaScript. Your text isn't sent to a server or stored, so it stays completely private.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/coin-flip/"><h3>Coin Flip</h3><p>Flip a virtual coin online. Get a fair, random heads or tails result, flip several at once, and keep a running tally. Free instant coin toss.</p></a><a class="card" href="/toolnest/color-converter/"><h3>Color Converter (HEX, RGB, HSL)</h3><p>Convert colors between HEX, RGB, and HSL with a live preview swatch and a color picker. Pick a color or type a hex code and copy the values you need.</p></a><a class="card" href="/toolnest/dice-roller/"><h3>Dice Roller</h3><p>Roll virtual dice online — any number of dice with any number of sides (d4, d6, d8, d10, d12, d20). See each die, the total, and a running roll history.</p></a><a class="card" href="/toolnest/hash-generator/"><h3>Hash Generator (SHA-256, SHA-1, SHA-512)</h3><p>Generate SHA-1, SHA-256, and SHA-512 hashes of any text directly in your browser. Live results, hex output, and one-click copy. Nothing is uploaded.</p></a><a class="card" href="/toolnest/json-formatter/"><h3>JSON Formatter & Validator</h3><p>Format, minify, and validate JSON in your browser. Pretty-print with clean indentation, compress to one line, and get clear error messages. Private and instant.</p></a><a class="card" href="/toolnest/lorem-ipsum-generator/"><h3>Lorem Ipsum Generator</h3><p>Generate placeholder lorem ipsum text by paragraphs, sentences, or words. Copy classic dummy text instantly for mockups, designs, and layouts.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

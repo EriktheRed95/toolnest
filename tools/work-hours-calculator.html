@@ -1,0 +1,72 @@
+<!--META
+{
+  "title": "Work Hours Calculator",
+  "slug": "work-hours-calculator",
+  "category": "everyday",
+  "h1": "Work Hours Calculator",
+  "description": "Calculate hours worked from clock-in and clock-out times, minus unpaid breaks. See the result in hours and minutes, as decimal hours, and as gross pay if you add a rate.",
+  "keywords": "work hours calculator, time card calculator, hours worked calculator, clock in clock out, decimal hours, gross pay calculator",
+  "faq": [
+    {"q": "How are worked hours calculated?", "a": "The calculator finds the minutes between your clock-in and clock-out times, subtracts any unpaid break, and converts the result to hours and minutes. It also shows decimal hours, which is the format most payroll systems use."},
+    {"q": "Does it handle overnight shifts?", "a": "Yes. If the clock-out time is earlier than or equal to the clock-in time, the calculator assumes the shift ran past midnight and adds 24 hours, so a shift from 10 PM to 6 AM correctly counts as eight hours."},
+    {"q": "What counts as an unpaid break?", "a": "Many employers don't pay for meal breaks. Enter the total unpaid break minutes and they'll be deducted from your worked time. Set it to zero if all your breaks are paid."},
+    {"q": "How is gross pay figured?", "a": "If you enter an hourly rate, gross pay is your decimal hours multiplied by that rate. It's a pre-tax figure — actual take-home pay will be lower after deductions."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="wh-in">Clock in</label><input type="time" id="wh-in" value="09:00"></div>
+  <div class="field"><label for="wh-out">Clock out</label><input type="time" id="wh-out" value="17:30"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="wh-break">Unpaid break (minutes)</label><input type="number" id="wh-break" value="30" min="0" step="1"></div>
+  <div class="field"><label for="wh-rate">Hourly rate ($, optional)</label><input type="number" id="wh-rate" value="0" min="0" step="0.01"></div>
+</div>
+
+<div class="result" id="wh-out"></div>
+
+<script>
+(function () {
+  var cf = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var inEl = document.getElementById('wh-in'), outEl = document.getElementById('wh-out');
+  var breakEl = document.getElementById('wh-break'), rateEl = document.getElementById('wh-rate');
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function mins(t) { if (!t) return null; var p = t.split(':'); return (+p[0]) * 60 + (+p[1]); }
+
+  function calc() {
+    var out = document.getElementById('wh-out');
+    var mi = mins(inEl.value), mo = mins(outEl.value);
+    if (mi === null || mo === null) { out.innerHTML = '<p class="note">Enter clock-in and clock-out times.</p>'; return; }
+    var span = mo - mi;
+    var overnight = false;
+    if (span <= 0) { span += 24 * 60; overnight = true; }
+    var brk = +breakEl.value || 0;
+    var worked = Math.max(0, span - brk);
+    var h = Math.floor(worked / 60), m = worked % 60;
+    var dec = worked / 60;
+    var rate = +rateEl.value || 0;
+
+    var rows =
+      kv('Hours worked', h + 'h ' + m + 'm') +
+      kv('Decimal hours', dec.toFixed(2)) +
+      kv('Unpaid break', brk + ' min');
+    if (rate > 0) rows += kv('Gross pay', cf.format(dec * rate));
+
+    out.innerHTML =
+      '<div class="result-sub">Time worked</div>' +
+      '<div class="result-big">' + h + 'h ' + m + 'm</div>' +
+      '<div style="margin-top:12px">' + rows + '</div>' +
+      (overnight ? '<p class="note">Clock-out was at or before clock-in, so this is treated as an overnight shift (24 hours added).</p>' : '') +
+      '<p class="note">Worked time subtracts the unpaid break. Gross pay is before taxes and deductions.</p>';
+  }
+  [inEl, outEl, breakEl, rateEl].forEach(function (el) { el.addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>From time card to take-home</h2>
+<p>This calculator turns a pair of clock times into the numbers you actually need: <strong>hours and minutes worked, decimal hours, and gross pay</strong>. Enter when you clocked in and out, subtract any unpaid break, and the result appears instantly. Decimal hours matter because most payroll systems want them — eight and a half hours becomes 8.50, not "8h 30m."</p>
+<p>Add your hourly rate and the tool multiplies it by your decimal hours to estimate gross pay for the shift. Leave the rate at zero if you only need the hours.</p>
+<h2>Breaks and overnight shifts</h2>
+<p>If your meal break is unpaid, enter its length in minutes and it's deducted from your total; set it to zero when all breaks are paid. The calculator also handles shifts that cross midnight: when the clock-out time is earlier than the clock-in time, it assumes you worked into the next day and adds <strong>24 hours</strong> automatically, so a 10 PM to 6 AM shift reads as a clean eight hours.</p>
+<p class="note">Gross pay is an estimate before taxes, overtime rules, and other deductions, which vary by employer and location.</p>

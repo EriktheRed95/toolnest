@@ -1,0 +1,78 @@
+<!--META
+{
+  "title": "Case Converter",
+  "slug": "case-converter",
+  "category": "random",
+  "h1": "Text Case Converter",
+  "description": "Convert text between UPPERCASE, lowercase, Title Case, Sentence case, camelCase, snake_case, and kebab-case. Fast, free, and private — runs in your browser.",
+  "keywords": "case converter, uppercase to lowercase, title case converter, sentence case, camelcase converter, snake case, change text case",
+  "faq": [
+    {"q": "What is Title Case vs. Sentence case?", "a": "Title Case capitalizes the first letter of each major word (\"The Quick Brown Fox\") and is used for headlines and titles. Sentence case capitalizes only the first word and proper nouns (\"The quick brown fox\"), like a normal sentence. This tool produces both."},
+    {"q": "What are camelCase, snake_case, and kebab-case?", "a": "These are naming styles used in programming. camelCase joins words with no spaces and capitalizes each word after the first (myVariableName). snake_case joins words with underscores (my_variable_name). kebab-case joins them with hyphens (my-variable-name), common in URLs and CSS."},
+    {"q": "Does converting case lose my formatting?", "a": "The converters change letter casing and, for the programming styles, remove spaces in favor of underscores or hyphens. Line breaks are preserved for the upper/lower/title/sentence conversions. If you need to keep exact formatting, copy your original text first."},
+    {"q": "Is my text uploaded anywhere?", "a": "No. All conversions happen in your browser with JavaScript. Your text isn't sent to a server or stored, so it stays completely private."}
+  ]
+}
+META-->
+<div class="field">
+  <label for="cc-text">Your text</label>
+  <textarea id="cc-text" rows="6" style="width:100%;resize:vertical" placeholder="Type or paste text…">the quick brown fox jumps over the lazy dog</textarea>
+</div>
+<div class="btn-row">
+  <button class="btn" data-case="upper">UPPERCASE</button>
+  <button class="btn" data-case="lower">lowercase</button>
+  <button class="btn" data-case="title">Title Case</button>
+  <button class="btn" data-case="sentence">Sentence case</button>
+  <button class="btn" data-case="camel">camelCase</button>
+  <button class="btn" data-case="snake">snake_case</button>
+  <button class="btn" data-case="kebab">kebab-case</button>
+</div>
+<div class="btn-row">
+  <button class="btn secondary" data-copy="#cc-text" id="cc-copy">Copy result</button>
+</div>
+
+<script>
+(function () {
+  var ta = document.getElementById('cc-text');
+  function words(s) { return s.replace(/[_\-]+/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').trim().split(/\s+/).filter(Boolean); }
+
+  var converters = {
+    upper: function (s) { return s.toUpperCase(); },
+    lower: function (s) { return s.toLowerCase(); },
+    title: function (s) {
+      return s.replace(/\w\S*/g, function (w) { return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); });
+    },
+    sentence: function (s) {
+      var lower = s.toLowerCase();
+      return lower.replace(/(^\s*\w|[.!?]\s+\w)/g, function (c) { return c.toUpperCase(); });
+    },
+    camel: function (s) {
+      return words(s).map(function (w, i) {
+        w = w.toLowerCase();
+        return i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1);
+      }).join('');
+    },
+    snake: function (s) { return words(s).map(function (w) { return w.toLowerCase(); }).join('_'); },
+    kebab: function (s) { return words(s).map(function (w) { return w.toLowerCase(); }).join('-'); }
+  };
+
+  document.querySelectorAll('[data-case]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      ta.value = converters[btn.dataset.case](ta.value);
+      ta.focus();
+    });
+  });
+})();
+</script>
+
+<h2>Convert text to any case</h2>
+<p>Retyping text just to fix its capitalization is a waste of time. Paste it here and switch instantly between the cases you need — from a headline in <strong>Title Case</strong> to an all-caps heading, a clean <strong>Sentence case</strong> paragraph, or the programmer-friendly <strong>camelCase</strong>, <strong>snake_case</strong>, and <strong>kebab-case</strong> formats. Each button transforms the text in place; copy the result with one click.</p>
+<h2>Which case should you use?</h2>
+<ul>
+  <li><strong>UPPERCASE</strong> — emphasis, acronyms, or headings. Use sparingly; all-caps is harder to read in long stretches.</li>
+  <li><strong>lowercase</strong> — a uniform, casual look, or to normalize text before processing.</li>
+  <li><strong>Title Case</strong> — headlines, titles, and headings where each major word is capitalized.</li>
+  <li><strong>Sentence case</strong> — normal prose: capitalize the first word and proper nouns only.</li>
+  <li><strong>camelCase / snake_case / kebab-case</strong> — variable and file names in code, URLs, and CSS classes. Pick the convention your project uses.</li>
+</ul>
+<p>Everything runs locally in your browser, so your text is never uploaded or stored — paste freely and the content stays private to your device.</p>

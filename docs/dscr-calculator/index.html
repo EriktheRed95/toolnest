@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DSCR Calculator for Rental Property</title>
+<meta name="description" content="Calculate the debt service coverage ratio (DSCR) on a rental property. See whether your rental income covers the mortgage and meets the 1.0–1.25 thresholds DSCR lenders require.">
+<meta name="keywords" content="DSCR calculator, debt service coverage ratio, DSCR loan calculator, rental property DSCR, DSCR mortgage qualify, investment property loan">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/dscr-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="DSCR Calculator for Rental Property">
+<meta property="og:description" content="Calculate the debt service coverage ratio (DSCR) on a rental property. See whether your rental income covers the mortgage and meets the 1.0–1.25 thresholds DSCR lenders require.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/dscr-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "DSCR Calculator for Rental Property", "url": "https://erikthered95.github.io/toolnest/dscr-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Calculate the debt service coverage ratio (DSCR) on a rental property. See whether your rental income covers the mortgage and meets the 1.0\u20131.25 thresholds DSCR lenders require."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is DSCR?", "acceptedAnswer": {"@type": "Answer", "text": "DSCR stands for debt service coverage ratio. It measures how well a property's income covers its debt payments: DSCR = net operating income \u00f7 annual debt service. For residential investor (DSCR) loans, lenders often use a simpler version \u2014 gross rent \u00f7 the monthly mortgage payment (PITIA). A DSCR of 1.0 means income exactly covers the payment."}}, {"@type": "Question", "name": "What DSCR do lenders require?", "acceptedAnswer": {"@type": "Answer", "text": "Many DSCR lenders want a ratio of at least 1.0, and prefer 1.25 or higher for the best terms. A DSCR above 1.0 means the property generates more income than its debt costs (positive coverage); below 1.0 means the rent doesn't fully cover the payment and the lender sees added risk."}}, {"@type": "Question", "name": "What is PITIA?", "acceptedAnswer": {"@type": "Answer", "text": "PITIA is the full monthly housing payment used in DSCR loans: Principal, Interest, Taxes, Insurance, and Association (HOA) dues. Using the complete payment \u2014 not just principal and interest \u2014 gives a true picture of whether the rent covers all the property's debt-related costs."}}, {"@type": "Question", "name": "Why do investors like DSCR loans?", "acceptedAnswer": {"@type": "Answer", "text": "DSCR loans qualify the property on its rental income rather than the borrower's personal income, tax returns, or job. That makes them popular with self-employed investors and those scaling a portfolio, since approval hinges on whether the deal's numbers work \u2014 captured by the DSCR."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>DSCR Calculator (Debt Service Coverage Ratio)</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "DSCR Calculator (Debt Service Coverage Ratio)"}]}</script>
+<article class="tool"><h1>DSCR Calculator (Debt Service Coverage Ratio)</h1><p class="lede">Calculate the debt service coverage ratio (DSCR) on a rental property. See whether your rental income covers the mortgage and meets the 1.0–1.25 thresholds DSCR lenders require.</p><div class="row">
+  <div class="field"><label for="ds-rent">Gross monthly rent ($)</label><input type="number" id="ds-rent" value="2400" min="0" step="50"></div>
+  <div class="field"><label for="ds-vac">Vacancy allowance (%) <span class="hint">optional</span></label><input type="number" id="ds-vac" value="0" min="0" max="100" step="1"></div>
+</div>
+<p class="lede">Monthly payment (PITIA):</p>
+<div class="row">
+  <div class="field"><label for="ds-pi">Principal &amp; interest ($/mo)</label><input type="number" id="ds-pi" value="1500" min="0" step="50"></div>
+  <div class="field"><label for="ds-tax">Property tax ($/mo)</label><input type="number" id="ds-tax" value="250" min="0" step="25"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="ds-ins">Insurance ($/mo)</label><input type="number" id="ds-ins" value="120" min="0" step="10"></div>
+  <div class="field"><label for="ds-hoa">HOA ($/mo) <span class="hint">optional</span></label><input type="number" id="ds-hoa" value="0" min="0" step="10"></div>
+</div>
+
+<div class="result" id="ds-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['ds-rent', 'ds-vac', 'ds-pi', 'ds-tax', 'ds-ins', 'ds-hoa'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var income = v('ds-rent') * (1 - v('ds-vac') / 100);
+    var pitia = v('ds-pi') + v('ds-tax') + v('ds-ins') + v('ds-hoa');
+    var dscr = pitia > 0 ? income / pitia : 0;
+    var cushion = income - pitia;
+
+    var band;
+    if (dscr >= 1.25) band = { label: 'Strong — qualifies for best terms', cls: 'ok' };
+    else if (dscr >= 1.0) band = { label: 'Acceptable — covers the payment', cls: 'ok' };
+    else if (dscr >= 0.75) band = { label: 'Below 1.0 — some lenders only', cls: 'warn' };
+    else band = { label: 'Too low — rent far short of payment', cls: 'warn' };
+
+    document.getElementById('ds-out').innerHTML =
+      '<div class="result-sub">Debt service coverage ratio</div>' +
+      '<div class="result-big">' + dscr.toFixed(2) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Effective monthly rent', money.format(income)) +
+        kv('Monthly payment (PITIA)', money.format(pitia)) +
+        kv('Monthly cushion', (cushion < 0 ? '&minus; ' : '') + money.format(Math.abs(cushion))) +
+        kv('Assessment', band.label) +
+      '</div>' +
+      '<p class="note ' + band.cls + '">' +
+        (dscr >= 1.25 ? 'At ' + dscr.toFixed(2) + ', the rent comfortably exceeds the payment — most DSCR lenders will see this favorably and offer their best pricing.' :
+         dscr >= 1.0 ? 'At ' + dscr.toFixed(2) + ', income covers the payment and meets the common 1.0 minimum, though 1.25+ unlocks better terms.' :
+         'At ' + dscr.toFixed(2) + ', the rent doesn’t fully cover the payment. You’d need a larger down payment (lower P&I), higher rent, or a lender that allows sub-1.0 DSCR (often with a higher rate).') +
+      '</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Does the rent cover the mortgage?</h2>
+<p>The <strong>debt service coverage ratio (DSCR)</strong> answers a single, decisive question for rental investors: does the property's income cover its debt payment? It's the ratio of income to the mortgage, and it's the heart of <strong>DSCR loans</strong> — a popular financing route that qualifies the <em>property</em> rather than your personal income.</p>
+<p>For these loans, lenders typically compare the <strong>gross monthly rent</strong> against the full monthly payment, known as <strong>PITIA</strong> — Principal, Interest, Taxes, Insurance, and Association (HOA) dues. A DSCR of <strong>1.0</strong> means the rent exactly covers the payment; <strong>above 1.0</strong> means positive coverage with a cushion; <strong>below 1.0</strong> means the rent falls short.</p>
+<h2>What DSCR lenders want to see</h2>
+<ul>
+  <li><strong>1.25 or higher</strong> — strong coverage; you'll generally get the best rates and terms.</li>
+  <li><strong>1.0 to 1.25</strong> — acceptable to most DSCR lenders; the deal cash-flows but with a thinner margin.</li>
+  <li><strong>Below 1.0</strong> — the rent doesn't fully cover the payment. Some lenders still finance these (often at higher rates), but you'll usually need a bigger down payment to bring the ratio up.</li>
+</ul>
+<p>If your ratio is low, the most direct fixes are a <strong>larger down payment</strong> (which lowers the principal-and-interest portion) or a property with stronger rent relative to price. Use this calculator to test how much down payment or rent it takes to clear your target lender's threshold before you apply.</p>
+<p class="note"><strong>Estimate only.</strong> Lenders define DSCR in slightly different ways — some use market rent from an appraisal, some net out vacancy or expenses. Confirm your lender's exact formula and minimum. This is not financial or lending advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is DSCR?</summary><div class="faq-a">DSCR stands for debt service coverage ratio. It measures how well a property's income covers its debt payments: DSCR = net operating income ÷ annual debt service. For residential investor (DSCR) loans, lenders often use a simpler version — gross rent ÷ the monthly mortgage payment (PITIA). A DSCR of 1.0 means income exactly covers the payment.</div></details>
+<details class="faq-item"><summary>What DSCR do lenders require?</summary><div class="faq-a">Many DSCR lenders want a ratio of at least 1.0, and prefer 1.25 or higher for the best terms. A DSCR above 1.0 means the property generates more income than its debt costs (positive coverage); below 1.0 means the rent doesn't fully cover the payment and the lender sees added risk.</div></details>
+<details class="faq-item"><summary>What is PITIA?</summary><div class="faq-a">PITIA is the full monthly housing payment used in DSCR loans: Principal, Interest, Taxes, Insurance, and Association (HOA) dues. Using the complete payment — not just principal and interest — gives a true picture of whether the rent covers all the property's debt-related costs.</div></details>
+<details class="faq-item"><summary>Why do investors like DSCR loans?</summary><div class="faq-a">DSCR loans qualify the property on its rental income rather than the borrower's personal income, tax returns, or job. That makes them popular with self-employed investors and those scaling a portfolio, since approval hinges on whether the deal's numbers work — captured by the DSCR.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/debt-payoff-calculator/"><h3>Debt Payoff Calculator (Snowball vs. Avalanche)</h3><p>Compare the debt snowball and debt avalanche methods. Enter your debts and an extra monthly payment to see which strategy pays off your debt faster and saves the most interest.</p></a><a class="card" href="/toolnest/debt-to-income-calculator/"><h3>Debt-to-Income (DTI) Calculator</h3><p>Calculate your debt-to-income (DTI) ratio for a mortgage. Enter your income and monthly debts to see your front-end and back-end ratios and how lenders view them.</p></a><a class="card" href="/toolnest/down-payment-savings-calculator/"><h3>Down Payment Savings Calculator</h3><p>Find out how long it will take to save your target home down payment based on your current savings, monthly contributions, and interest earned.</p></a><a class="card" href="/toolnest/emergency-fund-calculator/"><h3>Emergency Fund Calculator</h3><p>Find out how big your emergency fund should be and how long it will take to reach it. Enter your monthly expenses, target months of coverage, current savings, and contribution.</p></a><a class="card" href="/toolnest/fha-loan-calculator/"><h3>FHA Loan Calculator</h3><p>Estimate your FHA mortgage payment including upfront and monthly MIP, property taxes, and insurance, plus the financed loan amount.</p></a><a class="card" href="/toolnest/fix-and-flip-calculator/"><h3>Fix and Flip Calculator (70% Rule)</h3><p>Run the numbers on a house flip: maximum allowable offer using the 70% rule, total project cost, projected profit, and return on investment from ARV, rehab, and holding costs.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

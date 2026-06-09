@@ -1,0 +1,88 @@
+<!--META
+{
+  "title": "Price Per Square Foot Calculator",
+  "slug": "price-per-square-foot-calculator",
+  "category": "finance",
+  "h1": "Price Per Square Foot Calculator",
+  "description": "Calculate a home's price per square foot, or estimate a property's value from its size and a comparable price per square foot.",
+  "keywords": "price per square foot calculator, cost per square foot, home value calculator, price per sqft, real estate comparison",
+  "faq": [
+    {"q": "How is price per square foot calculated?", "a": "Divide the total price by the finished square footage: a $400,000 home with 2,000 sq ft costs $200 per square foot. It's a quick way to normalize price across homes of different sizes, but it ignores condition, layout, lot size, and location quality."},
+    {"q": "Is a lower price per square foot always better?", "a": "Not necessarily. A low price per square foot can signal a good value, but it can also reflect deferred maintenance, an inferior location, a poor layout, or a large home where extra space adds little usable value. Always look at the whole picture, not just the ratio."},
+    {"q": "What square footage should I use?", "a": "Use finished, above-grade living area for the cleanest comparison, since that's how most listings and appraisers measure it. Basements, garages, and unfinished space are usually counted separately or excluded, so comparing on a consistent basis matters."},
+    {"q": "Why do homes on the same street have different prices per square foot?", "a": "Condition, updates, views, lot size, and even the month they sold all move the number. Smaller homes often carry a higher price per square foot than larger ones nearby, because the value of land and fixed features is spread over less space."}
+  ]
+}
+META-->
+<h2 style="margin-top:0">Calculate price per square foot</h2>
+<div class="row">
+  <div class="field"><label for="pps-price">Price ($)</label><input type="number" id="pps-price" value="400000" min="0" step="1000"></div>
+  <div class="field"><label for="pps-sqft">Square footage</label><input type="number" id="pps-sqft" value="2000" min="0" step="10"></div>
+</div>
+
+<div class="result" id="pps-out1"></div>
+
+<h2>Estimate value from price per square foot</h2>
+<div class="row">
+  <div class="field"><label for="pps-sqft2">Square footage</label><input type="number" id="pps-sqft2" value="1800" min="0" step="10"></div>
+  <div class="field"><label for="pps-comp">Comparable price per sq ft ($)</label><input type="number" id="pps-comp" value="210" min="0" step="1"></div>
+</div>
+
+<div class="result" id="pps-out2"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var price = v('pps-price');
+    var sqft = v('pps-sqft');
+    var out1 = document.getElementById('pps-out1');
+    if (price <= 0 || sqft <= 0) {
+      out1.innerHTML = '<p class="note">Enter a price and square footage.</p>';
+    } else {
+      var ppsf = price / sqft;
+      out1.innerHTML =
+        '<div class="result-sub">Price per square foot</div>' +
+        '<div class="result-big">' + money2.format(ppsf) + '</div>' +
+        '<div style="margin-top:12px">' +
+          kv('Price', money.format(price)) +
+          kv('Square footage', sqft.toLocaleString('en-US') + ' sq ft') +
+        '</div>';
+    }
+
+    var sqft2 = v('pps-sqft2');
+    var comp = v('pps-comp');
+    var out2 = document.getElementById('pps-out2');
+    if (sqft2 <= 0 || comp <= 0) {
+      out2.innerHTML = '<p class="note">Enter a square footage and a comparable price per square foot.</p>';
+    } else {
+      var value = sqft2 * comp;
+      out2.innerHTML =
+        '<div class="result-sub">Estimated value</div>' +
+        '<div class="result-big">' + money.format(value) + '</div>' +
+        '<div style="margin-top:12px">' +
+          kv('Square footage', sqft2.toLocaleString('en-US') + ' sq ft') +
+          kv('Price per sq ft', money2.format(comp)) +
+        '</div>';
+    }
+  }
+  ['pps-price', 'pps-sqft', 'pps-sqft2', 'pps-comp'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
+
+<h2>What price per square foot tells you</h2>
+<p>Price per square foot is the real estate world's favorite shorthand. Divide a home's price by its finished square footage and you get a single number that lets you compare a 1,500 sq ft cottage against a 3,000 sq ft colonial on a roughly common footing. Buyers use it to sanity-check a list price, sellers use it to position against recent sales, and appraisers lean on it as one input among several.</p>
+<p>The second section flips the math: pick a price per square foot from comparable sales nearby and multiply by a home's size to ballpark its value. It's a fast way to translate "homes around here go for about $210 a foot" into a dollar figure before you dig deeper.</p>
+<ul>
+  <li>Smaller homes usually carry a <strong>higher</strong> price per square foot than larger ones nearby.</li>
+  <li>Use consistent square footage — finished, above-grade area — when you compare.</li>
+  <li>Treat the result as a starting point, not an appraisal.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> Price per square foot varies widely with condition, updates, lot size, layout, and location — two identical-sized homes can be worth very different amounts. Use comparable sales and a professional opinion of value before making decisions. This is not financial or real estate advice.</p>

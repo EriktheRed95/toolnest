@@ -1,0 +1,94 @@
+<!--META
+{
+  "title": "Mortgage Payoff Calculator (Extra Payments)",
+  "slug": "mortgage-payoff-calculator",
+  "category": "finance",
+  "h1": "Early Mortgage Payoff Calculator",
+  "description": "See how extra monthly or one-time payments pay off your mortgage faster. Calculate the time saved and total interest saved by paying extra principal.",
+  "keywords": "mortgage payoff calculator, extra payment calculator, pay off mortgage early, early payoff interest saved, additional principal payment calculator",
+  "faq": [
+    {"q": "How much faster will I pay off my mortgage with extra payments?", "a": "It depends on the size of the extra payment and how early you start. Even a modest extra amount each month can shave years off a 30-year loan and save tens of thousands in interest, because every extra dollar goes straight to principal and stops accruing interest for the rest of the term. Enter your numbers to see the exact time and interest saved."},
+    {"q": "Is it better to pay extra each month or one lump sum?", "a": "Both help, and the earlier the better. A consistent extra monthly amount steadily cuts the balance and compounds its savings over the whole loan. A one-time lump sum early on also removes interest for every remaining month. This calculator lets you combine both to see the total effect."},
+    {"q": "Do extra payments go toward principal automatically?", "a": "Not always. Some servicers apply extra money to future scheduled payments or hold it unless you specify. To pay off the loan early, make sure each extra payment is applied to principal — many lenders have a checkbox or memo line for exactly that."},
+    {"q": "Should I pay off my mortgage early or invest?", "a": "Paying extra guarantees a return equal to your mortgage rate, tax-free, with no risk. Investing might earn more over time but carries risk. If your rate is high or you value being debt-free, extra payments are compelling; if your rate is low and you're comfortable with market risk, investing may win. It's partly a math question and partly a peace-of-mind one."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="po-balance">Current loan balance ($)</label><input type="number" id="po-balance" value="320000" min="0" step="1000"></div>
+  <div class="field"><label for="po-rate">Interest rate (%)</label><input type="number" id="po-rate" value="6.5" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="po-remain">Years left on loan</label><input type="number" id="po-remain" value="30" min="1" max="40" step="1"></div>
+  <div class="field"><label for="po-extra">Extra payment ($/mo)</label><input type="number" id="po-extra" value="250" min="0" step="50"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="po-lump">One-time extra payment ($) <span class="hint">optional, now</span></label><input type="number" id="po-lump" value="0" min="0" step="1000"></div>
+</div>
+
+<div class="result" id="po-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['po-balance', 'po-rate', 'po-remain', 'po-extra', 'po-lump'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function fmtMonths(m) { var y = Math.floor(m / 12), mo = m % 12; return (y ? y + ' yr ' : '') + mo + ' mo'; }
+
+  function amortize(P, r, basePay, extra, lump) {
+    var bal = P - lump, paid = 0, months = 0;
+    if (bal < 0) bal = 0;
+    while (bal > 0 && months < 1200) {
+      var interest = bal * r;
+      var principal = basePay + extra - interest;
+      if (principal <= 0) return null; // payment never covers interest
+      principal = Math.min(principal, bal);
+      bal -= principal; paid += interest; months++;
+    }
+    return { months: months, interest: paid };
+  }
+
+  function calc() {
+    var P = v('po-balance');
+    var r = v('po-rate') / 100 / 12;
+    var n = Math.round(v('po-remain') * 12);
+    var basePay = r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+
+    var base = amortize(P, r, basePay, 0, 0);
+    var fast = amortize(P, r, basePay, v('po-extra'), v('po-lump'));
+    var out = document.getElementById('po-out');
+    if (!fast || !base) { out.innerHTML = '<p class="note">Enter valid loan details to calculate.</p>'; return; }
+
+    var monthsSaved = base.months - fast.months;
+    var interestSaved = base.interest - fast.interest;
+
+    out.innerHTML =
+      '<div class="result-sub">Interest saved by paying extra</div>' +
+      '<div class="result-big">' + money.format(interestSaved) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Time saved', fmtMonths(monthsSaved) + ' earlier') +
+        kv('New payoff time', fmtMonths(fast.months)) +
+        kv('Original payoff time', fmtMonths(base.months)) +
+        kv('Base payment (P&amp;I)', money2.format(basePay)) +
+        (v('po-extra') ? kv('With extra', money2.format(basePay + v('po-extra')) + '/mo') : '') +
+        kv('Total interest — with extra', money.format(fast.interest)) +
+        kv('Total interest — original', money.format(base.interest)) +
+      '</div>' +
+      '<p class="note">Paying ' + money.format(v('po-extra')) + '/mo extra' + (v('po-lump') ? ' plus a ' + money.format(v('po-lump')) + ' lump sum' : '') +
+        ' clears the loan ' + fmtMonths(monthsSaved) + ' sooner and saves ' + money.format(interestSaved) + ' in interest. Make sure your servicer applies extra to principal.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How extra payments crush mortgage interest</h2>
+<p>A mortgage front-loads interest: in the early years, most of each payment covers interest, not principal. That's why <strong>extra principal payments</strong> are so powerful — every additional dollar permanently removes the interest that dollar would have generated for the rest of the loan. The effect compounds, and starting early multiplies it.</p>
+<p>This calculator compares your loan on its original schedule against the same loan with extra payments — a recurring monthly amount, a one-time lump sum, or both — and shows two numbers that tend to surprise people: how many <strong>years earlier</strong> you'd be debt-free, and how many thousands in <strong>interest you'd never pay</strong>.</p>
+<h2>Make sure it actually goes to principal</h2>
+<p>The catch is mechanical: extra money only accelerates payoff if your servicer applies it to <strong>principal</strong>. Some lenders instead credit it toward your next payment or park it as "unapplied funds." When you send extra, specify "apply to principal" — most have a field for it — and confirm it on your next statement.</p>
+<h2>Pay down or invest?</h2>
+<p>Extra payments earn a guaranteed, risk-free return equal to your interest rate. With a high rate, that's hard to beat. If your rate is low, investing the same money might earn more over time — at the cost of market risk and the certainty of being debt-free. There's no universally right answer; this tool quantifies the payoff side so you can weigh it against your alternatives.</p>
+<p class="note"><strong>Estimate only.</strong> Figures use principal and interest; taxes, insurance, and any PMI are separate. Confirm there's no prepayment penalty on your loan. This is not financial advice.</p>

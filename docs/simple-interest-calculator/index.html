@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simple Interest Calculator</title>
+<meta name="description" content="Calculate simple interest on a principal amount. Enter the principal, annual rate, and time in years to see the interest earned and the total amount.">
+<meta name="keywords" content="simple interest calculator, simple interest formula, interest earned calculator, principal interest rate time, flat interest calculator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/simple-interest-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Simple Interest Calculator">
+<meta property="og:description" content="Calculate simple interest on a principal amount. Enter the principal, annual rate, and time in years to see the interest earned and the total amount.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/simple-interest-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Simple Interest Calculator", "url": "https://erikthered95.github.io/toolnest/simple-interest-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Calculate simple interest on a principal amount. Enter the principal, annual rate, and time in years to see the interest earned and the total amount."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is simple interest?", "acceptedAnswer": {"@type": "Answer", "text": "Simple interest is interest charged only on the original principal, never on previously earned interest. The formula is I = P \u00d7 r \u00d7 t, where P is the principal, r is the annual rate as a decimal, and t is the time in years. It produces a straight-line, predictable amount."}}, {"@type": "Question", "name": "How is simple interest different from compound interest?", "acceptedAnswer": {"@type": "Answer", "text": "Simple interest is calculated only on the original principal, so it grows in a straight line. Compound interest is calculated on the principal plus all accumulated interest, so it grows faster over time. For the same rate and term, compound interest always yields more than simple interest."}}, {"@type": "Question", "name": "Where is simple interest used?", "acceptedAnswer": {"@type": "Answer", "text": "It's common on some short-term and auto loans, certain bonds, and many informal or personal loans. Always check whether a loan or account uses simple or compound interest, since the difference grows with larger amounts and longer terms."}}, {"@type": "Question", "name": "Can I use a fraction of a year?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Enter time in years and use decimals for partial years \u2014 for example, 0.5 for six months or 1.25 for fifteen months. The formula scales linearly with time."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Simple Interest Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Simple Interest Calculator"}]}</script>
+<article class="tool"><h1>Simple Interest Calculator</h1><p class="lede">Calculate simple interest on a principal amount. Enter the principal, annual rate, and time in years to see the interest earned and the total amount.</p><div class="row">
+  <div class="field"><label for="si-principal">Principal ($)</label><input type="number" id="si-principal" value="10000" min="0" step="100"></div>
+  <div class="field"><label for="si-rate">Annual interest rate (%)</label><input type="number" id="si-rate" value="5" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="si-years">Time (years) <span class="hint">decimals OK</span></label><input type="number" id="si-years" value="3" min="0" step="0.25"></div>
+</div>
+
+<div class="result" id="si-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['si-principal', 'si-rate', 'si-years'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var P = v('si-principal');
+    var rate = v('si-rate');
+    var years = v('si-years');
+    var out = document.getElementById('si-out');
+    if (P <= 0 || years <= 0) { out.innerHTML = '<p class="note">Enter a principal and time in years.</p>'; return; }
+
+    var interest = P * rate / 100 * years;
+    var total = P + interest;
+
+    out.innerHTML =
+      '<div class="result-sub">Interest earned</div>' +
+      '<div class="result-big">' + money2.format(interest) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Total amount', money2.format(total)) +
+        kv('Principal', money.format(P)) +
+        kv('Rate &amp; time', rate + '% for ' + years + ' yr' + (years === 1 ? '' : 's')) +
+      '</div>' +
+      '<p class="note">Simple interest is charged only on the principal — unlike compound interest, it never earns interest on previously earned interest.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How simple interest works</h2>
+<p>Simple interest is the most straightforward way to calculate the cost of borrowing or the return on a deposit. It applies a fixed annual rate to the <strong>original principal only</strong>, using the formula I = P × r × t. Because the interest base never changes, the amount grows in a straight line: doubling the time doubles the interest, and doubling the principal doubles it too. That predictability makes simple interest easy to reason about for short-term loans, certain bonds, and informal lending between people.</p>
+<p>The key thing to watch for is whether an account or loan actually uses simple or <strong>compound</strong> interest. Compound interest adds each period's interest back to the balance, so future interest is calculated on a larger amount. Over short periods the gap is small, but over many years compounding pulls far ahead. When comparing offers, confirm the method and the compounding frequency, not just the headline rate.</p>
+<p class="note"><strong>Estimate only.</strong> Real accounts may compound, charge fees, or use different day-count conventions. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is simple interest?</summary><div class="faq-a">Simple interest is interest charged only on the original principal, never on previously earned interest. The formula is I = P × r × t, where P is the principal, r is the annual rate as a decimal, and t is the time in years. It produces a straight-line, predictable amount.</div></details>
+<details class="faq-item"><summary>How is simple interest different from compound interest?</summary><div class="faq-a">Simple interest is calculated only on the original principal, so it grows in a straight line. Compound interest is calculated on the principal plus all accumulated interest, so it grows faster over time. For the same rate and term, compound interest always yields more than simple interest.</div></details>
+<details class="faq-item"><summary>Where is simple interest used?</summary><div class="faq-a">It's common on some short-term and auto loans, certain bonds, and many informal or personal loans. Always check whether a loan or account uses simple or compound interest, since the difference grows with larger amounts and longer terms.</div></details>
+<details class="faq-item"><summary>Can I use a fraction of a year?</summary><div class="faq-a">Yes. Enter time in years and use decimals for partial years — for example, 0.5 for six months or 1.25 for fifteen months. The formula scales linearly with time.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/va-loan-calculator/"><h3>VA Loan Calculator</h3><p>Estimate your VA mortgage payment including the VA funding fee, property taxes, and insurance — with no down payment and no monthly mortgage insurance.</p></a><a class="card" href="/toolnest/1031-exchange-calculator/"><h3>1031 Exchange Calculator</h3><p>Estimate the taxes deferred by a 1031 like-kind exchange of investment property. See your realized gain, capital gains and depreciation recapture tax, and net proceeds to reinvest.</p></a><a class="card" href="/toolnest/2-1-buydown-calculator/"><h3>2-1 Buydown Calculator</h3><p>See your reduced mortgage payment in years 1 and 2 of a 2-1 temporary buydown, the monthly savings, and the upfront buydown cost.</p></a><a class="card" href="/toolnest/arm-vs-fixed-calculator/"><h3>ARM vs. Fixed Mortgage Calculator</h3><p>Compare an adjustable-rate mortgage (ARM) against a fixed-rate loan. See the intro-period savings, the payment after the rate adjusts, total cost, and the break-even point.</p></a><a class="card" href="/toolnest/auto-loan-calculator/"><h3>Auto Loan Calculator</h3><p>Calculate your monthly car payment including sales tax, trade-in, down payment, and fees. See total interest and the full cost of financing your vehicle.</p></a><a class="card" href="/toolnest/biweekly-mortgage-calculator/"><h3>Biweekly Mortgage Payment Calculator</h3><p>See how switching to biweekly mortgage payments pays off your loan faster. Compare biweekly vs monthly payments and the time and interest you'd save.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

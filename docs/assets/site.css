@@ -55,6 +55,7 @@ main{padding:26px 0 50px;min-height:60vh}
 
 /* category grid */
 .cat{margin-top:30px}
+.cat-count{font-size:.8rem;font-weight:600;color:var(--muted);vertical-align:middle;margin-left:6px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
 .card{display:block;background:var(--card);border:1px solid var(--line);border-radius:var(--r);
   padding:16px 18px;box-shadow:var(--shadow);transition:transform .12s,border-color .12s}
@@ -112,8 +113,14 @@ table.amort th{color:var(--muted);font-weight:700}
 .scroll{overflow:auto;max-height:360px;border:1px solid var(--line);border-radius:10px;margin-top:12px}
 
 .note{font-size:.85rem;color:var(--muted);margin-top:10px}
+.note.ok{color:var(--ok)}
+.note.warn{color:var(--warn)}
 .tool h2{font-size:1.2rem}
 .tool p,.page p{color:var(--ink)}
+
+/* related tools (internal linking under each tool) */
+.related{margin-top:28px}
+.related h2{font-size:1.2rem;margin-bottom:.6em}
 
 /* faq */
 .faq{margin-top:26px}

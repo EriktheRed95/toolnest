@@ -1,0 +1,57 @@
+<!--META
+{
+  "title": "UUID Generator",
+  "slug": "uuid-generator",
+  "category": "random",
+  "h1": "UUID Generator (v4)",
+  "description": "Generate random RFC 4122 version-4 UUIDs in your browser. Choose how many you need and copy them all with one click. Cryptographically secure and completely private.",
+  "keywords": "uuid generator, guid generator, version 4 uuid, random uuid, rfc 4122, unique identifier",
+  "faq": [
+    {"q": "What is a version-4 UUID?", "a": "A version-4 UUID is a 128-bit identifier where almost all bits are random. It's written as 32 hexadecimal digits in the 8-4-4-4-12 pattern, with version and variant bits fixed by RFC 4122. With 122 random bits, the chance of two colliding is vanishingly small."},
+    {"q": "Are these UUIDs cryptographically random?", "a": "Yes. The random bytes come from window.crypto.getRandomValues, the browser's cryptographically secure generator. Everything happens locally, so no UUID is ever sent to a server or stored."},
+    {"q": "Can I use these as database keys or API tokens?", "a": "UUIDs are great as primary keys and request IDs where you need uniqueness without coordination. For security tokens they're acceptable given 122 bits of entropy, though a dedicated secret generator is often clearer for that purpose."}
+  ]
+}
+META-->
+<div class="field">
+  <label for="uuid-count">How many: <span id="uuid-count-val">5</span></label>
+  <input type="range" id="uuid-count" min="1" max="100" value="5" style="width:100%">
+</div>
+<div class="btn-row">
+  <button class="btn" id="uuid-go">Generate</button>
+  <button class="btn secondary" data-copy="#uuid-out" id="uuid-copy">Copy</button>
+</div>
+<div class="result"><div class="pw-out" id="uuid-out" style="white-space:pre-wrap"></div></div>
+
+<script>
+(function () {
+  var countEl = document.getElementById('uuid-count'), out = document.getElementById('uuid-out');
+  document.getElementById('uuid-count-val').textContent = countEl.value;
+  countEl.addEventListener('input', function () { document.getElementById('uuid-count-val').textContent = countEl.value; });
+
+  var hex = [];
+  for (var i = 0; i < 256; i++) hex[i] = (i + 0x100).toString(16).slice(1);
+
+  function uuid() {
+    var b = new Uint8Array(16);
+    window.crypto.getRandomValues(b);
+    b[6] = (b[6] & 0x0f) | 0x40;
+    b[8] = (b[8] & 0x3f) | 0x80;
+    return hex[b[0]] + hex[b[1]] + hex[b[2]] + hex[b[3]] + '-' +
+           hex[b[4]] + hex[b[5]] + '-' + hex[b[6]] + hex[b[7]] + '-' +
+           hex[b[8]] + hex[b[9]] + '-' +
+           hex[b[10]] + hex[b[11]] + hex[b[12]] + hex[b[13]] + hex[b[14]] + hex[b[15]];
+  }
+  function go() {
+    var n = +countEl.value, list = [];
+    for (var i = 0; i < n; i++) list.push(uuid());
+    out.textContent = list.join('\n');
+  }
+  document.getElementById('uuid-go').addEventListener('click', go);
+  go();
+})();
+</script>
+
+<h2>Generate unique identifiers instantly</h2>
+<p>A UUID (Universally Unique Identifier, also called a GUID) is a 128-bit value used to label something without needing a central authority to hand out IDs. This tool produces <strong>version-4</strong> UUIDs, the random variety defined by RFC 4122, formatted in the familiar <code>8-4-4-4-12</code> hexadecimal pattern. Drag the slider to pick how many you want and click Generate; copy the whole batch with one button.</p>
+<p>Because every value draws its random bytes from your browser's cryptographically secure generator, the identifiers are suitable for database primary keys, message IDs, file names, test fixtures, and anywhere else you need values that practically never collide. Nothing leaves your device — the UUIDs are created locally and are gone as soon as you close the tab.</p>

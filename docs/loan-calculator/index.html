@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loan Calculator</title>
+<meta name="description" content="Calculate the monthly payment, total interest, and total cost of any loan — personal, student, or installment. Enter the amount, rate, and term to see your numbers.">
+<meta name="keywords" content="loan calculator, monthly payment calculator, personal loan calculator, loan interest calculator, installment loan payment">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/loan-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Loan Calculator">
+<meta property="og:description" content="Calculate the monthly payment, total interest, and total cost of any loan — personal, student, or installment. Enter the amount, rate, and term to see your numbers.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/loan-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Loan Calculator", "url": "https://erikthered95.github.io/toolnest/loan-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Calculate the monthly payment, total interest, and total cost of any loan \u2014 personal, student, or installment. Enter the amount, rate, and term to see your numbers."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How is a loan payment calculated?", "acceptedAnswer": {"@type": "Answer", "text": "A fixed-rate loan uses the amortization formula: the payment is the loan amount times the monthly rate, times (1 + rate)^months, divided by ((1 + rate)^months \u2212 1). Each payment covers that month's interest first, with the rest reducing the balance. Early payments are mostly interest; later ones mostly principal."}}, {"@type": "Question", "name": "What's the difference between APR and interest rate?", "acceptedAnswer": {"@type": "Answer", "text": "The interest rate is the cost of borrowing the principal. The APR (annual percentage rate) also folds in certain fees, so it reflects the loan's true yearly cost and is better for comparing offers. This calculator uses the rate you enter as the periodic rate; enter the APR for the most accurate comparison."}}, {"@type": "Question", "name": "Does a longer loan term save money?", "acceptedAnswer": {"@type": "Answer", "text": "A longer term lowers the monthly payment but increases the total interest you pay, because you're borrowing for longer. A shorter term costs more each month but far less overall. Try a few terms above to see the trade-off for your loan."}}, {"@type": "Question", "name": "How can I pay less interest?", "acceptedAnswer": {"@type": "Answer", "text": "Borrow less, get a lower rate (often via better credit), choose a shorter term, or make extra principal payments. Even small extra payments early in the loan can meaningfully cut total interest, since they reduce the balance that interest is charged on."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Loan Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Loan Calculator"}]}</script>
+<article class="tool"><h1>Loan Calculator</h1><p class="lede">Calculate the monthly payment, total interest, and total cost of any loan — personal, student, or installment. Enter the amount, rate, and term to see your numbers.</p><div class="row">
+  <div class="field"><label for="ln-amount">Loan amount ($)</label><input type="number" id="ln-amount" value="20000" min="0" step="100"></div>
+  <div class="field"><label for="ln-rate">Interest rate (% APR)</label><input type="number" id="ln-rate" value="9.5" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="ln-term">Term length</label><input type="number" id="ln-term" value="5" min="0.1" step="0.5"></div>
+  <div class="field"><label for="ln-unit">Term in</label>
+    <select id="ln-unit"><option value="12">Years</option><option value="1">Months</option></select></div>
+</div>
+
+<div class="result" id="ln-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['ln-amount', 'ln-rate', 'ln-term', 'ln-unit'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var P = v('ln-amount');
+    var r = v('ln-rate') / 100 / 12;
+    var n = Math.round(v('ln-term') * v('ln-unit'));
+    var out = document.getElementById('ln-out');
+    if (P <= 0 || n <= 0) { out.innerHTML = '<p class="note">Enter a loan amount and term.</p>'; return; }
+    var pay = r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    var total = pay * n;
+    var interest = total - P;
+
+    out.innerHTML =
+      '<div class="result-sub">Monthly payment</div>' +
+      '<div class="result-big">' + money2.format(pay) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Loan amount', money.format(P)) +
+        kv('Total interest', money.format(interest)) +
+        kv('Total of ' + n + ' payments', money.format(total)) +
+        kv('Interest as % of loan', P ? (interest / P * 100).toFixed(1) + '%' : '—') +
+      '</div>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  document.getElementById('ln-unit').addEventListener('change', calc);
+  calc();
+})();
+</script>
+
+<h2>Understanding your loan payment</h2>
+<p>Whether it's a personal loan, a student loan, or any fixed installment loan, the monthly payment is driven by three things: the <strong>amount</strong> you borrow, the <strong>interest rate</strong>, and the <strong>term</strong> (how long you take to repay). This calculator combines them using the standard amortization formula and shows not just the payment, but the <strong>total interest</strong> — often the more eye-opening number.</p>
+<p>Every payment is split: part covers the interest accrued that month, and the rest pays down the balance. Early in the loan the interest share is largest, which is why borrowing for longer — or at a higher rate — costs disproportionately more over time.</p>
+<h2>How to pay less</h2>
+<p>Four levers reduce what a loan costs you: borrow less, secure a lower rate (usually through stronger credit), choose a shorter term, or make extra principal payments. The first three are set when you sign; the last one you control for the life of the loan. Because extra payments attack the balance directly, even modest ones made early can save a surprising amount of interest.</p>
+<p class="note"><strong>Estimate only.</strong> This assumes a fixed rate and equal monthly payments, and treats the rate you enter as the periodic rate. Real loans may include fees, variable rates, or different compounding. Check your loan agreement for exact terms. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How is a loan payment calculated?</summary><div class="faq-a">A fixed-rate loan uses the amortization formula: the payment is the loan amount times the monthly rate, times (1 + rate)^months, divided by ((1 + rate)^months − 1). Each payment covers that month's interest first, with the rest reducing the balance. Early payments are mostly interest; later ones mostly principal.</div></details>
+<details class="faq-item"><summary>What's the difference between APR and interest rate?</summary><div class="faq-a">The interest rate is the cost of borrowing the principal. The APR (annual percentage rate) also folds in certain fees, so it reflects the loan's true yearly cost and is better for comparing offers. This calculator uses the rate you enter as the periodic rate; enter the APR for the most accurate comparison.</div></details>
+<details class="faq-item"><summary>Does a longer loan term save money?</summary><div class="faq-a">A longer term lowers the monthly payment but increases the total interest you pay, because you're borrowing for longer. A shorter term costs more each month but far less overall. Try a few terms above to see the trade-off for your loan.</div></details>
+<details class="faq-item"><summary>How can I pay less interest?</summary><div class="faq-a">Borrow less, get a lower rate (often via better credit), choose a shorter term, or make extra principal payments. Even small extra payments early in the loan can meaningfully cut total interest, since they reduce the balance that interest is charged on.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/percentage-calculator/"><h3>Percentage Calculator</h3><p>Work out percentages three ways: what is X% of Y, X is what percent of Y, and the percent increase or decrease between two numbers. Free and instant.</p></a><a class="card" href="/toolnest/roman-numeral-converter/"><h3>Roman Numeral Converter</h3><p>Convert numbers to Roman numerals and Roman numerals back to numbers. Supports 1 to 3999 with instant, two-way conversion in your browser.</p></a><a class="card" href="/toolnest/salary-to-hourly-calculator/"><h3>Salary to Hourly Calculator</h3><p>Convert an annual salary to an hourly wage, or an hourly rate to a yearly salary. See weekly, biweekly, monthly, and daily pay based on your hours and weeks worked.</p></a><a class="card" href="/toolnest/sales-tax-calculator/"><h3>Sales Tax Calculator</h3><p>Add sales tax to a price or work backward from a tax-included total. Enter the amount and tax rate to see the tax owed and the final total instantly.</p></a><a class="card" href="/toolnest/square-footage-calculator/"><h3>Square Footage Calculator</h3><p>Calculate square footage from length and width in feet. See the area in square feet, square yards, and square meters, plus total cost from a price per square foot.</p></a><a class="card" href="/toolnest/tdee-calculator/"><h3>TDEE & Calorie Calculator</h3><p>Estimate your Total Daily Energy Expenditure (TDEE) and BMR using the Mifflin-St Jeor equation, plus daily calorie targets for losing, maintaining, or gaining weight.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

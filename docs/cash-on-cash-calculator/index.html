@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rental Property Cash-on-Cash Calculator</title>
+<meta name="description" content="Analyze a rental property deal: monthly cash flow, cash-on-cash return, cap rate, and NOI from rent, expenses, and financing. Built for real estate investors and BRRRR deals.">
+<meta name="keywords" content="cash on cash return calculator, rental property calculator, cap rate calculator, rental cash flow, BRRRR calculator, real estate ROI">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/cash-on-cash-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Rental Property Cash-on-Cash Calculator">
+<meta property="og:description" content="Analyze a rental property deal: monthly cash flow, cash-on-cash return, cap rate, and NOI from rent, expenses, and financing. Built for real estate investors and BRRRR deals.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/cash-on-cash-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Rental Property Cash-on-Cash Calculator", "url": "https://erikthered95.github.io/toolnest/cash-on-cash-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Analyze a rental property deal: monthly cash flow, cash-on-cash return, cap rate, and NOI from rent, expenses, and financing. Built for real estate investors and BRRRR deals."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is a good cash-on-cash return?", "acceptedAnswer": {"@type": "Answer", "text": "Many rental investors target a cash-on-cash return of 8%\u201312% or higher, though what's 'good' depends on your market, risk, and goals. It measures the annual pre-tax cash flow against the actual cash you put in, so it reflects the return on your real out-of-pocket investment \u2014 not the property's full value."}}, {"@type": "Question", "name": "What's the difference between cash-on-cash return and cap rate?", "acceptedAnswer": {"@type": "Answer", "text": "Cap rate is net operating income (NOI) divided by the purchase price, ignoring financing \u2014 it describes the property itself. Cash-on-cash return divides your annual cash flow (after the mortgage) by the cash you invested, so it reflects your leveraged return. A property can have a modest cap rate but a strong cash-on-cash return when financed well."}}, {"@type": "Question", "name": "What counts as operating expenses on a rental?", "acceptedAnswer": {"@type": "Answer", "text": "Recurring costs to run the property: property taxes, insurance, maintenance and repairs, property management, HOA dues, and a vacancy allowance. By convention, operating expenses exclude the mortgage payment (debt service) and capital improvements \u2014 those are handled separately."}}, {"@type": "Question", "name": "How does this work for a BRRRR deal?", "acceptedAnswer": {"@type": "Answer", "text": "BRRRR (Buy, Rehab, Rent, Refinance, Repeat) aims to recover most of your invested cash through a cash-out refinance, which shrinks the denominator in the cash-on-cash formula and can push returns very high. Enter your post-refinance loan and the cash you left in the deal to estimate the return on your remaining capital."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Rental Property Cash-on-Cash Return Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Rental Property Cash-on-Cash Return Calculator"}]}</script>
+<article class="tool"><h1>Rental Property Cash-on-Cash Return Calculator</h1><p class="lede">Analyze a rental property deal: monthly cash flow, cash-on-cash return, cap rate, and NOI from rent, expenses, and financing. Built for real estate investors and BRRRR deals.</p><div class="row">
+  <div class="field"><label for="co-price">Purchase price ($)</label><input type="number" id="co-price" value="250000" min="0" step="1000"></div>
+  <div class="field"><label for="co-rent">Monthly rent ($)</label><input type="number" id="co-rent" value="2100" min="0" step="50"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="co-dp">Down payment (%)</label><input type="number" id="co-dp" value="25" min="0" max="100" step="0.5"></div>
+  <div class="field"><label for="co-close">Closing + rehab costs ($)</label><input type="number" id="co-close" value="9000" min="0" step="500"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="co-rate">Interest rate (%)</label><input type="number" id="co-rate" value="7" min="0" step="0.01"></div>
+  <div class="field"><label for="co-term">Loan term (years)</label>
+    <select id="co-term"><option>30</option><option>20</option><option>15</option></select></div>
+</div>
+<div class="row">
+  <div class="field"><label for="co-vac">Vacancy (% of rent)</label><input type="number" id="co-vac" value="5" min="0" max="100" step="0.5"></div>
+  <div class="field"><label for="co-mgmt">Management (% of rent)</label><input type="number" id="co-mgmt" value="8" min="0" max="100" step="0.5"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="co-maint">Maintenance (% of rent)</label><input type="number" id="co-maint" value="8" min="0" max="100" step="0.5"></div>
+  <div class="field"><label for="co-hoa">HOA ($/mo) <span class="hint">optional</span></label><input type="number" id="co-hoa" value="0" min="0" step="10"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="co-tax">Property tax ($/yr)</label><input type="number" id="co-tax" value="3000" min="0" step="100"></div>
+  <div class="field"><label for="co-ins">Insurance ($/yr)</label><input type="number" id="co-ins" value="1400" min="0" step="100"></div>
+</div>
+
+<div class="result" id="co-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['co-price', 'co-rent', 'co-dp', 'co-close', 'co-rate', 'co-term', 'co-vac', 'co-mgmt', 'co-maint', 'co-hoa', 'co-tax', 'co-ins'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var price = v('co-price');
+    var rent = v('co-rent');
+    var down = price * v('co-dp') / 100;
+    var loan = Math.max(0, price - down);
+    var r = v('co-rate') / 100 / 12;
+    var n = v('co-term') * 12;
+    var pi = r === 0 ? loan / n : loan * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+
+    var grossAnnual = rent * 12;
+    var vacancy = grossAnnual * v('co-vac') / 100;
+    var effectiveGross = grossAnnual - vacancy;
+    var mgmt = grossAnnual * v('co-mgmt') / 100;
+    var maint = grossAnnual * v('co-maint') / 100;
+    var opex = v('co-tax') + v('co-ins') + mgmt + maint + v('co-hoa') * 12;
+    var noi = effectiveGross - opex;
+    var debtService = pi * 12;
+    var annualCashFlow = noi - debtService;
+    var monthlyCashFlow = annualCashFlow / 12;
+    var cashInvested = down + v('co-close');
+    var coc = cashInvested ? annualCashFlow / cashInvested * 100 : 0;
+    var capRate = price ? noi / price * 100 : 0;
+
+    document.getElementById('co-out').innerHTML =
+      '<div class="result-sub">Cash-on-cash return</div>' +
+      '<div class="result-big">' + coc.toFixed(1) + '%</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Monthly cash flow', (monthlyCashFlow < 0 ? '&minus; ' : '') + money.format(Math.abs(monthlyCashFlow))) +
+        kv('Annual cash flow', (annualCashFlow < 0 ? '&minus; ' : '') + money.format(Math.abs(annualCashFlow))) +
+        kv('Cap rate', capRate.toFixed(2) + '%') +
+        kv('Net operating income (NOI)', money.format(noi)) +
+        kv('&nbsp;&nbsp;Effective gross income', money.format(effectiveGross)) +
+        kv('&nbsp;&nbsp;Operating expenses', '&minus; ' + money.format(opex)) +
+        kv('Mortgage (P&amp;I) / yr', '&minus; ' + money.format(debtService)) +
+        kv('Total cash invested', money.format(cashInvested)) +
+      '</div>' +
+      (monthlyCashFlow < 0
+        ? '<p class="note">This deal has negative cash flow — the rent doesn’t cover expenses plus the mortgage. You’d pay in each month, betting on appreciation or paydown.</p>'
+        : '<p class="note">Positive cash flow of ' + money.format(monthlyCashFlow) + '/mo. Compare the ' + coc.toFixed(1) + '% cash-on-cash return against other deals and your target.</p>');
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Analyzing a rental property deal</h2>
+<p>Before you buy a rental, the numbers have to work — and the headline number most investors live by is <strong>cash-on-cash return</strong>: your annual pre-tax cash flow divided by the actual cash you put into the deal. It answers the question that matters most to a leveraged investor: "for every dollar I sink in, how much comes back each year?"</p>
+<p>Getting there means building the income statement from the top down:</p>
+<ul>
+  <li><strong>Effective gross income</strong> — annual rent minus a vacancy allowance, because no property is rented 100% of the time.</li>
+  <li><strong>Operating expenses</strong> — property taxes, insurance, maintenance, management, and HOA. By convention these exclude the mortgage.</li>
+  <li><strong>Net operating income (NOI)</strong> — effective gross income minus operating expenses. Divide it by price and you get the <strong>cap rate</strong>, which describes the property regardless of how it's financed.</li>
+  <li><strong>Cash flow</strong> — NOI minus the mortgage (debt service). Divide annual cash flow by your cash invested for the <strong>cash-on-cash return</strong>.</li>
+</ul>
+<h2>Cap rate vs. cash-on-cash — and BRRRR</h2>
+<p>Cap rate and cash-on-cash answer different questions. Cap rate ignores your loan and lets you compare properties apples-to-apples. Cash-on-cash reflects your leverage and your real out-of-pocket return. A deal financed with little money down can show a high cash-on-cash return even at a modest cap rate. That's the engine behind <strong>BRRRR</strong> (Buy, Rehab, Rent, Refinance, Repeat): pull most of your cash back out in a refinance, and the small amount left in the deal makes the return on remaining capital look outstanding.</p>
+<p class="note"><strong>Estimate only.</strong> Real deals carry costs this model simplifies — capital expenditures (roof, HVAC), leasing fees, utilities, and taxes on income. Always verify rents, expenses, and financing with real quotes before committing. This is not financial or investment advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is a good cash-on-cash return?</summary><div class="faq-a">Many rental investors target a cash-on-cash return of 8%–12% or higher, though what's 'good' depends on your market, risk, and goals. It measures the annual pre-tax cash flow against the actual cash you put in, so it reflects the return on your real out-of-pocket investment — not the property's full value.</div></details>
+<details class="faq-item"><summary>What's the difference between cash-on-cash return and cap rate?</summary><div class="faq-a">Cap rate is net operating income (NOI) divided by the purchase price, ignoring financing — it describes the property itself. Cash-on-cash return divides your annual cash flow (after the mortgage) by the cash you invested, so it reflects your leveraged return. A property can have a modest cap rate but a strong cash-on-cash return when financed well.</div></details>
+<details class="faq-item"><summary>What counts as operating expenses on a rental?</summary><div class="faq-a">Recurring costs to run the property: property taxes, insurance, maintenance and repairs, property management, HOA dues, and a vacancy allowance. By convention, operating expenses exclude the mortgage payment (debt service) and capital improvements — those are handled separately.</div></details>
+<details class="faq-item"><summary>How does this work for a BRRRR deal?</summary><div class="faq-a">BRRRR (Buy, Rehab, Rent, Refinance, Repeat) aims to recover most of your invested cash through a cash-out refinance, which shrinks the denominator in the cash-on-cash formula and can push returns very high. Enter your post-refinance loan and the cash you left in the deal to estimate the return on your remaining capital.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/retirement-calculator/"><h3>Retirement Savings Calculator</h3><p>Project how much your retirement savings could grow. Enter your age, current balance, monthly contribution, and expected return to estimate your nest egg at retirement.</p></a><a class="card" href="/toolnest/roth-ira-calculator/"><h3>Roth IRA Calculator</h3><p>Estimate how much your Roth IRA could grow tax-free. Enter your balance, annual contribution, time horizon, and expected return to project your tax-free retirement savings.</p></a><a class="card" href="/toolnest/savings-goal-calculator/"><h3>Savings Goal Calculator</h3><p>Find out how much to save each month to reach a goal. Enter your target, current savings, timeline, and APY to see the monthly contribution and interest you'll earn.</p></a><a class="card" href="/toolnest/seller-net-proceeds-calculator/"><h3>Seller Net Proceeds Calculator</h3><p>Estimate how much cash you'll walk away with after selling your home — sale price minus mortgage payoff, agent commission, and closing costs. Free seller net sheet.</p></a><a class="card" href="/toolnest/simple-interest-calculator/"><h3>Simple Interest Calculator</h3><p>Calculate simple interest on a principal amount. Enter the principal, annual rate, and time in years to see the interest earned and the total amount.</p></a><a class="card" href="/toolnest/va-loan-calculator/"><h3>VA Loan Calculator</h3><p>Estimate your VA mortgage payment including the VA funding fee, property taxes, and insurance — with no down payment and no monthly mortgage insurance.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

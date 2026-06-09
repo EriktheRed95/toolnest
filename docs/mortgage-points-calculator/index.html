@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mortgage Points Calculator</title>
+<meta name="description" content="Should you buy discount points to lower your mortgage rate? Calculate the cost of points, your monthly savings, and the break-even point to decide if it's worth it.">
+<meta name="keywords" content="mortgage points calculator, discount points break even, should I buy points, buying down interest rate, points break even calculator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/mortgage-points-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Mortgage Points Calculator">
+<meta property="og:description" content="Should you buy discount points to lower your mortgage rate? Calculate the cost of points, your monthly savings, and the break-even point to decide if it's worth it.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/mortgage-points-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Mortgage Points Calculator", "url": "https://erikthered95.github.io/toolnest/mortgage-points-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Should you buy discount points to lower your mortgage rate? Calculate the cost of points, your monthly savings, and the break-even point to decide if it's worth it."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What are mortgage discount points?", "acceptedAnswer": {"@type": "Answer", "text": "Discount points are optional, prepaid interest you pay at closing to lower your loan's rate. One point costs 1% of the loan amount and typically reduces the rate by roughly 0.25%, though the exact reduction varies by lender. You're essentially paying upfront to save monthly."}}, {"@type": "Question", "name": "What is the break-even point on mortgage points?", "acceptedAnswer": {"@type": "Answer", "text": "It's how many months of lower payments it takes to recover the upfront cost of the points. If points cost $4,000 and lower your payment by $80 a month, you break even in 50 months. Keep the loan past that point and the points pay off; sell or refinance sooner and they don't."}}, {"@type": "Question", "name": "Are mortgage points worth it?", "acceptedAnswer": {"@type": "Answer", "text": "They're worth it if you'll keep the loan well beyond the break-even point. Points favor buyers who plan to stay put for many years and aren't likely to refinance. If you might move or refinance within a few years, paying points usually isn't worth it."}}, {"@type": "Question", "name": "Are discount points tax deductible?", "acceptedAnswer": {"@type": "Answer", "text": "Points paid to buy down the rate on a primary-home purchase are often deductible as mortgage interest, sometimes fully in the year paid and sometimes spread over the loan. Rules have conditions and limits, so check current IRS guidance or a tax professional for your situation."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Mortgage Discount Points Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Mortgage Discount Points Calculator"}]}</script>
+<article class="tool"><h1>Mortgage Discount Points Calculator</h1><p class="lede">Should you buy discount points to lower your mortgage rate? Calculate the cost of points, your monthly savings, and the break-even point to decide if it's worth it.</p><div class="row">
+  <div class="field"><label for="pt-loan">Loan amount ($)</label><input type="number" id="pt-loan" value="350000" min="0" step="1000"></div>
+  <div class="field"><label for="pt-term">Loan term (years)</label>
+    <select id="pt-term"><option>30</option><option>20</option><option>15</option></select></div>
+</div>
+<div class="row">
+  <div class="field"><label for="pt-rate">Rate without points (%)</label><input type="number" id="pt-rate" value="6.75" min="0" step="0.01"></div>
+  <div class="field"><label for="pt-rate2">Rate with points (%)</label><input type="number" id="pt-rate2" value="6.25" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="pt-points">Points purchased</label><input type="number" id="pt-points" value="2" min="0" step="0.125"></div>
+  <div class="field"><label for="pt-stay">Years you'll keep the loan</label><input type="number" id="pt-stay" value="10" min="1" max="40" step="1"></div>
+</div>
+
+<div class="result" id="pt-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['pt-loan', 'pt-term', 'pt-rate', 'pt-rate2', 'pt-points', 'pt-stay'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function pmt(P, r, n) { return r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1); }
+
+  function calc() {
+    var loan = v('pt-loan');
+    var n = v('pt-term') * 12;
+    var pay1 = pmt(loan, v('pt-rate') / 100 / 12, n);
+    var pay2 = pmt(loan, v('pt-rate2') / 100 / 12, n);
+    var cost = loan * v('pt-points') / 100;
+    var monthlySave = pay1 - pay2;
+    var breakeven = monthlySave > 0 ? cost / monthlySave : null;
+    var stayMonths = v('pt-stay') * 12;
+    var netOverStay = monthlySave * stayMonths - cost;
+
+    var verdict;
+    if (monthlySave <= 0) {
+      verdict = '<p class="note warn">The "with points" rate isn’t lower than the base rate, so there’s no monthly saving to recover the cost. Check your rate inputs.</p>';
+    } else if (breakeven <= stayMonths) {
+      verdict = '<p class="note ok">You break even in ' + Math.ceil(breakeven) + ' months — before you plan to leave — so the points pay off, netting ' + money.format(netOverStay) + ' over ' + v('pt-stay') + ' years.</p>';
+    } else {
+      verdict = '<p class="note warn">Break-even is ' + Math.ceil(breakeven) + ' months, but you only plan to keep the loan ' + stayMonths + ' months. You’d lose about ' + money.format(-netOverStay) + ' — buying points likely isn’t worth it here.</p>';
+    }
+
+    document.getElementById('pt-out').innerHTML =
+      '<div class="result-sub">Break-even on points</div>' +
+      '<div class="result-big">' + (breakeven ? Math.ceil(breakeven) + ' months' : '—') + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Cost of ' + v('pt-points') + ' points', money.format(cost)) +
+        kv('Payment without points', money2.format(pay1)) +
+        kv('Payment with points', money2.format(pay2)) +
+        kv('Monthly savings', money2.format(monthlySave)) +
+        kv('Net over ' + v('pt-stay') + ' years', (netOverStay < 0 ? '&minus; ' : '') + money.format(Math.abs(netOverStay))) +
+      '</div>' +
+      verdict;
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Should you buy down your mortgage rate?</h2>
+<p><strong>Discount points</strong> let you pay extra at closing in exchange for a lower interest rate for the life of the loan. One point costs <strong>1% of the loan amount</strong> and usually trims the rate by about a quarter percent. It's a trade of upfront cash for lower monthly payments — and whether it's smart comes down to one number: the <strong>break-even point</strong>.</p>
+<p>The break-even is how long it takes your monthly savings to repay what the points cost. Buy $4,000 in points to save $80 a month, and you recover the cost in 50 months. Stay in the loan longer than that and the points are pure savings; leave sooner — by selling or refinancing — and you've lost money.</p>
+<h2>When points make sense (and when they don't)</h2>
+<ul>
+  <li><strong>Worth it:</strong> you'll keep this loan for many years, you're confident you won't refinance soon, and you have cash to spare at closing without shrinking your down payment.</li>
+  <li><strong>Skip them:</strong> you might move or refinance within a few years, or that cash would do more as a larger down payment (avoiding PMI) or in reserves.</li>
+</ul>
+<p>This calculator compares your payment with and without points, shows the cost and break-even, and tells you the net result over the period you actually expect to keep the loan.</p>
+<p class="note"><strong>Estimate only.</strong> The rate reduction per point varies by lender and market — use the actual quoted rates. Points paid on a primary-home purchase may be tax deductible, which can shorten the effective break-even; check current IRS rules. This is not financial or tax advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What are mortgage discount points?</summary><div class="faq-a">Discount points are optional, prepaid interest you pay at closing to lower your loan's rate. One point costs 1% of the loan amount and typically reduces the rate by roughly 0.25%, though the exact reduction varies by lender. You're essentially paying upfront to save monthly.</div></details>
+<details class="faq-item"><summary>What is the break-even point on mortgage points?</summary><div class="faq-a">It's how many months of lower payments it takes to recover the upfront cost of the points. If points cost $4,000 and lower your payment by $80 a month, you break even in 50 months. Keep the loan past that point and the points pay off; sell or refinance sooner and they don't.</div></details>
+<details class="faq-item"><summary>Are mortgage points worth it?</summary><div class="faq-a">They're worth it if you'll keep the loan well beyond the break-even point. Points favor buyers who plan to stay put for many years and aren't likely to refinance. If you might move or refinance within a few years, paying points usually isn't worth it.</div></details>
+<details class="faq-item"><summary>Are discount points tax deductible?</summary><div class="faq-a">Points paid to buy down the rate on a primary-home purchase are often deductible as mortgage interest, sometimes fully in the year paid and sometimes spread over the loan. Rules have conditions and limits, so check current IRS guidance or a tax professional for your situation.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/mortgage-qualification-calculator/"><h3>Mortgage Qualification Calculator</h3><p>Find out how much income you need to qualify for a mortgage. Enter the home price, down payment, rate, taxes, insurance, and debts to see the required annual income and DTI.</p></a><a class="card" href="/toolnest/mortgage-recast-calculator/"><h3>Mortgage Recast Calculator</h3><p>See how a lump-sum payment and recast lowers your monthly mortgage payment. Compare your new payment, monthly savings, and total interest saved without refinancing.</p></a><a class="card" href="/toolnest/refinance-calculator/"><h3>Mortgage Refinance Calculator</h3><p>See if refinancing your mortgage is worth it. Compare your current loan to a new rate, find your monthly savings, break-even point, and lifetime interest difference.</p></a><a class="card" href="/toolnest/net-worth-calculator/"><h3>Net Worth Calculator</h3><p>Calculate your net worth by adding up your assets and subtracting your debts. Enter cash, investments, property, and liabilities to see where you stand financially.</p></a><a class="card" href="/toolnest/pmi-removal-calculator/"><h3>PMI Removal Date Calculator</h3><p>Find out when you can drop private mortgage insurance (PMI). See the month you reach 80% LTV to request cancellation and 78% for automatic termination, with optional extra payments.</p></a><a class="card" href="/toolnest/price-per-square-foot-calculator/"><h3>Price Per Square Foot Calculator</h3><p>Calculate a home's price per square foot, or estimate a property's value from its size and a comparable price per square foot.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

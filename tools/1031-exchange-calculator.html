@@ -1,0 +1,82 @@
+<!--META
+{
+  "title": "1031 Exchange Calculator",
+  "slug": "1031-exchange-calculator",
+  "category": "finance",
+  "h1": "1031 Exchange Calculator",
+  "description": "Estimate the taxes deferred by a 1031 like-kind exchange of investment property. See your realized gain, capital gains and depreciation recapture tax, and net proceeds to reinvest.",
+  "keywords": "1031 exchange calculator, like kind exchange, capital gains deferral, depreciation recapture, 1031 tax deferral, investment property exchange",
+  "faq": [
+    {"q": "What is a 1031 exchange?", "a": "A Section 1031 like-kind exchange lets you sell an investment or business property and reinvest the proceeds into another qualifying property while deferring the capital gains and depreciation recapture taxes you would otherwise owe. The tax is postponed, not erased — it carries over into the replacement property's basis."},
+    {"q": "What taxes does a 1031 exchange defer?", "a": "It defers federal capital gains tax on appreciation, depreciation recapture tax on the depreciation you previously claimed (often taxed at up to 25%), and in most cases applicable state income tax on the gain. This calculator estimates each piece and totals the tax you'd defer."},
+    {"q": "What are the 1031 deadlines?", "a": "Two strict clocks start when you sell: you must identify replacement property within 45 days, and complete the purchase within 180 days. Both are calendar-day deadlines with essentially no extensions, and a qualified intermediary must hold the proceeds in between."},
+    {"q": "Do I have to reinvest everything?", "a": "To fully defer tax, you generally must reinvest all net proceeds and acquire property of equal or greater value, replacing any debt that was paid off. Cash you keep (called 'boot') or a drop in debt can trigger partial taxable gain. This estimate assumes a full deferral."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="ex-sale">Sale price ($)</label><input type="number" id="ex-sale" value="700000" min="0" step="1000"></div>
+  <div class="field"><label for="ex-basis">Adjusted cost basis ($)</label><input type="number" id="ex-basis" value="400000" min="0" step="1000"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="ex-costs">Selling costs ($) <span class="hint">optional</span></label><input type="number" id="ex-costs" value="0" min="0" step="1000"></div>
+  <div class="field"><label for="ex-dep">Accumulated depreciation ($) <span class="hint">optional</span></label><input type="number" id="ex-dep" value="0" min="0" step="1000"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="ex-cg">Federal capital gains rate (%)</label><input type="number" id="ex-cg" value="20" min="0" max="100" step="0.5"></div>
+  <div class="field"><label for="ex-recap">Depreciation recapture rate (%)</label><input type="number" id="ex-recap" value="25" min="0" max="100" step="0.5"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="ex-state">State tax rate (%) <span class="hint">optional</span></label><input type="number" id="ex-state" value="0" min="0" max="100" step="0.1"></div>
+</div>
+
+<div class="result" id="ex-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['ex-sale', 'ex-basis', 'ex-costs', 'ex-dep', 'ex-cg', 'ex-recap', 'ex-state'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var sale = v('ex-sale');
+    var basis = v('ex-basis');
+    var costs = v('ex-costs');
+    var dep = v('ex-dep');
+    var cgRate = v('ex-cg');
+    var recapRate = v('ex-recap');
+    var stateRate = v('ex-state');
+    var out = document.getElementById('ex-out');
+
+    var realizedGain = sale - costs - basis;
+    if (realizedGain < 0) realizedGain = 0;
+    var depPortion = Math.min(dep, realizedGain);
+    var capPortion = realizedGain - depPortion;
+    var recapTax = depPortion * recapRate / 100;
+    var capTax = capPortion * cgRate / 100;
+    var stateTax = realizedGain * stateRate / 100;
+    var totalDeferred = recapTax + capTax + stateTax;
+    var netProceeds = sale - costs;
+
+    out.innerHTML =
+      '<div class="result-sub">Total tax deferred by the exchange</div>' +
+      '<div class="result-big">' + money.format(totalDeferred) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Realized gain', money.format(realizedGain)) +
+        kv('Depreciation recapture tax', money.format(recapTax)) +
+        kv('Capital gains tax', money.format(capTax)) +
+        kv('State tax', money.format(stateTax)) +
+        kv('Net proceeds to reinvest', money.format(netProceeds)) +
+      '</div>' +
+      '<p class="note">A 1031 defers tax — it does not eliminate it. To fully defer, reinvest all proceeds, replace any debt, and meet the 45-day identification and 180-day closing deadlines.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How a 1031 exchange defers tax</h2>
+<p>When you sell an appreciated investment property outright, you owe tax on the <strong>realized gain</strong> — the sale price minus selling costs and your adjusted cost basis. That gain is taxed in two layers: depreciation you previously deducted is "recaptured" (often at up to 25%), and the remaining appreciation is taxed at capital gains rates, plus any state income tax. A Section 1031 like-kind exchange lets you roll the entire proceeds into a replacement investment property and postpone all of that tax, carrying your old basis forward.</p>
+<p>This calculator estimates the tax you would defer by splitting your gain into a depreciation-recapture portion and a capital-gains portion, applying your rates, and adding state tax. It also shows the net proceeds available to reinvest. Remember the deferral is conditional: you must use a qualified intermediary, reinvest all proceeds into equal-or-greater value, replace any paid-off debt, and hit the strict 45-day and 180-day deadlines.</p>
+<p class="note"><strong>Estimate only.</strong> Tax rules are complex and case-specific — consult a qualified tax advisor and intermediary. This is not financial advice.</p>

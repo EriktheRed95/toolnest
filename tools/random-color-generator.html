@@ -1,0 +1,79 @@
+<!--META
+{
+  "title": "Random Color Generator",
+  "slug": "random-color-generator",
+  "category": "random",
+  "h1": "Random Color Generator",
+  "description": "Generate random colors with one click. See a swatch, HEX, and RGB for each, and copy all the HEX codes at once. Great for palettes, mockups, and placeholders.",
+  "keywords": "random color generator, random hex color, random rgb color, color palette generator, random color picker",
+  "faq": [
+    {"q": "How are the colors generated?", "a": "Each color is picked using your browser's cryptographically secure random number generator (window.crypto), then formatted as a six-digit HEX code and its equivalent RGB values. No two clicks should ever give the same set."},
+    {"q": "What can I use random colors for?", "a": "They're handy for sparking design palettes, filling placeholder elements while building a layout, generating avatar or tag colors, testing how a UI handles different shades, or simply breaking creative block when you can't decide on a hue."},
+    {"q": "What's the difference between HEX and RGB?", "a": "Both describe the same color. HEX is a six-digit code like #3A7BD5 used widely in CSS and design tools. RGB lists the red, green, and blue channels as numbers from 0 to 255, like rgb(58, 123, 213). This tool shows both for every swatch."},
+    {"q": "Can I copy the colors?", "a": "Yes. Every generated set lists its HEX codes in a copy box — click Copy to grab them all at once, then paste straight into your CSS, design file, or notes."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field">
+    <label for="rc-count">How many colors (1–12)</label>
+    <input type="number" id="rc-count" value="5" min="1" max="12" step="1">
+  </div>
+</div>
+<div class="btn-row">
+  <button class="btn" id="rc-go">Generate</button>
+  <button class="btn secondary" data-copy="#rc-hex" id="rc-copy">Copy HEX</button>
+</div>
+
+<div class="result">
+  <div id="rc-swatches"></div>
+  <div class="pw-out" id="rc-hex" style="margin-top:12px"></div>
+</div>
+
+<script>
+(function () {
+  var countEl = document.getElementById('rc-count');
+  var swatches = document.getElementById('rc-swatches');
+  var hexBox = document.getElementById('rc-hex');
+
+  function randByte() {
+    var buf = new Uint8Array(1);
+    window.crypto.getRandomValues(buf);
+    return buf[0];
+  }
+  function hex2(n) { return ('0' + n.toString(16)).slice(-2); }
+
+  function go() {
+    var n = Math.max(1, Math.min(12, Math.trunc(+countEl.value || 1)));
+    countEl.value = n;
+    var rows = '', hexLines = [];
+    for (var i = 0; i < n; i++) {
+      var r = randByte(), g = randByte(), b = randByte();
+      var hex = '#' + hex2(r) + hex2(g) + hex2(b);
+      var rgb = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+      hexLines.push(hex);
+      rows +=
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">' +
+          '<div style="flex:0 0 64px;height:48px;border-radius:8px;border:1px solid rgba(0,0,0,.15);background:' + hex + '"></div>' +
+          '<div><div class="v" style="font-weight:600">' + hex.toUpperCase() + '</div>' +
+          '<div class="hint">' + rgb + '</div></div>' +
+        '</div>';
+    }
+    swatches.innerHTML = rows;
+    hexBox.textContent = hexLines.join('\n');
+  }
+
+  document.getElementById('rc-go').addEventListener('click', go);
+  countEl.addEventListener('input', go);
+  go();
+})();
+</script>
+
+<h2>Random colors for design and testing</h2>
+<p>A random color generator is one of those small tools that turns out to be surprisingly useful. Designers reach for it to <strong>kick-start a palette</strong> when a blank canvas feels paralyzing, developers use it to fill <strong>placeholder</strong> blocks and to give tags, avatars, or chart series distinct shades, and anyone can use it just to discover a hue they wouldn't have picked themselves. Each click here produces a fresh set generated with your browser's secure random source.</p>
+<p>Every color comes with both its <strong>HEX</strong> code — the six-digit form like #3A7BD5 that CSS and design apps expect — and its <strong>RGB</strong> values, the red, green, and blue channels from 0 to 255. The swatch shows you the actual color, and the copy box collects all the HEX codes so you can paste a whole palette in one go.</p>
+<ul>
+  <li><strong>Palettes</strong> — generate a batch and keep the shades you like.</li>
+  <li><strong>Placeholders</strong> — fill blocks and components while building.</li>
+  <li><strong>Variety</strong> — assign unique colors to tags, users, or data series.</li>
+</ul>

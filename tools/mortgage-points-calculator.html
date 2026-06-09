@@ -1,0 +1,88 @@
+<!--META
+{
+  "title": "Mortgage Points Calculator",
+  "slug": "mortgage-points-calculator",
+  "category": "finance",
+  "h1": "Mortgage Discount Points Calculator",
+  "description": "Should you buy discount points to lower your mortgage rate? Calculate the cost of points, your monthly savings, and the break-even point to decide if it's worth it.",
+  "keywords": "mortgage points calculator, discount points break even, should I buy points, buying down interest rate, points break even calculator",
+  "faq": [
+    {"q": "What are mortgage discount points?", "a": "Discount points are optional, prepaid interest you pay at closing to lower your loan's rate. One point costs 1% of the loan amount and typically reduces the rate by roughly 0.25%, though the exact reduction varies by lender. You're essentially paying upfront to save monthly."},
+    {"q": "What is the break-even point on mortgage points?", "a": "It's how many months of lower payments it takes to recover the upfront cost of the points. If points cost $4,000 and lower your payment by $80 a month, you break even in 50 months. Keep the loan past that point and the points pay off; sell or refinance sooner and they don't."},
+    {"q": "Are mortgage points worth it?", "a": "They're worth it if you'll keep the loan well beyond the break-even point. Points favor buyers who plan to stay put for many years and aren't likely to refinance. If you might move or refinance within a few years, paying points usually isn't worth it."},
+    {"q": "Are discount points tax deductible?", "a": "Points paid to buy down the rate on a primary-home purchase are often deductible as mortgage interest, sometimes fully in the year paid and sometimes spread over the loan. Rules have conditions and limits, so check current IRS guidance or a tax professional for your situation."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="pt-loan">Loan amount ($)</label><input type="number" id="pt-loan" value="350000" min="0" step="1000"></div>
+  <div class="field"><label for="pt-term">Loan term (years)</label>
+    <select id="pt-term"><option>30</option><option>20</option><option>15</option></select></div>
+</div>
+<div class="row">
+  <div class="field"><label for="pt-rate">Rate without points (%)</label><input type="number" id="pt-rate" value="6.75" min="0" step="0.01"></div>
+  <div class="field"><label for="pt-rate2">Rate with points (%)</label><input type="number" id="pt-rate2" value="6.25" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="pt-points">Points purchased</label><input type="number" id="pt-points" value="2" min="0" step="0.125"></div>
+  <div class="field"><label for="pt-stay">Years you'll keep the loan</label><input type="number" id="pt-stay" value="10" min="1" max="40" step="1"></div>
+</div>
+
+<div class="result" id="pt-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['pt-loan', 'pt-term', 'pt-rate', 'pt-rate2', 'pt-points', 'pt-stay'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function pmt(P, r, n) { return r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1); }
+
+  function calc() {
+    var loan = v('pt-loan');
+    var n = v('pt-term') * 12;
+    var pay1 = pmt(loan, v('pt-rate') / 100 / 12, n);
+    var pay2 = pmt(loan, v('pt-rate2') / 100 / 12, n);
+    var cost = loan * v('pt-points') / 100;
+    var monthlySave = pay1 - pay2;
+    var breakeven = monthlySave > 0 ? cost / monthlySave : null;
+    var stayMonths = v('pt-stay') * 12;
+    var netOverStay = monthlySave * stayMonths - cost;
+
+    var verdict;
+    if (monthlySave <= 0) {
+      verdict = '<p class="note warn">The "with points" rate isn’t lower than the base rate, so there’s no monthly saving to recover the cost. Check your rate inputs.</p>';
+    } else if (breakeven <= stayMonths) {
+      verdict = '<p class="note ok">You break even in ' + Math.ceil(breakeven) + ' months — before you plan to leave — so the points pay off, netting ' + money.format(netOverStay) + ' over ' + v('pt-stay') + ' years.</p>';
+    } else {
+      verdict = '<p class="note warn">Break-even is ' + Math.ceil(breakeven) + ' months, but you only plan to keep the loan ' + stayMonths + ' months. You’d lose about ' + money.format(-netOverStay) + ' — buying points likely isn’t worth it here.</p>';
+    }
+
+    document.getElementById('pt-out').innerHTML =
+      '<div class="result-sub">Break-even on points</div>' +
+      '<div class="result-big">' + (breakeven ? Math.ceil(breakeven) + ' months' : '—') + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Cost of ' + v('pt-points') + ' points', money.format(cost)) +
+        kv('Payment without points', money2.format(pay1)) +
+        kv('Payment with points', money2.format(pay2)) +
+        kv('Monthly savings', money2.format(monthlySave)) +
+        kv('Net over ' + v('pt-stay') + ' years', (netOverStay < 0 ? '&minus; ' : '') + money.format(Math.abs(netOverStay))) +
+      '</div>' +
+      verdict;
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Should you buy down your mortgage rate?</h2>
+<p><strong>Discount points</strong> let you pay extra at closing in exchange for a lower interest rate for the life of the loan. One point costs <strong>1% of the loan amount</strong> and usually trims the rate by about a quarter percent. It's a trade of upfront cash for lower monthly payments — and whether it's smart comes down to one number: the <strong>break-even point</strong>.</p>
+<p>The break-even is how long it takes your monthly savings to repay what the points cost. Buy $4,000 in points to save $80 a month, and you recover the cost in 50 months. Stay in the loan longer than that and the points are pure savings; leave sooner — by selling or refinancing — and you've lost money.</p>
+<h2>When points make sense (and when they don't)</h2>
+<ul>
+  <li><strong>Worth it:</strong> you'll keep this loan for many years, you're confident you won't refinance soon, and you have cash to spare at closing without shrinking your down payment.</li>
+  <li><strong>Skip them:</strong> you might move or refinance within a few years, or that cash would do more as a larger down payment (avoiding PMI) or in reserves.</li>
+</ul>
+<p>This calculator compares your payment with and without points, shows the cost and break-even, and tells you the net result over the period you actually expect to keep the loan.</p>
+<p class="note"><strong>Estimate only.</strong> The rate reduction per point varies by lender and market — use the actual quoted rates. Points paid on a primary-home purchase may be tax deductible, which can shorten the effective break-even; check current IRS rules. This is not financial or tax advice.</p>

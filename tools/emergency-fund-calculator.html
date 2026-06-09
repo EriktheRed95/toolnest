@@ -1,0 +1,83 @@
+<!--META
+{
+  "title": "Emergency Fund Calculator",
+  "slug": "emergency-fund-calculator",
+  "category": "finance",
+  "h1": "Emergency Fund Calculator",
+  "description": "Find out how big your emergency fund should be and how long it will take to reach it. Enter your monthly expenses, target months of coverage, current savings, and contribution.",
+  "keywords": "emergency fund calculator, how much emergency fund, rainy day fund, months of expenses savings, emergency savings goal, financial safety net",
+  "faq": [
+    {"q": "How big should my emergency fund be?", "a": "A common guideline is three to six months of essential living expenses. People with stable, dual incomes may lean toward three months, while those with variable income, a single earner, or dependents often aim for six months or more. Use your essential expenses — housing, food, utilities, insurance, minimum debt payments — not your full discretionary budget."},
+    {"q": "Where should I keep my emergency fund?", "a": "Keep it somewhere safe and liquid that you can access quickly without losing value — typically a high-yield savings or money market account. Avoid investing it in stocks or anything volatile, since an emergency could force you to sell at a bad time."},
+    {"q": "Should I build an emergency fund before paying off debt?", "a": "Many planners suggest building a small starter fund (often around one month of expenses or a fixed amount) first, then aggressively paying high-interest debt, and finally growing the fund to the full three-to-six-month target. The right balance depends on your interest rates and job stability."},
+    {"q": "What counts as an emergency?", "a": "True emergencies are urgent, necessary, and unexpected — a job loss, medical bill, or essential home or car repair. Planned or discretionary spending doesn't qualify. Replenish the fund after you use it so it's ready next time."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="ef-exp">Monthly essential expenses ($)</label><input type="number" id="ef-exp" value="3500" min="0" step="100"></div>
+  <div class="field"><label for="ef-months">Months of coverage desired</label><input type="number" id="ef-months" value="6" min="1" step="1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="ef-current">Current emergency savings ($)</label><input type="number" id="ef-current" value="5000" min="0" step="100"></div>
+  <div class="field"><label for="ef-contrib">Monthly contribution ($) <span class="hint">optional</span></label><input type="number" id="ef-contrib" value="0" min="0" step="50"></div>
+</div>
+
+<div class="result" id="ef-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['ef-exp', 'ef-months', 'ef-current', 'ef-contrib'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var exp = v('ef-exp');
+    var months = v('ef-months');
+    var current = v('ef-current');
+    var contrib = v('ef-contrib');
+    var out = document.getElementById('ef-out');
+    if (exp <= 0 || months <= 0) { out.innerHTML = '<p class="note">Enter your monthly expenses and months of coverage.</p>'; return; }
+
+    var target = exp * months;
+    var gap = target - current;
+
+    var html =
+      '<div class="result-sub">Target emergency fund</div>' +
+      '<div class="result-big">' + money.format(target) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Current savings', money.format(current)) +
+        kv('Remaining gap', money.format(Math.max(0, gap)));
+
+    if (gap <= 0) {
+      html += kv('Status', 'Fully funded') + '</div>' +
+        '<p class="note ok">You\'ve reached your ' + months + '-month goal. Keep it in a safe, liquid account and replenish it after any use.</p>';
+    } else {
+      if (contrib > 0) {
+        var monthsToReach = Math.ceil(gap / contrib);
+        var yrs = Math.floor(monthsToReach / 12), mo = monthsToReach % 12;
+        var timeStr = (yrs ? yrs + ' yr' + (yrs === 1 ? '' : 's') + ' ' : '') + mo + ' mo';
+        html += kv('Time to reach goal', timeStr + ' at ' + money.format(contrib) + '/mo') + '</div>';
+      } else {
+        html += '</div>';
+      }
+      html += '<p class="note warn">You\'re ' + money.format(gap) + ' short of your goal. Three to six months of essential expenses is a common guideline.</p>';
+    }
+
+    out.innerHTML = html;
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Why an emergency fund matters</h2>
+<p>An emergency fund is cash set aside to cover unexpected, necessary costs — a job loss, a medical bill, or an essential car or home repair — without reaching for credit cards or derailing your other goals. The standard guideline is to hold <strong>three to six months</strong> of essential living expenses, measured against the bills you truly can't skip rather than your full discretionary budget. If your income is variable, you support dependents, or you're the sole earner, aim toward the higher end of that range.</p>
+<p>This calculator multiplies your monthly essentials by the months of coverage you want to set a target, then subtracts what you've already saved to show the gap. If you enter a monthly contribution, it estimates how long the remaining distance will take to close. Keep the money somewhere <strong>safe and liquid</strong> — a high-yield savings or money market account — so it holds its value and you can reach it instantly when you need it.</p>
+<ul>
+  <li>Count only essential expenses: housing, food, utilities, insurance, and minimum debt payments.</li>
+  <li>Automate a recurring transfer to make steady progress without thinking about it.</li>
+  <li>Replenish the fund after each use so it's ready for the next surprise.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> The right fund size depends on your job stability, dependents, and obligations. This is not financial advice.</p>

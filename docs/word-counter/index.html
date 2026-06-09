@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Word Counter</title>
+<meta name="description" content="Count words, characters, sentences, and paragraphs in your text instantly. See reading time too. Everything runs in your browser — your text never leaves the page.">
+<meta name="keywords" content="word counter, character counter, word count tool, count words online, character count, reading time calculator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/word-counter/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Word Counter">
+<meta property="og:description" content="Count words, characters, sentences, and paragraphs in your text instantly. See reading time too. Everything runs in your browser — your text never leaves the page.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/word-counter/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Word Counter", "url": "https://erikthered95.github.io/toolnest/word-counter/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Count words, characters, sentences, and paragraphs in your text instantly. See reading time too. Everything runs in your browser \u2014 your text never leaves the page."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does the word counter work?", "acceptedAnswer": {"@type": "Answer", "text": "As you type or paste text, the tool counts words (groups of characters separated by spaces), total characters, characters excluding spaces, sentences, and paragraphs. It updates live and runs entirely in your browser, so nothing you type is uploaded or stored."}}, {"@type": "Question", "name": "How is reading time estimated?", "acceptedAnswer": {"@type": "Answer", "text": "Reading time is based on an average adult reading speed of about 200\u2013250 words per minute; this tool uses 200 for a comfortable estimate. Actual speed varies with the difficulty of the text and the reader, so treat it as a rough guide."}}, {"@type": "Question", "name": "What counts as a word?", "acceptedAnswer": {"@type": "Answer", "text": "A word is any sequence of non-space characters separated by whitespace, so hyphenated terms and contractions count as one word. Numbers and standalone symbols separated by spaces also count. This matches how most word processors tally words."}}, {"@type": "Question", "name": "Is my text private?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. All counting happens locally in your browser using JavaScript. Your text is never sent to a server, saved, or logged \u2014 close the tab and it's gone."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>Word & Character Counter</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://erikthered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "Word & Character Counter"}]}</script>
+<article class="tool"><h1>Word & Character Counter</h1><p class="lede">Count words, characters, sentences, and paragraphs in your text instantly. See reading time too. Everything runs in your browser — your text never leaves the page.</p><div class="field">
+  <label for="wc-text">Your text</label>
+  <textarea id="wc-text" rows="9" style="width:100%;resize:vertical" placeholder="Type or paste your text here…">The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.</textarea>
+</div>
+<div class="btn-row">
+  <button class="btn secondary" id="wc-clear">Clear</button>
+  <button class="btn secondary" data-copy="#wc-text" id="wc-copy">Copy text</button>
+</div>
+
+<div class="result" id="wc-out"></div>
+
+<script>
+(function () {
+  var nf = new Intl.NumberFormat('en-US');
+  var ta = document.getElementById('wc-text');
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var text = ta.value;
+    var trimmed = text.trim();
+    var words = trimmed ? trimmed.split(/\s+/).length : 0;
+    var chars = text.length;
+    var noSpaces = text.replace(/\s/g, '').length;
+    var sentences = (trimmed.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g) || []).filter(function (s) { return s.trim(); }).length;
+    var paragraphs = trimmed ? trimmed.split(/\n+/).filter(function (p) { return p.trim(); }).length : 0;
+    var minutes = words / 200;
+    var readTime = words === 0 ? '0 sec' : minutes < 1 ? Math.ceil(minutes * 60) + ' sec' : Math.round(minutes) + ' min';
+
+    document.getElementById('wc-out').innerHTML =
+      '<div class="result-sub">Words</div>' +
+      '<div class="result-big">' + nf.format(words) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Characters', nf.format(chars)) +
+        kv('Characters (no spaces)', nf.format(noSpaces)) +
+        kv('Sentences', nf.format(sentences)) +
+        kv('Paragraphs', nf.format(paragraphs)) +
+        kv('Reading time', readTime) +
+      '</div>';
+  }
+  ta.addEventListener('input', calc);
+  document.getElementById('wc-clear').addEventListener('click', function () { ta.value = ''; calc(); ta.focus(); });
+  calc();
+})();
+</script>
+
+<h2>Count words and characters instantly</h2>
+<p>Whether you're trimming an essay to a word limit, fitting a meta description under 160 characters, or checking a tweet's length, knowing your exact counts matters. This tool tallies <strong>words, characters, characters without spaces, sentences, and paragraphs</strong> the moment you type or paste — no button to press, no waiting.</p>
+<p>It also estimates <strong>reading time</strong> based on a typical pace of 200 words per minute, which is handy for blog posts, scripts, and presentations where you need to gauge how long your audience will spend.</p>
+<h2>Where word and character limits come up</h2>
+<ul>
+  <li><strong>Academic writing</strong> — essays and applications with strict word counts.</li>
+  <li><strong>SEO &amp; metadata</strong> — title tags (~60 characters) and meta descriptions (~155 characters) that get cut off if too long.</li>
+  <li><strong>Social media</strong> — posts with character caps.</li>
+  <li><strong>Forms and bios</strong> — fields that limit how much you can enter.</li>
+</ul>
+<p>Because everything runs locally in your browser, your text stays completely <strong>private</strong> — it's never uploaded, saved, or seen by anyone but you. Paste sensitive drafts without a second thought, and close the tab when you're done to clear it entirely.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How does the word counter work?</summary><div class="faq-a">As you type or paste text, the tool counts words (groups of characters separated by spaces), total characters, characters excluding spaces, sentences, and paragraphs. It updates live and runs entirely in your browser, so nothing you type is uploaded or stored.</div></details>
+<details class="faq-item"><summary>How is reading time estimated?</summary><div class="faq-a">Reading time is based on an average adult reading speed of about 200–250 words per minute; this tool uses 200 for a comfortable estimate. Actual speed varies with the difficulty of the text and the reader, so treat it as a rough guide.</div></details>
+<details class="faq-item"><summary>What counts as a word?</summary><div class="faq-a">A word is any sequence of non-space characters separated by whitespace, so hyphenated terms and contractions count as one word. Numbers and standalone symbols separated by spaces also count. This matches how most word processors tally words.</div></details>
+<details class="faq-item"><summary>Is my text private?</summary><div class="faq-a">Yes. All counting happens locally in your browser using JavaScript. Your text is never sent to a server, saved, or logged — close the tab and it's gone.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/base64-encode-decode/"><h3>Base64 Encode & Decode</h3><p>Encode text to Base64 or decode Base64 back to text, right in your browser. UTF-8 safe, handles emoji and accents, and never sends your data anywhere.</p></a><a class="card" href="/toolnest/case-converter/"><h3>Case Converter</h3><p>Convert text between UPPERCASE, lowercase, Title Case, Sentence case, camelCase, snake_case, and kebab-case. Fast, free, and private — runs in your browser.</p></a><a class="card" href="/toolnest/coin-flip/"><h3>Coin Flip</h3><p>Flip a virtual coin online. Get a fair, random heads or tails result, flip several at once, and keep a running tally. Free instant coin toss.</p></a><a class="card" href="/toolnest/color-converter/"><h3>Color Converter (HEX, RGB, HSL)</h3><p>Convert colors between HEX, RGB, and HSL with a live preview swatch and a color picker. Pick a color or type a hex code and copy the values you need.</p></a><a class="card" href="/toolnest/dice-roller/"><h3>Dice Roller</h3><p>Roll virtual dice online — any number of dice with any number of sides (d4, d6, d8, d10, d12, d20). See each die, the total, and a running roll history.</p></a><a class="card" href="/toolnest/hash-generator/"><h3>Hash Generator (SHA-256, SHA-1, SHA-512)</h3><p>Generate SHA-1, SHA-256, and SHA-512 hashes of any text directly in your browser. Live results, hex output, and one-click copy. Nothing is uploaded.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

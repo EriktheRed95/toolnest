@@ -1,0 +1,83 @@
+<!--META
+{
+  "title": "Auto Loan Calculator",
+  "slug": "auto-loan-calculator",
+  "category": "finance",
+  "h1": "Auto Loan Calculator",
+  "description": "Calculate your monthly car payment including sales tax, trade-in, down payment, and fees. See total interest and the full cost of financing your vehicle.",
+  "keywords": "auto loan calculator, car payment calculator, monthly car payment, car loan interest, vehicle finance calculator, trade in car loan",
+  "faq": [
+    {"q": "How is a car payment calculated?", "a": "Your loan amount is the vehicle price plus sales tax and fees, minus your down payment and any trade-in value. The monthly payment is then computed from that amount, your interest rate, and the loan length using the standard amortization formula. Longer terms lower the payment but raise total interest."},
+    {"q": "Does a trade-in reduce sales tax?", "a": "In many states, yes — sales tax is charged on the price after subtracting the trade-in value, which can save a meaningful amount. A few states tax the full price. This calculator applies tax to the price minus the trade-in, the most common approach; adjust if your state differs."},
+    {"q": "Is a longer car loan a good idea?", "a": "A longer term (72 or 84 months) shrinks the monthly payment but you pay much more interest and risk being 'underwater' — owing more than the car is worth — for years. Shorter loans cost more per month but far less overall and build equity faster. Borrow for the shortest term you can comfortably afford."},
+    {"q": "What's a good interest rate on a car loan?", "a": "Rates depend heavily on your credit score, whether the car is new or used, and the lender. Buyers with strong credit get the lowest rates; used-car and lower-credit rates run higher. Always get pre-approved from a bank or credit union so you can compare against the dealer's financing offer."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="al-price">Vehicle price ($)</label><input type="number" id="al-price" value="35000" min="0" step="500"></div>
+  <div class="field"><label for="al-down">Down payment ($)</label><input type="number" id="al-down" value="5000" min="0" step="500"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="al-trade">Trade-in value ($)</label><input type="number" id="al-trade" value="0" min="0" step="500"></div>
+  <div class="field"><label for="al-tax">Sales tax (%)</label><input type="number" id="al-tax" value="6" min="0" step="0.1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="al-rate">Interest rate (% APR)</label><input type="number" id="al-rate" value="7.5" min="0" step="0.01"></div>
+  <div class="field"><label for="al-term">Loan term (months)</label>
+    <select id="al-term"><option>60</option><option>72</option><option>48</option><option>36</option><option>84</option></select></div>
+</div>
+<div class="row">
+  <div class="field"><label for="al-fees">Title, registration &amp; fees ($)</label><input type="number" id="al-fees" value="500" min="0" step="50"></div>
+</div>
+
+<div class="result" id="al-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['al-price', 'al-down', 'al-trade', 'al-tax', 'al-rate', 'al-term', 'al-fees'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var price = v('al-price');
+    var trade = v('al-trade');
+    var taxable = Math.max(0, price - trade);
+    var tax = taxable * v('al-tax') / 100;
+    var loan = Math.max(0, price + tax + v('al-fees') - v('al-down') - trade);
+    var r = v('al-rate') / 100 / 12;
+    var n = v('al-term');
+    var pay = r === 0 ? loan / n : loan * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    var totalPaid = pay * n;
+    var totalInterest = totalPaid - loan;
+
+    document.getElementById('al-out').innerHTML =
+      '<div class="result-sub">Estimated monthly payment</div>' +
+      '<div class="result-big">' + money2.format(pay) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Vehicle price', money.format(price)) +
+        kv('Sales tax (' + v('al-tax') + '%)', money.format(tax)) +
+        kv('Fees', money.format(v('al-fees'))) +
+        kv('Down payment', '&minus; ' + money.format(v('al-down'))) +
+        (trade ? kv('Trade-in', '&minus; ' + money.format(trade)) : '') +
+        kv('<strong>Amount financed</strong>', '<strong>' + money.format(loan) + '</strong>') +
+        kv('Total interest (' + n + ' mo)', money.format(totalInterest)) +
+        kv('Total of payments', money.format(totalPaid)) +
+        kv('Total cost (incl. down/trade)', money.format(totalPaid + v('al-down') + trade)) +
+      '</div>' +
+      (n >= 72 ? '<p class="note">A ' + n + '-month term keeps the payment low but adds ' + money.format(totalInterest) + ' in interest and keeps you in debt longer — and likely underwater early on. A shorter term costs more monthly but far less overall.</p>' : '');
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>What goes into your car payment</h2>
+<p>A car's sticker price is only the start. Your actual <strong>monthly payment</strong> depends on the amount financed — the price plus <strong>sales tax</strong> and fees, minus your <strong>down payment</strong> and any <strong>trade-in</strong> — together with your interest rate and loan length. This calculator assembles all of it so you can see the real payment and, just as important, the <strong>total interest</strong> over the life of the loan.</p>
+<p>In most states, the trade-in lowers the taxable amount, so trading in a car can save you sales tax on top of reducing the loan. This tool taxes the price after the trade-in, which matches the common rule; if your state taxes the full price, set the trade-in to zero and account for it separately.</p>
+<h2>The trap of long car loans</h2>
+<p>Stretching to a 72- or 84-month loan is tempting because the monthly number looks friendly — but it's an expensive habit. Longer terms pile on interest and keep you <strong>underwater</strong> (owing more than the car is worth) for years, since cars depreciate faster than long loans pay down. A larger down payment and the <strong>shortest term you can comfortably afford</strong> are the two levers that save you the most.</p>
+<p>Before you accept dealer financing, get <strong>pre-approved</strong> by a bank or credit union. Walking in with your own rate gives you a benchmark and real negotiating power — sometimes the dealer beats it, sometimes they don't.</p>
+<p class="note"><strong>Estimate only.</strong> Sales tax rules, fees, and rate offers vary by state, lender, and credit profile. Confirm the exact figures on your loan documents before signing. This is not financial advice.</p>

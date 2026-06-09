@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Text Sorter & Deduplicator</title>
+<meta name="description" content="Sort lines of text alphabetically, reverse or shuffle them, and remove duplicate lines. Case-insensitive and trim options. Free, private, in-browser.">
+<meta name="keywords" content="text sorter, sort lines alphabetically, remove duplicate lines, deduplicate text, shuffle lines, reverse lines, line sorter">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/text-sorter/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Text Sorter & Deduplicator">
+<meta property="og:description" content="Sort lines of text alphabetically, reverse or shuffle them, and remove duplicate lines. Case-insensitive and trim options. Free, private, in-browser.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/text-sorter/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Text Sorter & Deduplicator", "url": "https://erikthered95.github.io/toolnest/text-sorter/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Sort lines of text alphabetically, reverse or shuffle them, and remove duplicate lines. Case-insensitive and trim options. Free, private, in-browser."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I sort a list alphabetically?", "acceptedAnswer": {"@type": "Answer", "text": "Paste your list with one item per line, then click 'Sort A\u2192Z' for ascending order or 'Sort Z\u2192A' for descending. Turn on 'Case-insensitive' so that 'apple' and 'Apple' sort together rather than splitting upper and lowercase into separate groups."}}, {"@type": "Question", "name": "How does removing duplicates work?", "acceptedAnswer": {"@type": "Answer", "text": "Click 'Remove duplicates' to keep only the first occurrence of each line, preserving the original order. With 'Case-insensitive' on, lines that differ only in capitalization count as duplicates; with 'Trim whitespace' on, surrounding spaces are ignored when comparing."}}, {"@type": "Question", "name": "What does the shuffle button do?", "acceptedAnswer": {"@type": "Answer", "text": "Shuffle randomly reorders your lines using your browser's secure random generator and a Fisher\u2013Yates shuffle, giving a fair, unbiased random order. It's handy for randomizing names, picks, or any list where you want no particular sequence."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>Text Sorter & Deduplicator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://erikthered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "Text Sorter & Deduplicator"}]}</script>
+<article class="tool"><h1>Text Sorter & Deduplicator</h1><p class="lede">Sort lines of text alphabetically, reverse or shuffle them, and remove duplicate lines. Case-insensitive and trim options. Free, private, in-browser.</p><div class="field">
+  <label for="ts-text">Your lines (one per line)</label>
+  <textarea id="ts-text" rows="8" style="width:100%;resize:vertical" placeholder="One item per line…">banana
+Apple
+cherry
+apple
+Banana
+date</textarea>
+</div>
+<div class="checks">
+  <label><input type="checkbox" id="ts-ci" checked> Case-insensitive</label>
+  <label><input type="checkbox" id="ts-trim" checked> Trim whitespace</label>
+</div>
+<div class="btn-row">
+  <button class="btn" data-act="asc">Sort A→Z</button>
+  <button class="btn" data-act="desc">Sort Z→A</button>
+  <button class="btn" data-act="dedupe">Remove duplicates</button>
+  <button class="btn" data-act="reverse">Reverse</button>
+  <button class="btn" data-act="shuffle">Shuffle</button>
+</div>
+<div class="btn-row">
+  <button class="btn secondary" data-copy="#ts-text" id="ts-copy">Copy result</button>
+</div>
+
+<script>
+(function () {
+  var ta = document.getElementById('ts-text');
+  function opts() {
+    return { ci: document.getElementById('ts-ci').checked, trim: document.getElementById('ts-trim').checked };
+  }
+  function lines(o) {
+    var arr = ta.value.split('\n');
+    return o.trim ? arr.map(function (l) { return l.trim(); }) : arr;
+  }
+  function cmpKey(s, o) { return o.ci ? s.toLowerCase() : s; }
+  function rand(max) { var b = new Uint32Array(1); window.crypto.getRandomValues(b); return Math.floor(b[0] / 4294967296 * max); }
+
+  var acts = {
+    asc: function (arr, o) { return arr.slice().sort(function (a, b) { return cmpKey(a, o) < cmpKey(b, o) ? -1 : cmpKey(a, o) > cmpKey(b, o) ? 1 : 0; }); },
+    desc: function (arr, o) { return arr.slice().sort(function (a, b) { return cmpKey(a, o) > cmpKey(b, o) ? -1 : cmpKey(a, o) < cmpKey(b, o) ? 1 : 0; }); },
+    dedupe: function (arr, o) {
+      var seen = {}, res = [];
+      arr.forEach(function (l) { var k = cmpKey(l, o); if (!seen.hasOwnProperty(k)) { seen[k] = 1; res.push(l); } });
+      return res;
+    },
+    reverse: function (arr) { return arr.slice().reverse(); },
+    shuffle: function (arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) { var j = rand(i + 1); var t = a[i]; a[i] = a[j]; a[j] = t; }
+      return a;
+    }
+  };
+
+  document.querySelectorAll('[data-act]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var o = opts();
+      ta.value = acts[btn.dataset.act](lines(o), o).join('\n');
+      ta.focus();
+    });
+  });
+})();
+</script>
+
+<h2>Sort, dedupe, and shuffle text lines</h2>
+<p>Paste any list with one item per line and reshape it in a click. <strong>Sort A→Z</strong> and <strong>Z→A</strong> order the lines alphabetically, <strong>Remove duplicates</strong> keeps only the first of each repeated line, <strong>Reverse</strong> flips the order, and <strong>Shuffle</strong> randomizes it fairly. Each button rewrites the text in place, so you can chain operations — dedupe, then sort, then copy the result.</p>
+<p>Two options control how lines are compared. <strong>Case-insensitive</strong> treats "Apple" and "apple" as the same when sorting and deduplicating, instead of grouping all capitals first. <strong>Trim whitespace</strong> strips leading and trailing spaces so stray indentation doesn't hide duplicates or scramble the sort. Everything runs locally in your browser — no uploads, no limits — making this a fast way to clean up name lists, keywords, CSV columns, or any pile of text lines.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How do I sort a list alphabetically?</summary><div class="faq-a">Paste your list with one item per line, then click 'Sort A→Z' for ascending order or 'Sort Z→A' for descending. Turn on 'Case-insensitive' so that 'apple' and 'Apple' sort together rather than splitting upper and lowercase into separate groups.</div></details>
+<details class="faq-item"><summary>How does removing duplicates work?</summary><div class="faq-a">Click 'Remove duplicates' to keep only the first occurrence of each line, preserving the original order. With 'Case-insensitive' on, lines that differ only in capitalization count as duplicates; with 'Trim whitespace' on, surrounding spaces are ignored when comparing.</div></details>
+<details class="faq-item"><summary>What does the shuffle button do?</summary><div class="faq-a">Shuffle randomly reorders your lines using your browser's secure random generator and a Fisher–Yates shuffle, giving a fair, unbiased random order. It's handy for randomizing names, picks, or any list where you want no particular sequence.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/slug-generator/"><h3>URL Slug Generator</h3><p>Turn any title into a clean, SEO-friendly URL slug. Lowercases text, strips accents, and replaces spaces and symbols with hyphens. Free and instant.</p></a><a class="card" href="/toolnest/uuid-generator/"><h3>UUID Generator</h3><p>Generate random RFC 4122 version-4 UUIDs in your browser. Choose how many you need and copy them all with one click. Cryptographically secure and completely private.</p></a><a class="card" href="/toolnest/username-generator/"><h3>Username Generator</h3><p>Generate fun, memorable usernames by combining an adjective and a noun, with optional numbers and capitalization. Cryptographically random and private.</p></a><a class="card" href="/toolnest/word-counter/"><h3>Word Counter</h3><p>Count words, characters, sentences, and paragraphs in your text instantly. See reading time too. Everything runs in your browser — your text never leaves the page.</p></a><a class="card" href="/toolnest/base64-encode-decode/"><h3>Base64 Encode & Decode</h3><p>Encode text to Base64 or decode Base64 back to text, right in your browser. UTF-8 safe, handles emoji and accents, and never sends your data anywhere.</p></a><a class="card" href="/toolnest/case-converter/"><h3>Case Converter</h3><p>Convert text between UPPERCASE, lowercase, Title Case, Sentence case, camelCase, snake_case, and kebab-case. Fast, free, and private — runs in your browser.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

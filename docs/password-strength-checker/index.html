@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Password Strength Checker</title>
+<meta name="description" content="Check how strong a password is. See an entropy-bit estimate, a strength rating, and tips to improve it — all checked locally in your browser and never sent anywhere.">
+<meta name="keywords" content="password strength checker, password entropy calculator, how strong is my password, check password strength, password tester">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/password-strength-checker/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Password Strength Checker">
+<meta property="og:description" content="Check how strong a password is. See an entropy-bit estimate, a strength rating, and tips to improve it — all checked locally in your browser and never sent anywhere.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/password-strength-checker/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Password Strength Checker", "url": "https://erikthered95.github.io/toolnest/password-strength-checker/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Check how strong a password is. See an entropy-bit estimate, a strength rating, and tips to improve it \u2014 all checked locally in your browser and never sent anywhere."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is my password sent anywhere?", "acceptedAnswer": {"@type": "Answer", "text": "No. The check runs entirely in your browser with JavaScript. Your password is never transmitted over the internet, logged, or stored \u2014 close the tab and it's gone. Even so, avoid pasting a password you actively use into any website you don't fully trust."}}, {"@type": "Question", "name": "How is strength estimated?", "acceptedAnswer": {"@type": "Answer", "text": "It estimates entropy in bits from the size of the character pool (lowercase, uppercase, digits, symbols) and the password length, using bits = length \u00d7 log2(poolSize). More characters and a larger pool mean more bits and a stronger password against brute-force guessing."}}, {"@type": "Question", "name": "What's a good number of bits?", "acceptedAnswer": {"@type": "Answer", "text": "As a rough guide, under 50 bits is weak, 50\u201390 is fair to good, and over 90 bits is strong. Reaching high bit counts is easiest by adding length \u2014 every extra character multiplies the possibilities far more than swapping in one symbol does."}}, {"@type": "Question", "name": "Does this catch common passwords?", "acceptedAnswer": {"@type": "Answer", "text": "Not directly \u2014 the entropy estimate assumes random characters. A long password built from a common phrase or a leaked password can score well here yet still be guessable. Always use a unique, randomly generated password for each account."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>Password Strength Checker</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://erikthered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "Password Strength Checker"}]}</script>
+<article class="tool"><h1>Password Strength Checker</h1><p class="lede">Check how strong a password is. See an entropy-bit estimate, a strength rating, and tips to improve it — all checked locally in your browser and never sent anywhere.</p><div class="field">
+  <label for="ps-pw">Password (checked locally, never sent)</label>
+  <input type="text" id="ps-pw" value="" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type a password to test…">
+</div>
+
+<div class="result">
+  <div class="meter"><span id="ps-meter"></span></div>
+  <div class="result-sub" id="ps-label"></div>
+  <div style="margin-top:12px" id="ps-kv"></div>
+  <ul id="ps-tips" style="margin-top:10px"></ul>
+</div>
+
+<script>
+(function () {
+  var pwEl = document.getElementById('ps-pw');
+  var meter = document.getElementById('ps-meter');
+  var labelEl = document.getElementById('ps-label');
+  var kvEl = document.getElementById('ps-kv');
+  var tipsEl = document.getElementById('ps-tips');
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var pw = pwEl.value;
+    if (!pw) {
+      meter.style.width = '0%';
+      labelEl.textContent = 'Type a password to see its strength.';
+      kvEl.innerHTML = '';
+      tipsEl.innerHTML = '';
+      return;
+    }
+    var hasLower = /[a-z]/.test(pw);
+    var hasUpper = /[A-Z]/.test(pw);
+    var hasDigit = /[0-9]/.test(pw);
+    var hasSymbol = /[^A-Za-z0-9]/.test(pw);
+    var pool = (hasLower ? 26 : 0) + (hasUpper ? 26 : 0) + (hasDigit ? 10 : 0) + (hasSymbol ? 32 : 0);
+    var bits = pw.length * Math.log2(pool || 1);
+
+    var pct = Math.min(100, Math.round(bits / 128 * 100));
+    meter.style.width = pct + '%';
+    meter.style.background = bits < 50 ? '#dc2626' : bits <= 90 ? '#d97706' : '#15803d';
+
+    var label = bits < 28 ? 'Very weak' : bits < 50 ? 'Weak' : bits < 70 ? 'Fair' : bits < 90 ? 'Strong' : 'Very strong';
+    labelEl.innerHTML = 'Strength: <strong>' + label + '</strong>';
+
+    kvEl.innerHTML =
+      kv('Estimated entropy', Math.round(bits) + ' bits') +
+      kv('Length', pw.length + ' characters') +
+      kv('Character pool', pool + ' symbols');
+
+    var tips = [];
+    var types = (hasLower ? 1 : 0) + (hasUpper ? 1 : 0) + (hasDigit ? 1 : 0) + (hasSymbol ? 1 : 0);
+    if (pw.length < 12) tips.push('Add length — aim for at least 12–16 characters.');
+    if (!hasUpper || !hasLower) tips.push('Mix upper- and lower-case letters.');
+    if (!hasDigit) tips.push('Include some numbers.');
+    if (!hasSymbol) tips.push('Mix in symbols (!@#$…).');
+    if (types <= 1) tips.push('Avoid using only one character type.');
+    if (bits >= 90 && tips.length === 0) tips.push('Strong password. Use a unique one for every account.');
+    tipsEl.innerHTML = tips.map(function (t) { return '<li>' + t + '</li>'; }).join('');
+  }
+
+  pwEl.addEventListener('input', calc);
+  calc();
+})();
+</script>
+
+<h2>How password strength is measured</h2>
+<p>This checker estimates strength as <strong>entropy</strong>, measured in bits. The idea is simple: the more possible passwords an attacker would have to try, the stronger yours is. The number of possibilities depends on two things — how many different character types you use (the <strong>pool size</strong>) and how <strong>long</strong> the password is. The estimate is length × log2(poolSize), so each extra character adds a fixed number of bits while each new character type only widens the pool once.</p>
+<p>That's why length matters most. Going from 8 to 16 characters does far more for your security than sprinkling in a single symbol. Use this as a guide, not a guarantee: the math assumes truly random characters, so a long but predictable phrase or a previously leaked password can score well here and still be easy to guess. The safest approach is a unique, randomly generated password for every account, stored in a password manager.</p>
+<ul>
+  <li><strong>Length first</strong> — every character multiplies the possibilities.</li>
+  <li><strong>Mix types</strong> — combine lower, upper, digits, and symbols.</li>
+  <li><strong>Stay unique</strong> — never reuse a password across sites.</li>
+</ul>
+<p class="note">Your password is checked entirely in your browser and is never transmitted, logged, or stored.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>Is my password sent anywhere?</summary><div class="faq-a">No. The check runs entirely in your browser with JavaScript. Your password is never transmitted over the internet, logged, or stored — close the tab and it's gone. Even so, avoid pasting a password you actively use into any website you don't fully trust.</div></details>
+<details class="faq-item"><summary>How is strength estimated?</summary><div class="faq-a">It estimates entropy in bits from the size of the character pool (lowercase, uppercase, digits, symbols) and the password length, using bits = length × log2(poolSize). More characters and a larger pool mean more bits and a stronger password against brute-force guessing.</div></details>
+<details class="faq-item"><summary>What's a good number of bits?</summary><div class="faq-a">As a rough guide, under 50 bits is weak, 50–90 is fair to good, and over 90 bits is strong. Reaching high bit counts is easiest by adding length — every extra character multiplies the possibilities far more than swapping in one symbol does.</div></details>
+<details class="faq-item"><summary>Does this catch common passwords?</summary><div class="faq-a">Not directly — the entropy estimate assumes random characters. A long password built from a common phrase or a leaked password can score well here yet still be guessable. Always use a unique, randomly generated password for each account.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/random-color-generator/"><h3>Random Color Generator</h3><p>Generate random colors with one click. See a swatch, HEX, and RGB for each, and copy all the HEX codes at once. Great for palettes, mockups, and placeholders.</p></a><a class="card" href="/toolnest/random-number-generator/"><h3>Random Number Generator</h3><p>Generate random numbers in any range — pick a min and max, choose how many, and toggle duplicates. Free, instant, works on any device.</p></a><a class="card" href="/toolnest/random-picker/"><h3>Random Picker (Decision Maker)</h3><p>Paste a list of names or options and let chance choose. Perfect for giveaways, raffles, picking a winner, or settling a decision. Free and instant.</p></a><a class="card" href="/toolnest/text-sorter/"><h3>Text Sorter & Deduplicator</h3><p>Sort lines of text alphabetically, reverse or shuffle them, and remove duplicate lines. Case-insensitive and trim options. Free, private, in-browser.</p></a><a class="card" href="/toolnest/slug-generator/"><h3>URL Slug Generator</h3><p>Turn any title into a clean, SEO-friendly URL slug. Lowercases text, strips accents, and replaces spaces and symbols with hyphens. Free and instant.</p></a><a class="card" href="/toolnest/uuid-generator/"><h3>UUID Generator</h3><p>Generate random RFC 4122 version-4 UUIDs in your browser. Choose how many you need and copy them all with one click. Cryptographically secure and completely private.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hash Generator (SHA-256, SHA-1, SHA-512)</title>
+<meta name="description" content="Generate SHA-1, SHA-256, and SHA-512 hashes of any text directly in your browser. Live results, hex output, and one-click copy. Nothing is uploaded.">
+<meta name="keywords" content="hash generator, sha256 generator, sha1 hash, sha512 hash, online hash, checksum generator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/hash-generator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Hash Generator (SHA-256, SHA-1, SHA-512)">
+<meta property="og:description" content="Generate SHA-1, SHA-256, and SHA-512 hashes of any text directly in your browser. Live results, hex output, and one-click copy. Nothing is uploaded.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/hash-generator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Hash Generator (SHA-256, SHA-1, SHA-512)", "url": "https://erikthered95.github.io/toolnest/hash-generator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Generate SHA-1, SHA-256, and SHA-512 hashes of any text directly in your browser. Live results, hex output, and one-click copy. Nothing is uploaded."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is a cryptographic hash?", "acceptedAnswer": {"@type": "Answer", "text": "A hash function turns any input into a fixed-length string of hex digits. The same input always gives the same hash, but you cannot reverse the hash back into the input. Hashes are used for checksums, integrity checks, and fingerprinting data."}}, {"@type": "Question", "name": "Which algorithm should I use?", "acceptedAnswer": {"@type": "Answer", "text": "SHA-256 is the modern default and a solid choice for most needs. SHA-512 produces a longer digest and is also strong. SHA-1 is included for compatibility but is considered broken for security purposes \u2014 avoid it for anything that must resist tampering."}}, {"@type": "Question", "name": "Can I get my text back from a hash?", "acceptedAnswer": {"@type": "Answer", "text": "No. Hashing is one-way by design, so there's no decode step. It is not encryption and shouldn't be used to store recoverable data. To hash passwords for storage, use a purpose-built algorithm like bcrypt or Argon2 instead."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>Hash Generator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://erikthered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "Hash Generator"}]}</script>
+<article class="tool"><h1>Hash Generator</h1><p class="lede">Generate SHA-1, SHA-256, and SHA-512 hashes of any text directly in your browser. Live results, hex output, and one-click copy. Nothing is uploaded.</p><div class="field">
+  <label for="hsh-in">Text to hash</label>
+  <textarea id="hsh-in" rows="4" style="width:100%;resize:vertical" placeholder="Type or paste text…">Hello, ToolNest!</textarea>
+</div>
+<div class="btn-row">
+  <button class="btn" id="hsh-go">Generate hashes</button>
+</div>
+<div class="result">
+  <div class="result-sub">SHA-1</div>
+  <div class="pw-out" id="hsh-sha1" style="word-break:break-all"></div>
+  <div class="btn-row"><button class="btn secondary" data-copy="#hsh-sha1">Copy SHA-1</button></div>
+  <div class="result-sub">SHA-256</div>
+  <div class="pw-out" id="hsh-sha256" style="word-break:break-all"></div>
+  <div class="btn-row"><button class="btn secondary" data-copy="#hsh-sha256">Copy SHA-256</button></div>
+  <div class="result-sub">SHA-512</div>
+  <div class="pw-out" id="hsh-sha512" style="word-break:break-all"></div>
+  <div class="btn-row"><button class="btn secondary" data-copy="#hsh-sha512">Copy SHA-512</button></div>
+</div>
+<div class="note">Hashes are one-way — there is no way to recover the original text from a hash.</div>
+
+<script>
+(function () {
+  var inEl = document.getElementById('hsh-in');
+  function toHex(buf) {
+    var b = new Uint8Array(buf), s = '';
+    for (var i = 0; i < b.length; i++) s += (b[i] + 0x100).toString(16).slice(1);
+    return s;
+  }
+  function go() {
+    var data = new TextEncoder().encode(inEl.value);
+    [['SHA-1', 'hsh-sha1'], ['SHA-256', 'hsh-sha256'], ['SHA-512', 'hsh-sha512']].forEach(function (pair) {
+      window.crypto.subtle.digest(pair[0], data).then(function (buf) {
+        document.getElementById(pair[1]).textContent = toHex(buf);
+      });
+    });
+  }
+  inEl.addEventListener('input', go);
+  document.getElementById('hsh-go').addEventListener('click', go);
+  go();
+})();
+</script>
+
+<h2>Hash any text in your browser</h2>
+<p>A cryptographic hash condenses any amount of text into a short, fixed-length fingerprint. Type into the box and this tool computes the <strong>SHA-1</strong>, <strong>SHA-256</strong>, and <strong>SHA-512</strong> digests live, showing each as lowercase hexadecimal you can copy individually. Hashes are handy for verifying that a file or message hasn't changed, generating cache keys, or comparing data without storing the data itself.</p>
+<p>Two things worth remembering: hashing is <strong>one-way</strong>, so there's no way to turn a digest back into the original, and SHA-1 is no longer safe against deliberate collisions — prefer SHA-256 or SHA-512 when integrity matters. The work uses your browser's built-in Web Crypto API, so your input never leaves the page.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is a cryptographic hash?</summary><div class="faq-a">A hash function turns any input into a fixed-length string of hex digits. The same input always gives the same hash, but you cannot reverse the hash back into the input. Hashes are used for checksums, integrity checks, and fingerprinting data.</div></details>
+<details class="faq-item"><summary>Which algorithm should I use?</summary><div class="faq-a">SHA-256 is the modern default and a solid choice for most needs. SHA-512 produces a longer digest and is also strong. SHA-1 is included for compatibility but is considered broken for security purposes — avoid it for anything that must resist tampering.</div></details>
+<details class="faq-item"><summary>Can I get my text back from a hash?</summary><div class="faq-a">No. Hashing is one-way by design, so there's no decode step. It is not encryption and shouldn't be used to store recoverable data. To hash passwords for storage, use a purpose-built algorithm like bcrypt or Argon2 instead.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/json-formatter/"><h3>JSON Formatter & Validator</h3><p>Format, minify, and validate JSON in your browser. Pretty-print with clean indentation, compress to one line, and get clear error messages. Private and instant.</p></a><a class="card" href="/toolnest/lorem-ipsum-generator/"><h3>Lorem Ipsum Generator</h3><p>Generate placeholder lorem ipsum text by paragraphs, sentences, or words. Copy classic dummy text instantly for mockups, designs, and layouts.</p></a><a class="card" href="/toolnest/magic-8-ball/"><h3>Magic 8-Ball</h3><p>Ask the online Magic 8-Ball a yes-or-no question and get one of the 20 classic answers. A fun, random fortune-telling toy that runs in your browser.</p></a><a class="card" href="/toolnest/password-generator/"><h3>Password Generator</h3><p>Create strong, random passwords instantly. Choose length and character types, then copy with one click. Generated in your browser — never sent anywhere.</p></a><a class="card" href="/toolnest/password-strength-checker/"><h3>Password Strength Checker</h3><p>Check how strong a password is. See an entropy-bit estimate, a strength rating, and tips to improve it — all checked locally in your browser and never sent anywhere.</p></a><a class="card" href="/toolnest/random-color-generator/"><h3>Random Color Generator</h3><p>Generate random colors with one click. See a swatch, HEX, and RGB for each, and copy all the HEX codes at once. Great for palettes, mockups, and placeholders.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

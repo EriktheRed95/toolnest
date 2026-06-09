@@ -1,0 +1,89 @@
+<!--META
+{
+  "title": "Unit Converter",
+  "slug": "unit-converter",
+  "category": "everyday",
+  "h1": "Unit Converter",
+  "description": "Convert between units of length, weight, temperature, and volume. Pick a category, enter a value, and choose your 'from' and 'to' units for an instant result.",
+  "keywords": "unit converter, length converter, weight converter, temperature converter, volume converter, metric to imperial",
+  "faq": [
+    {"q": "What units can I convert?", "a": "This tool covers four common categories: length (meters, kilometers, miles, feet, inches and more), weight (grams, kilograms, pounds, ounces, tonnes), temperature (Celsius, Fahrenheit, Kelvin), and volume (liters, milliliters, US gallons, quarts, cups, fluid ounces)."},
+    {"q": "How does the conversion work?", "a": "Each category has a base unit. Length and weight values are converted to the base unit using a fixed factor, then to the target unit. Temperature uses formulas instead of factors because the scales don't share a zero point."},
+    {"q": "Are US or imperial gallons used?", "a": "Volume conversions use US customary measures — US gallons, quarts, pints, cups, and fluid ounces. These differ from UK imperial measures, so double-check if you're working with British recipes or fuel figures."},
+    {"q": "How accurate are the results?", "a": "Conversion factors are exact or standard definitions (for example, one inch is exactly 0.0254 meters), so results are accurate to the precision shown. Rounding only happens in the final display."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="uc-cat">Category</label>
+    <select id="uc-cat">
+      <option value="length">Length</option>
+      <option value="weight">Weight</option>
+      <option value="temperature">Temperature</option>
+      <option value="volume">Volume</option>
+    </select>
+  </div>
+</div>
+<div class="row">
+  <div class="field"><label for="uc-val">Value</label><input type="number" id="uc-val" value="1" step="any"></div>
+  <div class="field"><label for="uc-from">From</label><select id="uc-from"></select></div>
+  <div class="field"><label for="uc-to">To</label><select id="uc-to"></select></div>
+</div>
+
+<div class="result" id="uc-out"></div>
+
+<script>
+(function () {
+  var nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 6 });
+  var units = {
+    length: { m: 1, km: 1000, cm: 0.01, mm: 0.001, mi: 1609.344, yd: 0.9144, ft: 0.3048, "in": 0.0254 },
+    weight: { g: 1, kg: 1000, mg: 0.001, lb: 453.592, oz: 28.3495, tonne: 1e6 },
+    volume: { l: 1, ml: 0.001, "gal (US)": 3.78541, qt: 0.946353, pt: 0.473176, cup: 0.236588, "fl oz": 0.0295735 },
+    temperature: { C: 1, F: 1, K: 1 }
+  };
+  var cat = document.getElementById('uc-cat'), val = document.getElementById('uc-val');
+  var fromSel = document.getElementById('uc-from'), toSel = document.getElementById('uc-to');
+  function kv(k, v) { return '<div class="kv"><span>' + k + '</span><span class="v">' + v + '</span></div>'; }
+
+  function fill() {
+    var keys = Object.keys(units[cat.value]);
+    var html = keys.map(function (k) { return '<option value="' + k + '">' + k + '</option>'; }).join('');
+    fromSel.innerHTML = html; toSel.innerHTML = html;
+    toSel.selectedIndex = keys.length > 1 ? 1 : 0;
+  }
+
+  function toCelsius(v, u) { if (u === 'C') return v; if (u === 'F') return (v - 32) * 5 / 9; return v - 273.15; }
+  function fromCelsius(c, u) { if (u === 'C') return c; if (u === 'F') return c * 9 / 5 + 32; return c + 273.15; }
+
+  function calc() {
+    var out = document.getElementById('uc-out');
+    var v = parseFloat(val.value);
+    if (isNaN(v)) { out.innerHTML = '<p class="note">Enter a value to convert.</p>'; return; }
+    var f = fromSel.value, t = toSel.value, result;
+    if (cat.value === 'temperature') {
+      result = fromCelsius(toCelsius(v, f), t);
+    } else {
+      var u = units[cat.value];
+      result = v * u[f] / u[t];
+    }
+    out.innerHTML =
+      '<div class="result-sub">' + nf.format(v) + ' ' + f + ' equals</div>' +
+      '<div class="result-big">' + nf.format(result) + ' ' + t + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('From', nf.format(v) + ' ' + f) +
+        kv('To', nf.format(result) + ' ' + t) +
+      '</div>';
+  }
+  cat.addEventListener('change', function () { fill(); calc(); });
+  [val, fromSel, toSel].forEach(function (el) { el.addEventListener('input', calc); el.addEventListener('change', calc); });
+  fill();
+  calc();
+})();
+</script>
+
+<h2>One tool for everyday conversions</h2>
+<p>From following a recipe to reading a foreign spec sheet, everyday life is full of moments where you need to switch between units. This converter handles the four categories that come up most: <strong>length, weight, temperature, and volume</strong>. Pick a category, type a value, and choose what you're converting from and to — the answer appears instantly and updates as you type.</p>
+<p>Most conversions work by routing through a base unit. A length is turned into meters using an exact factor, then into your target unit; weight uses grams and volume uses liters the same way. That keeps results consistent no matter which pair of units you pick.</p>
+<h2>Why temperature is different</h2>
+<p>Temperature scales don't share a common zero, so you can't convert them with a simple multiplier. Instead, this tool converts your value to <strong>Celsius</strong> first, then out to the unit you want, using the standard formulas. Note that volume measures here are US customary, so a "gallon" or "cup" may differ from UK imperial equivalents.</p>
+<p class="note">Conversion factors are standard definitions; results are estimates only where rounding is shown.</p>

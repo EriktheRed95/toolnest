@@ -1,0 +1,60 @@
+<!--META
+{
+  "title": "Hash Generator (SHA-256, SHA-1, SHA-512)",
+  "slug": "hash-generator",
+  "category": "random",
+  "h1": "Hash Generator",
+  "description": "Generate SHA-1, SHA-256, and SHA-512 hashes of any text directly in your browser. Live results, hex output, and one-click copy. Nothing is uploaded.",
+  "keywords": "hash generator, sha256 generator, sha1 hash, sha512 hash, online hash, checksum generator",
+  "faq": [
+    {"q": "What is a cryptographic hash?", "a": "A hash function turns any input into a fixed-length string of hex digits. The same input always gives the same hash, but you cannot reverse the hash back into the input. Hashes are used for checksums, integrity checks, and fingerprinting data."},
+    {"q": "Which algorithm should I use?", "a": "SHA-256 is the modern default and a solid choice for most needs. SHA-512 produces a longer digest and is also strong. SHA-1 is included for compatibility but is considered broken for security purposes — avoid it for anything that must resist tampering."},
+    {"q": "Can I get my text back from a hash?", "a": "No. Hashing is one-way by design, so there's no decode step. It is not encryption and shouldn't be used to store recoverable data. To hash passwords for storage, use a purpose-built algorithm like bcrypt or Argon2 instead."}
+  ]
+}
+META-->
+<div class="field">
+  <label for="hsh-in">Text to hash</label>
+  <textarea id="hsh-in" rows="4" style="width:100%;resize:vertical" placeholder="Type or paste text…">Hello, ToolNest!</textarea>
+</div>
+<div class="btn-row">
+  <button class="btn" id="hsh-go">Generate hashes</button>
+</div>
+<div class="result">
+  <div class="result-sub">SHA-1</div>
+  <div class="pw-out" id="hsh-sha1" style="word-break:break-all"></div>
+  <div class="btn-row"><button class="btn secondary" data-copy="#hsh-sha1">Copy SHA-1</button></div>
+  <div class="result-sub">SHA-256</div>
+  <div class="pw-out" id="hsh-sha256" style="word-break:break-all"></div>
+  <div class="btn-row"><button class="btn secondary" data-copy="#hsh-sha256">Copy SHA-256</button></div>
+  <div class="result-sub">SHA-512</div>
+  <div class="pw-out" id="hsh-sha512" style="word-break:break-all"></div>
+  <div class="btn-row"><button class="btn secondary" data-copy="#hsh-sha512">Copy SHA-512</button></div>
+</div>
+<div class="note">Hashes are one-way — there is no way to recover the original text from a hash.</div>
+
+<script>
+(function () {
+  var inEl = document.getElementById('hsh-in');
+  function toHex(buf) {
+    var b = new Uint8Array(buf), s = '';
+    for (var i = 0; i < b.length; i++) s += (b[i] + 0x100).toString(16).slice(1);
+    return s;
+  }
+  function go() {
+    var data = new TextEncoder().encode(inEl.value);
+    [['SHA-1', 'hsh-sha1'], ['SHA-256', 'hsh-sha256'], ['SHA-512', 'hsh-sha512']].forEach(function (pair) {
+      window.crypto.subtle.digest(pair[0], data).then(function (buf) {
+        document.getElementById(pair[1]).textContent = toHex(buf);
+      });
+    });
+  }
+  inEl.addEventListener('input', go);
+  document.getElementById('hsh-go').addEventListener('click', go);
+  go();
+})();
+</script>
+
+<h2>Hash any text in your browser</h2>
+<p>A cryptographic hash condenses any amount of text into a short, fixed-length fingerprint. Type into the box and this tool computes the <strong>SHA-1</strong>, <strong>SHA-256</strong>, and <strong>SHA-512</strong> digests live, showing each as lowercase hexadecimal you can copy individually. Hashes are handy for verifying that a file or message hasn't changed, generating cache keys, or comparing data without storing the data itself.</p>
+<p>Two things worth remembering: hashing is <strong>one-way</strong>, so there's no way to turn a digest back into the original, and SHA-1 is no longer safe against deliberate collisions — prefer SHA-256 or SHA-512 when integrity matters. The work uses your browser's built-in Web Crypto API, so your input never leaves the page.</p>

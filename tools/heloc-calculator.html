@@ -1,0 +1,89 @@
+<!--META
+{
+  "title": "HELOC & Home Equity Calculator",
+  "slug": "heloc-calculator",
+  "category": "finance",
+  "h1": "Home Equity & HELOC Calculator",
+  "description": "Find out how much you can borrow against your home. Calculate your available home equity line of credit (HELOC) or loan based on your home value, mortgage balance, and lender's max loan-to-value.",
+  "keywords": "HELOC calculator, home equity calculator, how much can I borrow against my house, home equity line of credit, combined loan to value, available equity",
+  "faq": [
+    {"q": "How much can I borrow with a HELOC?", "a": "Lenders cap your total borrowing at a combined loan-to-value (CLTV) ratio, commonly 80%–90% of your home's value. Your available credit is that percentage of the home's value minus your current mortgage balance. For example, at 85% CLTV on a $400,000 home with a $250,000 mortgage, you could borrow up to about $90,000."},
+    {"q": "What's the difference between a HELOC and a home equity loan?", "a": "A home equity loan gives you a lump sum at a fixed rate, repaid in equal installments. A HELOC is a revolving line of credit with a variable rate that you draw from as needed during a 'draw period,' often paying interest-only at first, then repaying principal during the repayment period. Both are secured by your home."},
+    {"q": "What is combined loan-to-value (CLTV)?", "a": "CLTV is the total of all loans secured by your home divided by its value. If you owe $250,000 on a $400,000 home, your current CLTV is 62.5%. Lenders add any new HELOC or equity loan to that total and won't usually let it exceed their CLTV limit (often 80%–90%)."},
+    {"q": "What can I use a HELOC for?", "a": "Common uses include home improvements (which may also have tax advantages), consolidating higher-interest debt, or covering large expenses. Because your home is the collateral, borrowing carries real risk — falling behind can put the property in jeopardy — so it's best reserved for purposes that build value or clearly improve your finances."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="he-value">Current home value ($)</label><input type="number" id="he-value" value="450000" min="0" step="1000"></div>
+  <div class="field"><label for="he-balance">Mortgage balance ($)</label><input type="number" id="he-balance" value="250000" min="0" step="1000"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="he-cltv">Max combined LTV (%)</label><input type="number" id="he-cltv" value="85" min="0" max="100" step="1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="he-draw">Amount to borrow ($) <span class="hint">optional payment estimate</span></label><input type="number" id="he-draw" value="50000" min="0" step="1000"></div>
+  <div class="field"><label for="he-rate">HELOC rate (%)</label><input type="number" id="he-rate" value="8.5" min="0" step="0.01"></div>
+</div>
+
+<div class="result" id="he-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['he-value', 'he-balance', 'he-cltv', 'he-draw', 'he-rate'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var value = v('he-value');
+    var balance = v('he-balance');
+    var cltv = v('he-cltv') / 100;
+    var totalEquity = Math.max(0, value - balance);
+    var maxTotalDebt = value * cltv;
+    var available = Math.max(0, maxTotalDebt - balance);
+    var currentLtv = value ? balance / value * 100 : 0;
+
+    var draw = Math.min(v('he-draw'), available);
+    var monthlyRate = v('he-rate') / 100 / 12;
+    var interestOnly = draw * monthlyRate;
+    // 20-year repayment estimate (amortizing)
+    var nRepay = 240;
+    var amortPay = monthlyRate === 0 ? draw / nRepay : draw * monthlyRate * Math.pow(1 + monthlyRate, nRepay) / (Math.pow(1 + monthlyRate, nRepay) - 1);
+
+    document.getElementById('he-out').innerHTML =
+      '<div class="result-sub">Available to borrow</div>' +
+      '<div class="result-big">' + money.format(available) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Total home equity', money.format(totalEquity)) +
+        kv('Max total debt at ' + v('he-cltv') + '% CLTV', money.format(maxTotalDebt)) +
+        kv('Current mortgage balance', '&minus; ' + money.format(balance)) +
+        kv('<strong>Available credit</strong>', '<strong>' + money.format(available) + '</strong>') +
+        kv('Current loan-to-value', currentLtv.toFixed(1) + '%') +
+      '</div>' +
+      (v('he-draw') > 0 ?
+        '<div class="result-sub" style="margin-top:16px">Estimated payment on ' + money.format(draw) + '</div>' +
+        '<div style="margin-top:8px">' +
+          kv('Interest-only (draw period)', money2.format(interestOnly) + '/mo') +
+          kv('Amortizing (20-yr repayment)', money2.format(amortPay) + '/mo') +
+        '</div>' +
+        (v('he-draw') > available ? '<p class="note warn">Your requested ' + money.format(v('he-draw')) + ' exceeds your available credit of ' + money.format(available) + '; the estimate uses the maximum available.</p>' : '')
+        : '') +
+      (available === 0 ? '<p class="note warn">At this CLTV limit you have no available equity to borrow — your mortgage already meets or exceeds the cap.</p>' : '');
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How much can you borrow against your home?</h2>
+<p>Your home equity — the difference between what your home is worth and what you owe — is one of the largest assets most people have. A <strong>HELOC</strong> (home equity line of credit) or a <strong>home equity loan</strong> lets you turn part of that equity into cash. But you can't borrow against all of it: lenders limit your <strong>combined loan-to-value (CLTV)</strong>, usually to <strong>80%–90%</strong> of the home's value.</p>
+<p>The math is straightforward. Take the home's value times the CLTV cap, then subtract your current mortgage balance — what's left is your available credit. This calculator runs that for you, and also estimates the monthly payment on an amount you'd borrow, both as interest-only (typical during a HELOC's draw period) and fully amortizing (during repayment).</p>
+<h2>HELOC vs. home equity loan</h2>
+<ul>
+  <li><strong>HELOC</strong> — a revolving line you draw from as needed, usually at a <em>variable</em> rate. Many have a draw period with interest-only payments, followed by a repayment period. Flexible, but payments can rise with rates.</li>
+  <li><strong>Home equity loan</strong> — a one-time lump sum at a <em>fixed</em> rate, repaid in level installments. Predictable, best when you know exactly how much you need.</li>
+</ul>
+<p>Both are <strong>secured by your home</strong>, which is what makes their rates lower than credit cards — and also what makes them riskier. If you can't repay, the lender can foreclose. That's why equity borrowing is best reserved for value-adding home improvements or consolidating costlier debt, not everyday spending.</p>
+<p class="note"><strong>Estimate only.</strong> Actual limits depend on your credit, income, the lender's CLTV cap, and a current appraisal of your home. Variable HELOC rates change over time. Confirm terms with lenders before borrowing. This is not financial advice.</p>

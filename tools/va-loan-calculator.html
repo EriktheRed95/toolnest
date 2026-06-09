@@ -1,0 +1,100 @@
+<!--META
+{
+  "title": "VA Loan Calculator",
+  "slug": "va-loan-calculator",
+  "category": "finance",
+  "h1": "VA Loan Calculator",
+  "description": "Estimate your VA mortgage payment including the VA funding fee, property taxes, and insurance — with no down payment and no monthly mortgage insurance.",
+  "keywords": "va loan calculator, va mortgage calculator, va funding fee calculator, veteran home loan, va loan monthly payment",
+  "faq": [
+    {"q": "Do VA loans require a down payment?", "a": "No. One of the biggest benefits of a VA loan is 100% financing — eligible veterans, service members, and surviving spouses can buy with zero down. You can still put money down if you choose, which lowers your loan amount and may reduce the funding fee."},
+    {"q": "What is the VA funding fee?", "a": "The VA funding fee is a one-time charge that helps keep the loan program running without monthly mortgage insurance. It's a percentage of the loan (commonly around 2.15% for a first-use, no-down-payment purchase) and can be paid at closing or financed into the loan."},
+    {"q": "Can the funding fee be waived?", "a": "Yes. Veterans receiving VA disability compensation, certain Purple Heart recipients, and some surviving spouses are exempt from the funding fee entirely. If that applies to you, set the funding fee to 0% to see your payment without it."},
+    {"q": "Do VA loans have monthly mortgage insurance?", "a": "No. Unlike FHA loans and low-down-payment conventional loans, VA loans carry no monthly mortgage insurance at all. That's a major monthly savings, which is why this calculator's payment includes only principal, interest, taxes, and homeowners insurance."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="va-price">Home price ($)</label><input type="number" id="va-price" value="350000" min="0" step="1000"></div>
+  <div class="field"><label for="va-down">Down payment ($)</label><input type="number" id="va-down" value="0" min="0" step="1000"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="va-rate">Interest rate (%)</label><input type="number" id="va-rate" value="6.5" min="0" step="0.01"></div>
+  <div class="field"><label for="va-term">Term (years)</label><input type="number" id="va-term" value="30" min="1" step="1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="va-ff">VA funding fee (%)</label><input type="number" id="va-ff" value="2.15" min="0" step="0.05"></div>
+  <div class="field">
+    <label>Funding fee</label>
+    <div class="checks"><label><input type="checkbox" id="va-finance" checked> Finance the funding fee into the loan</label></div>
+  </div>
+</div>
+<div class="row">
+  <div class="field"><label for="va-tax">Property tax ($/yr)</label><input type="number" id="va-tax" value="3600" min="0" step="100"></div>
+  <div class="field"><label for="va-ins">Home insurance ($/yr)</label><input type="number" id="va-ins" value="1400" min="0" step="100"></div>
+</div>
+
+<div class="result" id="va-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['va-price', 'va-down', 'va-rate', 'va-term', 'va-ff', 'va-tax', 'va-ins'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function pmt(P, ratePct, n) {
+    var r = ratePct / 100 / 12;
+    if (r === 0) return P / n;
+    return P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+  }
+
+  function calc() {
+    var price = v('va-price');
+    var down = v('va-down');
+    var rate = v('va-rate');
+    var years = v('va-term');
+    var ffPct = v('va-ff');
+    var financed = document.getElementById('va-finance').checked;
+    var tax = v('va-tax');
+    var ins = v('va-ins');
+    var out = document.getElementById('va-out');
+    if (price <= 0 || years <= 0) { out.innerHTML = '<p class="note">Enter a home price and term.</p>'; return; }
+
+    var baseLoan = Math.max(0, price - down);
+    var fundingFee = baseLoan * ffPct / 100;
+    var totalLoan = baseLoan + (financed ? fundingFee : 0);
+    var n = Math.round(years * 12);
+    var pi = pmt(totalLoan, rate, n);
+    var monthlyTax = tax / 12;
+    var monthlyIns = ins / 12;
+    var total = pi + monthlyTax + monthlyIns;
+
+    out.innerHTML =
+      '<div class="result-sub">Total monthly payment</div>' +
+      '<div class="result-big">' + money2.format(total) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('VA funding fee', money.format(fundingFee) + (financed ? ' (financed)' : ' (paid at closing)')) +
+        kv('Loan amount', money.format(totalLoan)) +
+        kv('Principal &amp; interest', money2.format(pi)) +
+        kv('Property tax', money2.format(monthlyTax)) +
+        kv('Home insurance', money2.format(monthlyIns)) +
+        kv('<strong>Total monthly payment</strong>', '<strong>' + money2.format(total) + '</strong>') +
+      '</div>' +
+      '<p class="note ok">VA loans require <strong>no down payment</strong> and carry <strong>no monthly mortgage insurance</strong>. The funding fee can be waived for some disabled veterans.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  document.getElementById('va-finance').addEventListener('change', calc);
+  calc();
+})();
+</script>
+
+<h2>Why VA loans are different</h2>
+<p>VA loans are backed by the Department of Veterans Affairs for eligible veterans, active service members, and certain surviving spouses. Two features set them apart: you can buy with <strong>zero down</strong>, and there's <strong>no monthly mortgage insurance</strong> — ever. That second point is a real monthly savings compared with FHA or low-down conventional loans, which tack on mortgage insurance for years.</p>
+<p>In place of ongoing insurance, VA loans charge a one-time <strong>funding fee</strong>, a percentage of the loan that most borrowers finance into the balance rather than pay in cash. The fee helps sustain the program. This calculator builds your payment from principal and interest plus property taxes and homeowners insurance.</p>
+<ul>
+  <li><strong>Funding fee waivers</strong> apply to many veterans receiving disability compensation — set it to 0% to model that.</li>
+  <li><strong>Putting money down</strong> is optional but lowers both your loan and your funding fee.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> Funding fee percentages depend on down payment, service type, and whether it's your first use. Confirm your fee and eligibility with a VA-approved lender. This is not financial advice.</p>

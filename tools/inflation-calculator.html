@@ -1,0 +1,70 @@
+<!--META
+{
+  "title": "Inflation Calculator",
+  "slug": "inflation-calculator",
+  "category": "finance",
+  "h1": "Inflation Calculator",
+  "description": "See how inflation erodes the value of money over time. Enter an amount, a number of years, and an average inflation rate to find future costs and lost buying power.",
+  "keywords": "inflation calculator, buying power calculator, purchasing power calculator, future value of money, cost of living calculator, inflation rate calculator",
+  "faq": [
+    {"q": "How does this inflation calculator work?", "a": "It compounds your chosen average inflation rate over the number of years you enter. To find what something will cost later it multiplies your amount by (1 + rate)^years; to find today's buying power in the future it divides by the same factor. The two views are mirror images of the same erosion of value."},
+    {"q": "What inflation rate should I use?", "a": "Long-run inflation in the U.S. has averaged roughly 3% per year, though individual years range from near zero to well above that. Central banks often target about 2%. The 3% default is a reasonable middle-ground assumption; adjust it up or down to model higher- or lower-inflation scenarios."},
+    {"q": "What is the difference between future cost and buying power?", "a": "Future cost answers 'what will this purchase cost me in N years?' — the number gets bigger. Buying power answers 'what will today's dollars be worth in N years?' — the number gets smaller. Both describe the same thing: money loses value as prices rise, so a fixed amount buys less over time."},
+    {"q": "How can I protect against inflation?", "a": "Holding only cash means steadily losing purchasing power. Investing in assets that historically outpace inflation — like stocks, real estate, or inflation-protected bonds (TIPS) — helps your money keep up or grow in real terms. The goal is for your after-inflation, or 'real,' return to stay positive."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="if-amount">Amount ($)</label><input type="number" id="if-amount" value="10000" min="0" step="100"></div>
+  <div class="field"><label for="if-years">Number of years</label><input type="number" id="if-years" value="20" min="1" max="100" step="1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="if-rate">Average annual inflation (%)</label><input type="number" id="if-rate" value="3" min="0" step="0.1"></div>
+</div>
+
+<div class="result" id="if-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['if-amount', 'if-years', 'if-rate'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var amount = v('if-amount');
+    var years = Math.round(v('if-years'));
+    var r = v('if-rate') / 100;
+    var factor = Math.pow(1 + r, years);
+
+    var futureCost = amount * factor;
+    var buyingPower = amount / factor;
+    var costChange = amount ? (futureCost - amount) / amount * 100 : 0;
+    var powerLost = amount ? (amount - buyingPower) / amount * 100 : 0;
+
+    document.getElementById('if-out').innerHTML =
+      '<div class="result-sub">' + money.format(amount) + ' today will cost</div>' +
+      '<div class="result-big">' + money.format(futureCost) + '</div>' +
+      '<div class="result-sub">to buy the same goods in ' + years + ' years</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Cost of the same goods later', money.format(futureCost)) +
+        kv('Price increase', '+' + costChange.toFixed(1) + '%') +
+        kv('<strong>Buying power of ' + money.format(amount) + ' in ' + years + ' yrs</strong>', '<strong>' + money.format(buyingPower) + ' (today’s dollars)</strong>') +
+        kv('Purchasing power lost', '−' + powerLost.toFixed(1) + '%') +
+      '</div>' +
+      '<p class="note">At ' + v('if-rate') + '% inflation, ' + money.format(amount) + ' set aside today would have the buying power of just ' + money.format(buyingPower) + ' in ' + years + ' years — the same money buys noticeably less.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How inflation eats your money</h2>
+<p>Inflation is the gradual rise in prices that makes each dollar buy a little less over time. This calculator shows that effect from two angles. First, it projects what a purchase costing a set amount today will cost after several years of inflation. Second, it shows how much of today's money will actually be worth — in today's purchasing power — once those same years have passed. Both numbers describe the same quiet erosion: prices climb, and a fixed sum stretches less far.</p>
+<p>The compounding is what makes inflation sneaky. A few percent a year sounds trivial, but over decades it adds up dramatically — money sitting idle in cash can lose a large share of its real value across a working lifetime. That's why simply saving isn't always enough.</p>
+<ul>
+  <li><strong>Don't hold too much cash</strong> — idle money quietly loses purchasing power every year.</li>
+  <li><strong>Invest for real returns</strong> — assets that historically beat inflation help your money keep up.</li>
+  <li><strong>Think in today's dollars</strong> — long-term goals are clearer when adjusted for inflation.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> This assumes a single, steady inflation rate, but real inflation varies year to year and differs across categories like housing, food, and healthcare. Use it to understand the direction and rough scale of the effect. This is not financial advice.</p>

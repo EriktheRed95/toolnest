@@ -1,0 +1,46 @@
+<!--META
+{
+  "title": "URL Slug Generator",
+  "slug": "slug-generator",
+  "category": "random",
+  "h1": "URL Slug Generator",
+  "description": "Turn any title into a clean, SEO-friendly URL slug. Lowercases text, strips accents, and replaces spaces and symbols with hyphens. Free and instant.",
+  "keywords": "url slug generator, slug maker, slugify, permalink generator, seo url, make a slug from title",
+  "faq": [
+    {"q": "What is a URL slug?", "a": "A slug is the readable part of a URL that identifies a page, like 'best-coffee-shops' in example.com/best-coffee-shops. Good slugs are lowercase, use hyphens between words, and avoid spaces and special characters so they're clean and easy to share."},
+    {"q": "Why use hyphens instead of underscores or spaces?", "a": "Search engines treat hyphens as word separators, so 'red-running-shoes' reads as three words. Spaces get encoded as ugly '%20' sequences, and underscores aren't always treated as separators. Hyphens are the web standard for readable, SEO-friendly URLs."},
+    {"q": "Does this handle accents and special characters?", "a": "Yes. Accented letters like é or ñ are normalized to their plain ASCII form (e to n), and any run of symbols, spaces, or punctuation is collapsed into a single hyphen. Leading and trailing hyphens are trimmed for a clean result."}
+  ]
+}
+META-->
+<div class="field">
+  <label for="slug-input">Title or text</label>
+  <textarea id="slug-input" rows="3" style="width:100%;resize:vertical" placeholder="Type a title…">10 Café Façade Ideas You'll Love!</textarea>
+</div>
+<div class="pw-out" id="slug-out"></div>
+<div class="btn-row">
+  <button class="btn secondary" data-copy="#slug-out" id="slug-copy">Copy slug</button>
+</div>
+
+<script>
+(function () {
+  var input = document.getElementById('slug-input'), out = document.getElementById('slug-out');
+  function slugify(s) {
+    return s
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .toLowerCase().trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+  function update() {
+    var slug = slugify(input.value);
+    out.textContent = slug || '(empty)';
+  }
+  input.addEventListener('input', update);
+  update();
+})();
+</script>
+
+<h2>Make a clean URL slug from any title</h2>
+<p>A slug is the human-readable tail of a web address — the part after the last slash that tells both people and search engines what a page is about. Type a headline or any text above and this tool generates a tidy slug instantly: it lowercases everything, <strong>strips accents</strong> down to plain letters, and replaces every run of spaces, punctuation, and symbols with a single hyphen. Leading and trailing hyphens are trimmed so the result is always clean.</p>
+<p>Good slugs are short, descriptive, and made of real words separated by hyphens — the web standard that search engines read as distinct terms. Use them for blog posts, product pages, documentation, and anywhere you want a <strong>readable, shareable, SEO-friendly URL</strong>. The conversion runs entirely in your browser, so nothing you type is sent anywhere; just edit the text and copy the slug with one click.</p>

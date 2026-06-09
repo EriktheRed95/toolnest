@@ -1,0 +1,65 @@
+<!--META
+{
+  "title": "Loan-to-Value (LTV) Calculator",
+  "slug": "loan-to-value-calculator",
+  "category": "finance",
+  "h1": "Loan-to-Value (LTV) Calculator",
+  "description": "Calculate your loan-to-value (LTV) ratio from a loan amount and property value. See your equity and equity percentage, and whether you'll owe PMI.",
+  "keywords": "loan to value calculator, LTV calculator, LTV ratio, home equity calculator, PMI calculator, loan to value ratio",
+  "faq": [
+    {"q": "What is loan-to-value (LTV)?", "a": "LTV is the loan amount divided by the property's appraised value or purchase price, expressed as a percentage. A $320,000 loan on a $400,000 home is an 80% LTV. Lower LTV means you have more equity and represent less risk to a lender, which can earn you better rates and terms."},
+    {"q": "Why does LTV affect PMI?", "a": "On conventional loans, an LTV above 80% (less than 20% down) usually requires private mortgage insurance (PMI), which protects the lender if you default. Once your LTV drops to about 80% through payments or appreciation, you can typically request PMI removal, and lenders must cancel it at 78% based on the original schedule."},
+    {"q": "What LTV do different loans allow?", "a": "Conventional loans can go up to about 97% LTV (3% down) with PMI. FHA loans allow up to 96.5% LTV (3.5% down). VA and USDA loans can reach 100% for eligible borrowers. The lower your LTV, the more loan programs and pricing you'll qualify for."},
+    {"q": "How do I lower my LTV?", "a": "Make a larger down payment, pay down the loan balance, or benefit from rising property value (which raises the denominator). A new appraisal showing a higher value can lower your LTV and may let you drop PMI sooner."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="ltv-loan">Loan amount ($)</label><input type="number" id="ltv-loan" value="320000" min="0" step="1000"></div>
+  <div class="field"><label for="ltv-value">Appraised value / purchase price ($)</label><input type="number" id="ltv-value" value="400000" min="0" step="1000"></div>
+</div>
+
+<div class="result" id="ltv-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['ltv-loan', 'ltv-value'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var loan = v('ltv-loan');
+    var value = v('ltv-value');
+    var out = document.getElementById('ltv-out');
+    if (value <= 0) { out.innerHTML = '<p class="note">Enter an appraised value or purchase price.</p>'; return; }
+
+    var ltv = loan / value * 100;
+    var equity = value - loan;
+    var equityPct = 100 - ltv;
+
+    var note;
+    if (ltv <= 80) note = '<p class="note ok">At 80% LTV or below, you generally avoid PMI on a conventional loan.</p>';
+    else if (ltv <= 96.5) note = '<p class="note warn">Above 80% LTV, conventional loans typically require PMI until you reach about 20% equity. FHA loans allow up to 96.5% LTV.</p>';
+    else note = '<p class="note warn">This LTV is above the 96.5% FHA limit and the ~97% conventional limit. You may need a larger down payment or a special program (VA/USDA can reach 100%).</p>';
+
+    out.innerHTML =
+      '<div class="result-sub">Loan-to-value ratio</div>' +
+      '<div class="result-big">' + ltv.toFixed(1) + '%</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Equity', money.format(equity)) +
+        kv('Equity %', equityPct.toFixed(1) + '%') +
+        kv('Loan amount', money.format(loan)) +
+        kv('Property value', money.format(value)) +
+      '</div>' +
+      note;
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Understanding loan-to-value</h2>
+<p>Loan-to-value compares how much you owe to what the property is worth. It's one of the first numbers a lender looks at, because it measures their risk: a high LTV means you have little equity cushion, so a default is more likely to leave the lender short. That's why a lower LTV usually unlocks better interest rates, more loan options, and — on conventional loans — freedom from private mortgage insurance.</p>
+<p>The 80% threshold is the one to remember. At or below 80% LTV (at least 20% equity), conventional borrowers generally skip PMI. Between 80% and roughly 97%, you can still get a conventional loan but typically pay PMI until your equity grows; FHA loans go up to 96.5% LTV, and VA or USDA loans can reach 100% for eligible buyers. You lower your LTV by putting more down, paying down the balance, or benefiting from rising home value.</p>
+<p class="note"><strong>Estimate only.</strong> Lender rules and program limits vary. This is not financial advice.</p>

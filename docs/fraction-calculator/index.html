@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fraction Calculator</title>
+<meta name="description" content="Add, subtract, multiply, and divide fractions. Get the simplified result, its decimal value, and the mixed-number form, all calculated instantly.">
+<meta name="keywords" content="fraction calculator, add fractions, subtract fractions, multiply fractions, divide fractions, simplify fractions, mixed number calculator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/fraction-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Fraction Calculator">
+<meta property="og:description" content="Add, subtract, multiply, and divide fractions. Get the simplified result, its decimal value, and the mixed-number form, all calculated instantly.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/fraction-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Fraction Calculator", "url": "https://erikthered95.github.io/toolnest/fraction-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Add, subtract, multiply, and divide fractions. Get the simplified result, its decimal value, and the mixed-number form, all calculated instantly."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does the calculator simplify fractions?", "acceptedAnswer": {"@type": "Answer", "text": "After computing the result, it finds the greatest common divisor (GCD) of the numerator and denominator using Euclid's algorithm, then divides both by it. That reduces the fraction to its lowest terms \u2014 for example, 6/8 becomes 3/4."}}, {"@type": "Question", "name": "What is a mixed number?", "acceptedAnswer": {"@type": "Answer", "text": "A mixed number combines a whole number and a proper fraction, like 1 1/4. When a result is improper (the numerator is larger than the denominator), the tool also shows the mixed-number form alongside the simplified fraction."}}, {"@type": "Question", "name": "Can it handle negative fractions?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Enter a negative numerator or denominator and the calculator tracks the sign correctly. The result keeps the sign on the numerator and shows a leading minus where appropriate."}}, {"@type": "Question", "name": "What happens if I divide by zero?", "acceptedAnswer": {"@type": "Answer", "text": "A fraction can't have a denominator of zero, and you can't divide by a fraction equal to zero. If either situation comes up, the calculator flags it instead of showing a result."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Fraction Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Fraction Calculator"}]}</script>
+<article class="tool"><h1>Fraction Calculator</h1><p class="lede">Add, subtract, multiply, and divide fractions. Get the simplified result, its decimal value, and the mixed-number form, all calculated instantly.</p><div class="row">
+  <div class="field"><label for="fr-an">Numerator A</label><input type="number" id="fr-an" value="1" step="1"></div>
+  <div class="field"><label for="fr-ad">Denominator A</label><input type="number" id="fr-ad" value="2" step="1"></div>
+</div>
+<div class="field">
+  <label for="fr-op">Operation</label>
+  <select id="fr-op">
+    <option value="add">+ &nbsp;Add</option>
+    <option value="sub">− &nbsp;Subtract</option>
+    <option value="mul">× &nbsp;Multiply</option>
+    <option value="div">÷ &nbsp;Divide</option>
+  </select>
+</div>
+<div class="row">
+  <div class="field"><label for="fr-bn">Numerator B</label><input type="number" id="fr-bn" value="1" step="1"></div>
+  <div class="field"><label for="fr-bd">Denominator B</label><input type="number" id="fr-bd" value="4" step="1"></div>
+</div>
+
+<div class="result" id="fr-out"></div>
+
+<script>
+(function () {
+  var ids = ['fr-an', 'fr-ad', 'fr-bn', 'fr-bd'];
+  function v(id) { return Math.trunc(+document.getElementById(id).value || 0); }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = b; b = a % b; a = t; } return a; }
+
+  function calc() {
+    var out = document.getElementById('fr-out');
+    var an = v('fr-an'), ad = v('fr-ad'), bn = v('fr-bn'), bd = v('fr-bd');
+    var op = document.getElementById('fr-op').value;
+
+    if (ad === 0 || bd === 0) {
+      out.innerHTML = '<p class="note warn">A denominator can’t be zero.</p>';
+      return;
+    }
+    if (op === 'div' && bn === 0) {
+      out.innerHTML = '<p class="note warn">You can’t divide by zero (fraction B equals 0).</p>';
+      return;
+    }
+
+    var n, d;
+    if (op === 'add') { n = an * bd + bn * ad; d = ad * bd; }
+    else if (op === 'sub') { n = an * bd - bn * ad; d = ad * bd; }
+    else if (op === 'mul') { n = an * bn; d = ad * bd; }
+    else { n = an * bd; d = ad * bn; }
+
+    // normalize sign so denominator is positive
+    if (d < 0) { n = -n; d = -d; }
+    var g = gcd(n, d) || 1;
+    n /= g; d /= g;
+
+    var decimal = (n / d);
+    var simplified = d === 1 ? String(n) : n + '/' + d;
+    var mixed = '';
+    if (d !== 1 && Math.abs(n) > d) {
+      var whole = Math.trunc(n / d);
+      var rem = Math.abs(n % d);
+      mixed = whole + ' ' + rem + '/' + d;
+    }
+
+    out.innerHTML =
+      '<div class="result-sub">Simplified result</div>' +
+      '<div class="result-big">' + simplified + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Decimal', (Math.round(decimal * 1e6) / 1e6).toString()) +
+        (mixed ? kv('Mixed number', mixed) : '') +
+      '</div>';
+  }
+
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  document.getElementById('fr-op').addEventListener('change', calc);
+  calc();
+})();
+</script>
+
+<h2>Working with fractions</h2>
+<p>Fraction arithmetic trips up a lot of people because the rules differ for each operation. To <strong>add or subtract</strong>, you first need a common denominator; to <strong>multiply</strong>, you multiply across the tops and bottoms; and to <strong>divide</strong>, you flip the second fraction and multiply. This calculator handles all four and then reduces the answer to lowest terms automatically, so you never have to spot the common factor yourself.</p>
+<p>Each result comes in three forms so you can use whichever fits: the <strong>simplified fraction</strong>, its <strong>decimal</strong> equivalent, and — when the answer is improper — the <strong>mixed number</strong>. Negative values and sign handling are taken care of, and the tool guards against impossible inputs like a zero denominator or dividing by a fraction that equals zero.</p>
+<ul>
+  <li><strong>Add / subtract</strong> — needs a common denominator, done for you.</li>
+  <li><strong>Multiply</strong> — numerators times numerators, denominators times denominators.</li>
+  <li><strong>Divide</strong> — invert the second fraction, then multiply.</li>
+</ul><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How does the calculator simplify fractions?</summary><div class="faq-a">After computing the result, it finds the greatest common divisor (GCD) of the numerator and denominator using Euclid's algorithm, then divides both by it. That reduces the fraction to its lowest terms — for example, 6/8 becomes 3/4.</div></details>
+<details class="faq-item"><summary>What is a mixed number?</summary><div class="faq-a">A mixed number combines a whole number and a proper fraction, like 1 1/4. When a result is improper (the numerator is larger than the denominator), the tool also shows the mixed-number form alongside the simplified fraction.</div></details>
+<details class="faq-item"><summary>Can it handle negative fractions?</summary><div class="faq-a">Yes. Enter a negative numerator or denominator and the calculator tracks the sign correctly. The result keeps the sign on the numerator and shows a leading minus where appropriate.</div></details>
+<details class="faq-item"><summary>What happens if I divide by zero?</summary><div class="faq-a">A fraction can't have a denominator of zero, and you can't divide by a fraction equal to zero. If either situation comes up, the calculator flags it instead of showing a result.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/fuel-cost-calculator/"><h3>Fuel Cost Calculator</h3><p>Estimate the fuel cost of a trip from distance, MPG, and gas price. See total cost, gallons used, and cost per person when splitting a road trip.</p></a><a class="card" href="/toolnest/gpa-calculator/"><h3>GPA Calculator</h3><p>Calculate your grade point average on the 4.0 scale. Enter each course's letter grade and credit hours to get your weighted GPA instantly.</p></a><a class="card" href="/toolnest/ideal-weight-calculator/"><h3>Ideal Weight Calculator</h3><p>Estimate your ideal body weight from your height and sex using the Devine, Robinson, and Miller formulas, plus the healthy weight range from BMI.</p></a><a class="card" href="/toolnest/loan-calculator/"><h3>Loan Calculator</h3><p>Calculate the monthly payment, total interest, and total cost of any loan — personal, student, or installment. Enter the amount, rate, and term to see your numbers.</p></a><a class="card" href="/toolnest/percentage-calculator/"><h3>Percentage Calculator</h3><p>Work out percentages three ways: what is X% of Y, X is what percent of Y, and the percent increase or decrease between two numbers. Free and instant.</p></a><a class="card" href="/toolnest/roman-numeral-converter/"><h3>Roman Numeral Converter</h3><p>Convert numbers to Roman numerals and Roman numerals back to numbers. Supports 1 to 3999 with instant, two-way conversion in your browser.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

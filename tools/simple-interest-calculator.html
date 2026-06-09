@@ -1,0 +1,63 @@
+<!--META
+{
+  "title": "Simple Interest Calculator",
+  "slug": "simple-interest-calculator",
+  "category": "finance",
+  "h1": "Simple Interest Calculator",
+  "description": "Calculate simple interest on a principal amount. Enter the principal, annual rate, and time in years to see the interest earned and the total amount.",
+  "keywords": "simple interest calculator, simple interest formula, interest earned calculator, principal interest rate time, flat interest calculator",
+  "faq": [
+    {"q": "What is simple interest?", "a": "Simple interest is interest charged only on the original principal, never on previously earned interest. The formula is I = P × r × t, where P is the principal, r is the annual rate as a decimal, and t is the time in years. It produces a straight-line, predictable amount."},
+    {"q": "How is simple interest different from compound interest?", "a": "Simple interest is calculated only on the original principal, so it grows in a straight line. Compound interest is calculated on the principal plus all accumulated interest, so it grows faster over time. For the same rate and term, compound interest always yields more than simple interest."},
+    {"q": "Where is simple interest used?", "a": "It's common on some short-term and auto loans, certain bonds, and many informal or personal loans. Always check whether a loan or account uses simple or compound interest, since the difference grows with larger amounts and longer terms."},
+    {"q": "Can I use a fraction of a year?", "a": "Yes. Enter time in years and use decimals for partial years — for example, 0.5 for six months or 1.25 for fifteen months. The formula scales linearly with time."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="si-principal">Principal ($)</label><input type="number" id="si-principal" value="10000" min="0" step="100"></div>
+  <div class="field"><label for="si-rate">Annual interest rate (%)</label><input type="number" id="si-rate" value="5" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="si-years">Time (years) <span class="hint">decimals OK</span></label><input type="number" id="si-years" value="3" min="0" step="0.25"></div>
+</div>
+
+<div class="result" id="si-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['si-principal', 'si-rate', 'si-years'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var P = v('si-principal');
+    var rate = v('si-rate');
+    var years = v('si-years');
+    var out = document.getElementById('si-out');
+    if (P <= 0 || years <= 0) { out.innerHTML = '<p class="note">Enter a principal and time in years.</p>'; return; }
+
+    var interest = P * rate / 100 * years;
+    var total = P + interest;
+
+    out.innerHTML =
+      '<div class="result-sub">Interest earned</div>' +
+      '<div class="result-big">' + money2.format(interest) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Total amount', money2.format(total)) +
+        kv('Principal', money.format(P)) +
+        kv('Rate &amp; time', rate + '% for ' + years + ' yr' + (years === 1 ? '' : 's')) +
+      '</div>' +
+      '<p class="note">Simple interest is charged only on the principal — unlike compound interest, it never earns interest on previously earned interest.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How simple interest works</h2>
+<p>Simple interest is the most straightforward way to calculate the cost of borrowing or the return on a deposit. It applies a fixed annual rate to the <strong>original principal only</strong>, using the formula I = P × r × t. Because the interest base never changes, the amount grows in a straight line: doubling the time doubles the interest, and doubling the principal doubles it too. That predictability makes simple interest easy to reason about for short-term loans, certain bonds, and informal lending between people.</p>
+<p>The key thing to watch for is whether an account or loan actually uses simple or <strong>compound</strong> interest. Compound interest adds each period's interest back to the balance, so future interest is calculated on a larger amount. Over short periods the gap is small, but over many years compounding pulls far ahead. When comparing offers, confirm the method and the compounding frequency, not just the headline rate.</p>
+<p class="note"><strong>Estimate only.</strong> Real accounts may compound, charge fees, or use different day-count conventions. This is not financial advice.</p>

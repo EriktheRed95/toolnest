@@ -1,0 +1,54 @@
+<!--META
+{
+  "title": "Square Footage Calculator",
+  "slug": "square-footage-calculator",
+  "category": "everyday",
+  "h1": "Square Footage Calculator",
+  "description": "Calculate square footage from length and width in feet. See the area in square feet, square yards, and square meters, plus total cost from a price per square foot.",
+  "keywords": "square footage calculator, square feet calculator, area calculator, sq ft, flooring calculator, square yards, price per square foot",
+  "faq": [
+    {"q": "How do I calculate square footage?", "a": "Multiply the length in feet by the width in feet. For a room 12 ft long and 10 ft wide, the area is 12 × 10 = 120 square feet. This calculator does the math instantly and also converts to square yards and square meters."},
+    {"q": "How do I convert square feet to square yards or square meters?", "a": "Divide square feet by 9 to get square yards, since a square yard is 3 ft by 3 ft. Multiply square feet by 0.092903 to get square meters. The calculator shows both conversions automatically."},
+    {"q": "How do I estimate material cost from square footage?", "a": "Enter a price per square foot and the tool multiplies it by the total area. This gives a quick estimate for flooring, tile, carpet, or paint. Add 5–10% extra for waste, cuts, and mistakes."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="sqft-length">Length (ft)</label><input type="number" id="sqft-length" value="12" min="0" step="0.01"></div>
+  <div class="field"><label for="sqft-width">Width (ft)</label><input type="number" id="sqft-width" value="10" min="0" step="0.01"></div>
+  <div class="field"><label for="sqft-price">Price per sq ft ($, optional)</label><input type="number" id="sqft-price" value="0" min="0" step="0.01"></div>
+</div>
+<div class="result">
+  <div class="result-big" id="sqft-big">0 sq ft</div>
+  <div id="sqft-out" style="margin-top:12px"></div>
+</div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var num = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  var big = document.getElementById('sqft-big'), out = document.getElementById('sqft-out');
+
+  function calc() {
+    var l = +document.getElementById('sqft-length').value || 0;
+    var w = +document.getElementById('sqft-width').value || 0;
+    var price = +document.getElementById('sqft-price').value || 0;
+    var area = l * w;
+    big.textContent = num.format(area) + ' sq ft';
+    out.innerHTML =
+      kv('Square feet', num.format(area) + ' ft²') +
+      kv('Square yards', num.format(area / 9) + ' yd²') +
+      kv('Square meters', num.format(area * 0.092903) + ' m²') +
+      (price > 0 ? kv('Total cost', money.format(area * price)) : '');
+  }
+  ['sqft-length', 'sqft-width', 'sqft-price'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
+
+<h2>How to calculate square footage</h2>
+<p>Enter the <strong>length</strong> and <strong>width</strong> of a space in feet and the calculator multiplies them to give the area in square feet, then converts it to square yards and square meters. For an L-shaped or irregular room, split it into rectangles, measure each one, and add the results together.</p>
+<p>Add an optional <strong>price per square foot</strong> to estimate material cost — useful for flooring, carpet, tile, paint, or any project priced by area. Square footage is also the standard way real estate listings describe a home's size. Whatever you're measuring, it's smart to buy <strong>5–10% extra</strong> material to cover offcuts, breakage, and mistakes, so your project doesn't stall waiting on one more box.</p>

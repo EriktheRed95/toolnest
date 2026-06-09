@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roth IRA Calculator</title>
+<meta name="description" content="Estimate how much your Roth IRA could grow tax-free. Enter your balance, annual contribution, time horizon, and expected return to project your tax-free retirement savings.">
+<meta name="keywords" content="roth ira calculator, roth ira growth calculator, tax-free retirement calculator, ira contribution calculator, roth ira projection, retirement savings">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/roth-ira-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Roth IRA Calculator">
+<meta property="og:description" content="Estimate how much your Roth IRA could grow tax-free. Enter your balance, annual contribution, time horizon, and expected return to project your tax-free retirement savings.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/roth-ira-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Roth IRA Calculator", "url": "https://erikthered95.github.io/toolnest/roth-ira-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Estimate how much your Roth IRA could grow tax-free. Enter your balance, annual contribution, time horizon, and expected return to project your tax-free retirement savings."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is a Roth IRA?", "acceptedAnswer": {"@type": "Answer", "text": "A Roth IRA is a retirement account you fund with after-tax dollars. Because you've already paid tax on the money going in, qualified withdrawals in retirement \u2014 including all the investment growth \u2014 come out completely tax-free. That tax-free growth is the Roth's biggest advantage over a traditional IRA, where contributions may be deductible but withdrawals are taxed."}}, {"@type": "Question", "name": "What are the 2025 Roth IRA contribution limits?", "acceptedAnswer": {"@type": "Answer", "text": "For 2025 you can contribute up to $7,000 across all your IRAs, or $8,000 if you're age 50 or older thanks to the catch-up provision. These are annual limits, not per account. The default in this calculator uses $7,000 \u2014 adjust it down if you plan to contribute less."}}, {"@type": "Question", "name": "Are there income limits for a Roth IRA?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The ability to contribute directly phases out at higher incomes \u2014 for 2025 the phase-out begins around $146,000 for single filers and $230,000 for married couples filing jointly, with contributions disallowed above the top of each range. Higher earners sometimes use a 'backdoor' Roth conversion instead. Check current IRS figures for your situation."}}, {"@type": "Question", "name": "Why is Roth growth so valuable?", "acceptedAnswer": {"@type": "Answer", "text": "In a taxable account, dividends and gains can be taxed along the way and at withdrawal. In a Roth, decades of compounding happen with no tax drag and no tax due when you take qualified distributions. Over a long horizon, sheltering that growth from tax can mean keeping tens of thousands of dollars more."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Roth IRA Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Roth IRA Calculator"}]}</script>
+<article class="tool"><h1>Roth IRA Calculator</h1><p class="lede">Estimate how much your Roth IRA could grow tax-free. Enter your balance, annual contribution, time horizon, and expected return to project your tax-free retirement savings.</p><div class="row">
+  <div class="field"><label for="ri-balance">Current balance ($)</label><input type="number" id="ri-balance" value="10000" min="0" step="500"></div>
+  <div class="field"><label for="ri-contrib">Annual contribution ($)</label><input type="number" id="ri-contrib" value="7000" min="0" step="500"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="ri-years">Years</label><input type="number" id="ri-years" value="30" min="1" max="80" step="1"></div>
+  <div class="field"><label for="ri-rate">Annual return (%)</label><input type="number" id="ri-rate" value="7" min="0" step="0.1"></div>
+</div>
+
+<div class="result" id="ri-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['ri-balance', 'ri-contrib', 'ri-years', 'ri-rate'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var start = v('ri-balance');
+    var contrib = v('ri-contrib');
+    var years = Math.round(v('ri-years'));
+    var r = v('ri-rate') / 100;
+
+    var balance = start;
+    for (var y = 0; y < years; y++) {
+      balance = balance * (1 + r) + contrib;
+    }
+    var contributed = start + contrib * years;
+    var growth = balance - contributed;
+
+    document.getElementById('ri-out').innerHTML =
+      '<div class="result-sub">Tax-free balance after ' + years + ' years</div>' +
+      '<div class="result-big">' + money.format(balance) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Total contributed', money.format(contributed)) +
+        kv('&nbsp;&nbsp;Starting balance', money.format(start)) +
+        kv('&nbsp;&nbsp;Contributions', money.format(contrib * years)) +
+        kv('<strong>Tax-free growth</strong>', '<strong>' + money.format(growth) + '</strong>') +
+      '</div>' +
+      '<p class="note">In a Roth IRA, that ' + money.format(growth) + ' of growth is yours to withdraw tax-free in retirement — no tax due on qualified distributions.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>The power of tax-free growth</h2>
+<p>A Roth IRA is one of the most valuable retirement accounts available, and its advantage is simple: you contribute money you've already paid tax on, and in return every dollar of qualified growth comes out tax-free in retirement. This calculator projects your balance by adding your annual contribution and compounding the total once a year at your expected return, then separates what you put in from what the account earned.</p>
+<p>Because the growth is never taxed, the longer your money stays invested the more the Roth pulls ahead of a comparable taxable account. Over a 30- or 40-year horizon, sheltering decades of compounding from tax can mean keeping far more of your final balance.</p>
+<ul>
+  <li><strong>Contribute early each year</strong> — funding in January rather than December gives the money extra months to compound.</li>
+  <li><strong>Max it out when you can</strong> — the annual limit is use-it-or-lose-it; you can't make up missed years later.</li>
+  <li><strong>Mind the income limits</strong> — direct contributions phase out at higher incomes.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> This assumes a steady annual return and constant contributions; real markets fluctuate and returns aren't guaranteed. Contribution and income limits change yearly — verify current IRS figures. This is not financial or tax advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is a Roth IRA?</summary><div class="faq-a">A Roth IRA is a retirement account you fund with after-tax dollars. Because you've already paid tax on the money going in, qualified withdrawals in retirement — including all the investment growth — come out completely tax-free. That tax-free growth is the Roth's biggest advantage over a traditional IRA, where contributions may be deductible but withdrawals are taxed.</div></details>
+<details class="faq-item"><summary>What are the 2025 Roth IRA contribution limits?</summary><div class="faq-a">For 2025 you can contribute up to $7,000 across all your IRAs, or $8,000 if you're age 50 or older thanks to the catch-up provision. These are annual limits, not per account. The default in this calculator uses $7,000 — adjust it down if you plan to contribute less.</div></details>
+<details class="faq-item"><summary>Are there income limits for a Roth IRA?</summary><div class="faq-a">Yes. The ability to contribute directly phases out at higher incomes — for 2025 the phase-out begins around $146,000 for single filers and $230,000 for married couples filing jointly, with contributions disallowed above the top of each range. Higher earners sometimes use a 'backdoor' Roth conversion instead. Check current IRS figures for your situation.</div></details>
+<details class="faq-item"><summary>Why is Roth growth so valuable?</summary><div class="faq-a">In a taxable account, dividends and gains can be taxed along the way and at withdrawal. In a Roth, decades of compounding happen with no tax drag and no tax due when you take qualified distributions. Over a long horizon, sheltering that growth from tax can mean keeping tens of thousands of dollars more.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/savings-goal-calculator/"><h3>Savings Goal Calculator</h3><p>Find out how much to save each month to reach a goal. Enter your target, current savings, timeline, and APY to see the monthly contribution and interest you'll earn.</p></a><a class="card" href="/toolnest/seller-net-proceeds-calculator/"><h3>Seller Net Proceeds Calculator</h3><p>Estimate how much cash you'll walk away with after selling your home — sale price minus mortgage payoff, agent commission, and closing costs. Free seller net sheet.</p></a><a class="card" href="/toolnest/simple-interest-calculator/"><h3>Simple Interest Calculator</h3><p>Calculate simple interest on a principal amount. Enter the principal, annual rate, and time in years to see the interest earned and the total amount.</p></a><a class="card" href="/toolnest/va-loan-calculator/"><h3>VA Loan Calculator</h3><p>Estimate your VA mortgage payment including the VA funding fee, property taxes, and insurance — with no down payment and no monthly mortgage insurance.</p></a><a class="card" href="/toolnest/1031-exchange-calculator/"><h3>1031 Exchange Calculator</h3><p>Estimate the taxes deferred by a 1031 like-kind exchange of investment property. See your realized gain, capital gains and depreciation recapture tax, and net proceeds to reinvest.</p></a><a class="card" href="/toolnest/2-1-buydown-calculator/"><h3>2-1 Buydown Calculator</h3><p>See your reduced mortgage payment in years 1 and 2 of a 2-1 temporary buydown, the monthly savings, and the upfront buydown cost.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

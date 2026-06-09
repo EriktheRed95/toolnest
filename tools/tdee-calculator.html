@@ -1,0 +1,78 @@
+<!--META
+{
+  "title": "TDEE & Calorie Calculator",
+  "slug": "tdee-calculator",
+  "category": "everyday",
+  "h1": "TDEE & Calorie Calculator",
+  "description": "Estimate your Total Daily Energy Expenditure (TDEE) and BMR using the Mifflin-St Jeor equation, plus daily calorie targets for losing, maintaining, or gaining weight.",
+  "keywords": "TDEE calculator, calorie calculator, maintenance calories, BMR calculator, Mifflin-St Jeor, daily calorie needs",
+  "faq": [
+    {"q": "What is TDEE?", "a": "TDEE stands for Total Daily Energy Expenditure — the total number of calories you burn in a day, including your resting metabolism plus all movement and activity. Eating at your TDEE keeps your weight stable; eating below it leads to loss and above it to gain."},
+    {"q": "What is BMR?", "a": "BMR is your Basal Metabolic Rate, the calories your body burns at complete rest just to stay alive. This calculator uses the Mifflin-St Jeor equation, one of the most accurate BMR formulas, then multiplies it by an activity factor to get your TDEE."},
+    {"q": "How do I lose or gain weight?", "a": "A deficit of about 500 calories a day roughly corresponds to losing half a kilogram (about a pound) per week; a surplus does the reverse. The targets shown subtract or add 250 and 500 calories from your TDEE for mild and standard rates."},
+    {"q": "How accurate are these numbers?", "a": "They're well-researched estimates, but individual metabolism varies. Use them as a starting point, track your weight over a couple of weeks, and adjust your intake based on what actually happens."}
+  ]
+}
+META-->
+<div class="checks" style="margin-bottom:14px">
+  <label><input type="radio" name="td-sex" value="male" checked> Male</label>
+  <label><input type="radio" name="td-sex" value="female"> Female</label>
+</div>
+<div class="row">
+  <div class="field"><label for="td-age">Age</label><input type="number" id="td-age" value="30" min="0" step="1"></div>
+  <div class="field"><label for="td-cm">Height (cm)</label><input type="number" id="td-cm" value="175" min="0" step="0.5"></div>
+  <div class="field"><label for="td-kg">Weight (kg)</label><input type="number" id="td-kg" value="72" min="0" step="0.1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="td-act">Activity level</label>
+    <select id="td-act">
+      <option value="1.2">Sedentary (little or no exercise)</option>
+      <option value="1.375">Lightly active (1–3 days/week)</option>
+      <option value="1.55" selected>Moderately active (3–5 days/week)</option>
+      <option value="1.725">Very active (6–7 days/week)</option>
+      <option value="1.9">Extra active (hard exercise, physical job)</option>
+    </select>
+  </div>
+</div>
+
+<div class="result" id="td-out"></div>
+
+<script>
+(function () {
+  var nf = new Intl.NumberFormat('en-US');
+  var ids = ['td-age', 'td-cm', 'td-kg', 'td-act'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function sex() { return document.querySelector('input[name="td-sex"]:checked').value; }
+
+  function calc() {
+    var out = document.getElementById('td-out');
+    var age = v('td-age'), cm = v('td-cm'), kg = v('td-kg'), act = v('td-act');
+    if (age <= 0 || cm <= 0 || kg <= 0) { out.innerHTML = '<p class="note">Enter your age, height, and weight.</p>'; return; }
+    var bmr = 10 * kg + 6.25 * cm - 5 * age + (sex() === 'male' ? 5 : -161);
+    var tdee = bmr * act;
+    out.innerHTML =
+      '<div class="result-sub">Maintenance calories (TDEE)</div>' +
+      '<div class="result-big">' + nf.format(Math.round(tdee)) + ' kcal/day</div>' +
+      '<div style="margin-top:12px">' +
+        kv('BMR (at rest)', nf.format(Math.round(bmr)) + ' kcal/day') +
+        kv('Maintain weight', nf.format(Math.round(tdee)) + ' kcal/day') +
+        kv('Mild weight loss', nf.format(Math.round(tdee - 250)) + ' kcal/day') +
+        kv('Weight loss', nf.format(Math.round(tdee - 500)) + ' kcal/day') +
+        kv('Mild weight gain', nf.format(Math.round(tdee + 250)) + ' kcal/day') +
+        kv('Weight gain', nf.format(Math.round(tdee + 500)) + ' kcal/day') +
+      '</div>' +
+      '<p class="note">Estimates based on the Mifflin-St Jeor equation. Individual needs vary — consult a professional before making big diet changes.</p>';
+  }
+  ids.forEach(function (id) { var el = document.getElementById(id); el.addEventListener('input', calc); el.addEventListener('change', calc); });
+  document.querySelectorAll('input[name="td-sex"]').forEach(function (r) { r.addEventListener('change', calc); });
+  calc();
+})();
+</script>
+
+<h2>How many calories you really need</h2>
+<p>Your <strong>Total Daily Energy Expenditure (TDEE)</strong> is the number of calories you burn across a full day — resting metabolism plus everything you do, from walking to the gym to fidgeting at your desk. Knowing it is the foundation of any weight goal: eat at your TDEE to stay steady, below it to lose, above it to gain. This calculator starts from your Basal Metabolic Rate using the well-regarded Mifflin-St Jeor equation, then scales it by how active you are.</p>
+<p>Choose the activity level that honestly matches your week. People tend to overestimate, so if you're unsure, pick the lower option — it's easier to add calories later than to wonder why the scale isn't moving.</p>
+<h2>Setting a calorie target</h2>
+<p>The targets translate your TDEE into practical daily numbers. A roughly <strong>500-calorie</strong> daily deficit tends to produce about half a kilogram of loss per week, while 250 gives a gentler pace that's easier to sustain; surpluses work the same way for gaining. Pick a target, eat consistently, and weigh yourself over two or three weeks before judging whether to adjust.</p>
+<p class="note"><strong>Estimates only.</strong> These figures are a starting point, not medical or dietary advice. Speak to a doctor or dietitian for guidance tailored to you.</p>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mortgage Payoff Calculator (Extra Payments)</title>
+<meta name="description" content="See how extra monthly or one-time payments pay off your mortgage faster. Calculate the time saved and total interest saved by paying extra principal.">
+<meta name="keywords" content="mortgage payoff calculator, extra payment calculator, pay off mortgage early, early payoff interest saved, additional principal payment calculator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/mortgage-payoff-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Mortgage Payoff Calculator (Extra Payments)">
+<meta property="og:description" content="See how extra monthly or one-time payments pay off your mortgage faster. Calculate the time saved and total interest saved by paying extra principal.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/mortgage-payoff-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Mortgage Payoff Calculator (Extra Payments)", "url": "https://erikthered95.github.io/toolnest/mortgage-payoff-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "See how extra monthly or one-time payments pay off your mortgage faster. Calculate the time saved and total interest saved by paying extra principal."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How much faster will I pay off my mortgage with extra payments?", "acceptedAnswer": {"@type": "Answer", "text": "It depends on the size of the extra payment and how early you start. Even a modest extra amount each month can shave years off a 30-year loan and save tens of thousands in interest, because every extra dollar goes straight to principal and stops accruing interest for the rest of the term. Enter your numbers to see the exact time and interest saved."}}, {"@type": "Question", "name": "Is it better to pay extra each month or one lump sum?", "acceptedAnswer": {"@type": "Answer", "text": "Both help, and the earlier the better. A consistent extra monthly amount steadily cuts the balance and compounds its savings over the whole loan. A one-time lump sum early on also removes interest for every remaining month. This calculator lets you combine both to see the total effect."}}, {"@type": "Question", "name": "Do extra payments go toward principal automatically?", "acceptedAnswer": {"@type": "Answer", "text": "Not always. Some servicers apply extra money to future scheduled payments or hold it unless you specify. To pay off the loan early, make sure each extra payment is applied to principal \u2014 many lenders have a checkbox or memo line for exactly that."}}, {"@type": "Question", "name": "Should I pay off my mortgage early or invest?", "acceptedAnswer": {"@type": "Answer", "text": "Paying extra guarantees a return equal to your mortgage rate, tax-free, with no risk. Investing might earn more over time but carries risk. If your rate is high or you value being debt-free, extra payments are compelling; if your rate is low and you're comfortable with market risk, investing may win. It's partly a math question and partly a peace-of-mind one."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Early Mortgage Payoff Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Early Mortgage Payoff Calculator"}]}</script>
+<article class="tool"><h1>Early Mortgage Payoff Calculator</h1><p class="lede">See how extra monthly or one-time payments pay off your mortgage faster. Calculate the time saved and total interest saved by paying extra principal.</p><div class="row">
+  <div class="field"><label for="po-balance">Current loan balance ($)</label><input type="number" id="po-balance" value="320000" min="0" step="1000"></div>
+  <div class="field"><label for="po-rate">Interest rate (%)</label><input type="number" id="po-rate" value="6.5" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="po-remain">Years left on loan</label><input type="number" id="po-remain" value="30" min="1" max="40" step="1"></div>
+  <div class="field"><label for="po-extra">Extra payment ($/mo)</label><input type="number" id="po-extra" value="250" min="0" step="50"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="po-lump">One-time extra payment ($) <span class="hint">optional, now</span></label><input type="number" id="po-lump" value="0" min="0" step="1000"></div>
+</div>
+
+<div class="result" id="po-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['po-balance', 'po-rate', 'po-remain', 'po-extra', 'po-lump'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function fmtMonths(m) { var y = Math.floor(m / 12), mo = m % 12; return (y ? y + ' yr ' : '') + mo + ' mo'; }
+
+  function amortize(P, r, basePay, extra, lump) {
+    var bal = P - lump, paid = 0, months = 0;
+    if (bal < 0) bal = 0;
+    while (bal > 0 && months < 1200) {
+      var interest = bal * r;
+      var principal = basePay + extra - interest;
+      if (principal <= 0) return null; // payment never covers interest
+      principal = Math.min(principal, bal);
+      bal -= principal; paid += interest; months++;
+    }
+    return { months: months, interest: paid };
+  }
+
+  function calc() {
+    var P = v('po-balance');
+    var r = v('po-rate') / 100 / 12;
+    var n = Math.round(v('po-remain') * 12);
+    var basePay = r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+
+    var base = amortize(P, r, basePay, 0, 0);
+    var fast = amortize(P, r, basePay, v('po-extra'), v('po-lump'));
+    var out = document.getElementById('po-out');
+    if (!fast || !base) { out.innerHTML = '<p class="note">Enter valid loan details to calculate.</p>'; return; }
+
+    var monthsSaved = base.months - fast.months;
+    var interestSaved = base.interest - fast.interest;
+
+    out.innerHTML =
+      '<div class="result-sub">Interest saved by paying extra</div>' +
+      '<div class="result-big">' + money.format(interestSaved) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Time saved', fmtMonths(monthsSaved) + ' earlier') +
+        kv('New payoff time', fmtMonths(fast.months)) +
+        kv('Original payoff time', fmtMonths(base.months)) +
+        kv('Base payment (P&amp;I)', money2.format(basePay)) +
+        (v('po-extra') ? kv('With extra', money2.format(basePay + v('po-extra')) + '/mo') : '') +
+        kv('Total interest — with extra', money.format(fast.interest)) +
+        kv('Total interest — original', money.format(base.interest)) +
+      '</div>' +
+      '<p class="note">Paying ' + money.format(v('po-extra')) + '/mo extra' + (v('po-lump') ? ' plus a ' + money.format(v('po-lump')) + ' lump sum' : '') +
+        ' clears the loan ' + fmtMonths(monthsSaved) + ' sooner and saves ' + money.format(interestSaved) + ' in interest. Make sure your servicer applies extra to principal.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How extra payments crush mortgage interest</h2>
+<p>A mortgage front-loads interest: in the early years, most of each payment covers interest, not principal. That's why <strong>extra principal payments</strong> are so powerful — every additional dollar permanently removes the interest that dollar would have generated for the rest of the loan. The effect compounds, and starting early multiplies it.</p>
+<p>This calculator compares your loan on its original schedule against the same loan with extra payments — a recurring monthly amount, a one-time lump sum, or both — and shows two numbers that tend to surprise people: how many <strong>years earlier</strong> you'd be debt-free, and how many thousands in <strong>interest you'd never pay</strong>.</p>
+<h2>Make sure it actually goes to principal</h2>
+<p>The catch is mechanical: extra money only accelerates payoff if your servicer applies it to <strong>principal</strong>. Some lenders instead credit it toward your next payment or park it as "unapplied funds." When you send extra, specify "apply to principal" — most have a field for it — and confirm it on your next statement.</p>
+<h2>Pay down or invest?</h2>
+<p>Extra payments earn a guaranteed, risk-free return equal to your interest rate. With a high rate, that's hard to beat. If your rate is low, investing the same money might earn more over time — at the cost of market risk and the certainty of being debt-free. There's no universally right answer; this tool quantifies the payoff side so you can weigh it against your alternatives.</p>
+<p class="note"><strong>Estimate only.</strong> Figures use principal and interest; taxes, insurance, and any PMI are separate. Confirm there's no prepayment penalty on your loan. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How much faster will I pay off my mortgage with extra payments?</summary><div class="faq-a">It depends on the size of the extra payment and how early you start. Even a modest extra amount each month can shave years off a 30-year loan and save tens of thousands in interest, because every extra dollar goes straight to principal and stops accruing interest for the rest of the term. Enter your numbers to see the exact time and interest saved.</div></details>
+<details class="faq-item"><summary>Is it better to pay extra each month or one lump sum?</summary><div class="faq-a">Both help, and the earlier the better. A consistent extra monthly amount steadily cuts the balance and compounds its savings over the whole loan. A one-time lump sum early on also removes interest for every remaining month. This calculator lets you combine both to see the total effect.</div></details>
+<details class="faq-item"><summary>Do extra payments go toward principal automatically?</summary><div class="faq-a">Not always. Some servicers apply extra money to future scheduled payments or hold it unless you specify. To pay off the loan early, make sure each extra payment is applied to principal — many lenders have a checkbox or memo line for exactly that.</div></details>
+<details class="faq-item"><summary>Should I pay off my mortgage early or invest?</summary><div class="faq-a">Paying extra guarantees a return equal to your mortgage rate, tax-free, with no risk. Investing might earn more over time but carries risk. If your rate is high or you value being debt-free, extra payments are compelling; if your rate is low and you're comfortable with market risk, investing may win. It's partly a math question and partly a peace-of-mind one.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/mortgage-points-calculator/"><h3>Mortgage Points Calculator</h3><p>Should you buy discount points to lower your mortgage rate? Calculate the cost of points, your monthly savings, and the break-even point to decide if it's worth it.</p></a><a class="card" href="/toolnest/mortgage-qualification-calculator/"><h3>Mortgage Qualification Calculator</h3><p>Find out how much income you need to qualify for a mortgage. Enter the home price, down payment, rate, taxes, insurance, and debts to see the required annual income and DTI.</p></a><a class="card" href="/toolnest/mortgage-recast-calculator/"><h3>Mortgage Recast Calculator</h3><p>See how a lump-sum payment and recast lowers your monthly mortgage payment. Compare your new payment, monthly savings, and total interest saved without refinancing.</p></a><a class="card" href="/toolnest/refinance-calculator/"><h3>Mortgage Refinance Calculator</h3><p>See if refinancing your mortgage is worth it. Compare your current loan to a new rate, find your monthly savings, break-even point, and lifetime interest difference.</p></a><a class="card" href="/toolnest/net-worth-calculator/"><h3>Net Worth Calculator</h3><p>Calculate your net worth by adding up your assets and subtracting your debts. Enter cash, investments, property, and liabilities to see where you stand financially.</p></a><a class="card" href="/toolnest/pmi-removal-calculator/"><h3>PMI Removal Date Calculator</h3><p>Find out when you can drop private mortgage insurance (PMI). See the month you reach 80% LTV to request cancellation and 78% for automatic termination, with optional extra payments.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

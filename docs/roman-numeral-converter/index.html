@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roman Numeral Converter</title>
+<meta name="description" content="Convert numbers to Roman numerals and Roman numerals back to numbers. Supports 1 to 3999 with instant, two-way conversion in your browser.">
+<meta name="keywords" content="roman numeral converter, number to roman numerals, roman numerals to number, convert roman numerals, roman numeral translator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/roman-numeral-converter/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Roman Numeral Converter">
+<meta property="og:description" content="Convert numbers to Roman numerals and Roman numerals back to numbers. Supports 1 to 3999 with instant, two-way conversion in your browser.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/roman-numeral-converter/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Roman Numeral Converter", "url": "https://erikthered95.github.io/toolnest/roman-numeral-converter/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Convert numbers to Roman numerals and Roman numerals back to numbers. Supports 1 to 3999 with instant, two-way conversion in your browser."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What range of numbers is supported?", "acceptedAnswer": {"@type": "Answer", "text": "Standard Roman numerals cover 1 to 3999. There's no symbol for zero, and numbers above 3999 require bars over letters (vinculum notation) that aren't part of the basic system, so this converter sticks to the classic 1\u20133999 range."}}, {"@type": "Question", "name": "How do Roman numerals work?", "acceptedAnswer": {"@type": "Answer", "text": "Seven letters stand for values: I=1, V=5, X=10, L=50, C=100, D=500, M=1000. Letters are added together, but a smaller letter before a larger one is subtracted \u2014 so IV is 4 and IX is 9. The converter applies these rules automatically."}}, {"@type": "Question", "name": "Why is my Roman numeral marked invalid?", "acceptedAnswer": {"@type": "Answer", "text": "It must use only the letters I, V, X, L, C, D, and M and follow the standard subtractive rules. Strings like 'IIII' or 'VX' aren't valid standard numerals. The tool checks that your input round-trips to a proper numeral and flags it if not."}}, {"@type": "Question", "name": "Is there a Roman numeral for zero?", "acceptedAnswer": {"@type": "Answer", "text": "No. The Roman system has no symbol for zero \u2014 the concept simply wasn't represented. That's why this and other converters start at 1."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Roman Numeral Converter</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Roman Numeral Converter"}]}</script>
+<article class="tool"><h1>Roman Numeral Converter</h1><p class="lede">Convert numbers to Roman numerals and Roman numerals back to numbers. Supports 1 to 3999 with instant, two-way conversion in your browser.</p><div class="field">
+  <label for="rn-num">Number → Roman (1–3999)</label>
+  <input type="number" id="rn-num" value="2026" min="1" max="3999" step="1">
+</div>
+<div class="result" id="rn-num-out"></div>
+
+<div class="field" style="margin-top:18px">
+  <label for="rn-rom">Roman → Number</label>
+  <input type="text" id="rn-rom" value="MMXXVI" autocomplete="off" spellcheck="false">
+</div>
+<div class="result" id="rn-rom-out"></div>
+
+<script>
+(function () {
+  var MAP = [[1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'], [100, 'C'], [90, 'XC'],
+             [50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']];
+  var VAL = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+
+  function toRoman(n) {
+    var out = '';
+    for (var i = 0; i < MAP.length; i++) {
+      while (n >= MAP[i][0]) { out += MAP[i][1]; n -= MAP[i][0]; }
+    }
+    return out;
+  }
+  function fromRoman(s) {
+    var total = 0, prev = 0;
+    for (var i = s.length - 1; i >= 0; i--) {
+      var cur = VAL[s[i]];
+      if (cur < prev) total -= cur; else { total += cur; prev = cur; }
+    }
+    return total;
+  }
+
+  var numEl = document.getElementById('rn-num'), numOut = document.getElementById('rn-num-out');
+  var romEl = document.getElementById('rn-rom'), romOut = document.getElementById('rn-rom-out');
+
+  function calcNum() {
+    var raw = numEl.value.trim();
+    if (raw === '') { numOut.innerHTML = '<p class="note">Enter a whole number from 1 to 3999.</p>'; return; }
+    var n = Number(raw);
+    if (!Number.isInteger(n) || n < 1 || n > 3999) {
+      numOut.innerHTML = '<p class="note warn">Enter a whole number from 1 to 3999.</p>';
+      return;
+    }
+    numOut.innerHTML =
+      '<div class="result-sub">' + n + ' in Roman numerals</div>' +
+      '<div class="result-big">' + toRoman(n) + '</div>';
+  }
+
+  function calcRom() {
+    var raw = romEl.value.trim().toUpperCase();
+    if (raw === '') { romOut.innerHTML = '<p class="note">Enter a Roman numeral.</p>'; return; }
+    if (!/^[IVXLCDM]+$/.test(raw)) {
+      romOut.innerHTML = '<p class="note warn">Use only the letters I, V, X, L, C, D, and M.</p>';
+      return;
+    }
+    var n = fromRoman(raw);
+    if (n < 1 || n > 3999 || toRoman(n) !== raw) {
+      romOut.innerHTML = '<p class="note warn">That isn’t a valid standard Roman numeral.</p>';
+      return;
+    }
+    romOut.innerHTML =
+      '<div class="result-sub">' + raw + ' as a number</div>' +
+      '<div class="result-big">' + n + '</div>';
+  }
+
+  numEl.addEventListener('input', calcNum);
+  romEl.addEventListener('input', calcRom);
+  calcNum();
+  calcRom();
+})();
+</script>
+
+<h2>Reading and writing Roman numerals</h2>
+<p>Roman numerals build numbers from seven letters — <strong>I, V, X, L, C, D, M</strong> — worth 1, 5, 10, 50, 100, 500, and 1000. Most of the time you add the values together, reading left to right from largest to smallest. The clever twist is the <strong>subtractive rule</strong>: when a smaller letter sits before a larger one, you subtract it, so IV is 4, IX is 9, and XL is 40. This keeps numerals compact and avoids long runs of repeated letters.</p>
+<p>This converter works both ways and updates instantly as you type. Enter any number from 1 to 3999 to see its numeral, or paste a numeral to get the number back. It validates as it goes, flagging anything outside the range or that doesn't follow standard form — useful for checking clock faces, movie copyright dates, book chapters, and Super Bowl numbers.</p>
+<p>Everything runs locally in your browser, so nothing you type is uploaded or stored.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What range of numbers is supported?</summary><div class="faq-a">Standard Roman numerals cover 1 to 3999. There's no symbol for zero, and numbers above 3999 require bars over letters (vinculum notation) that aren't part of the basic system, so this converter sticks to the classic 1–3999 range.</div></details>
+<details class="faq-item"><summary>How do Roman numerals work?</summary><div class="faq-a">Seven letters stand for values: I=1, V=5, X=10, L=50, C=100, D=500, M=1000. Letters are added together, but a smaller letter before a larger one is subtracted — so IV is 4 and IX is 9. The converter applies these rules automatically.</div></details>
+<details class="faq-item"><summary>Why is my Roman numeral marked invalid?</summary><div class="faq-a">It must use only the letters I, V, X, L, C, D, and M and follow the standard subtractive rules. Strings like 'IIII' or 'VX' aren't valid standard numerals. The tool checks that your input round-trips to a proper numeral and flags it if not.</div></details>
+<details class="faq-item"><summary>Is there a Roman numeral for zero?</summary><div class="faq-a">No. The Roman system has no symbol for zero — the concept simply wasn't represented. That's why this and other converters start at 1.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/salary-to-hourly-calculator/"><h3>Salary to Hourly Calculator</h3><p>Convert an annual salary to an hourly wage, or an hourly rate to a yearly salary. See weekly, biweekly, monthly, and daily pay based on your hours and weeks worked.</p></a><a class="card" href="/toolnest/sales-tax-calculator/"><h3>Sales Tax Calculator</h3><p>Add sales tax to a price or work backward from a tax-included total. Enter the amount and tax rate to see the tax owed and the final total instantly.</p></a><a class="card" href="/toolnest/square-footage-calculator/"><h3>Square Footage Calculator</h3><p>Calculate square footage from length and width in feet. See the area in square feet, square yards, and square meters, plus total cost from a price per square foot.</p></a><a class="card" href="/toolnest/tdee-calculator/"><h3>TDEE & Calorie Calculator</h3><p>Estimate your Total Daily Energy Expenditure (TDEE) and BMR using the Mifflin-St Jeor equation, plus daily calorie targets for losing, maintaining, or gaining weight.</p></a><a class="card" href="/toolnest/tip-calculator/"><h3>Tip Calculator</h3><p>Calculate the tip and split the bill in seconds. Enter the bill, choose a tip percentage, and see the tip, total, and amount per person.</p></a><a class="card" href="/toolnest/unit-converter/"><h3>Unit Converter</h3><p>Convert between units of length, weight, temperature, and volume. Pick a category, enter a value, and choose your 'from' and 'to' units for an instant result.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

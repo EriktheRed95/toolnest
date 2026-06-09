@@ -1,0 +1,58 @@
+<!--META
+{
+  "title": "Base64 Encode & Decode",
+  "slug": "base64-encode-decode",
+  "category": "random",
+  "h1": "Base64 Encode & Decode",
+  "description": "Encode text to Base64 or decode Base64 back to text, right in your browser. UTF-8 safe, handles emoji and accents, and never sends your data anywhere.",
+  "keywords": "base64 encode, base64 decode, base64 converter, encode decode text, utf-8 base64",
+  "faq": [
+    {"q": "What is Base64 encoding?", "a": "Base64 represents binary or text data using 64 safe ASCII characters (A–Z, a–z, 0–9, + and /). It's used to embed data in places that expect text, like JSON, data URLs, and email attachments. It is encoding, not encryption — anyone can decode it."},
+    {"q": "Does this handle emoji and accented characters?", "a": "Yes. The tool encodes through UTF-8 first, so emoji, accents, and non-Latin scripts round-trip correctly. Plain btoa would break on those characters, which is why we wrap it with proper UTF-8 handling."},
+    {"q": "Why did decoding fail?", "a": "If the input isn't valid Base64 — wrong characters, bad padding, or truncated data — decoding can't proceed and you'll see a warning. Check that you pasted the complete string and that it only contains Base64 characters."}
+  ]
+}
+META-->
+<div class="field">
+  <label for="b64-in">Input</label>
+  <textarea id="b64-in" rows="5" style="width:100%;resize:vertical" placeholder="Type or paste text…">Hello, ToolNest! 🚀</textarea>
+</div>
+<div class="btn-row">
+  <button class="btn" id="b64-enc">Encode</button>
+  <button class="btn" id="b64-dec">Decode</button>
+  <button class="btn secondary" data-copy="#b64-out" id="b64-copy">Copy result</button>
+</div>
+<div id="b64-msg"></div>
+<div class="field">
+  <label for="b64-out">Output</label>
+  <textarea id="b64-out" rows="5" readonly style="width:100%;resize:vertical"></textarea>
+</div>
+
+<script>
+(function () {
+  var inEl = document.getElementById('b64-in'), out = document.getElementById('b64-out'),
+      msg = document.getElementById('b64-msg');
+  function clear() { msg.innerHTML = ''; }
+  document.getElementById('b64-enc').addEventListener('click', function () {
+    clear();
+    try {
+      out.value = btoa(unescape(encodeURIComponent(inEl.value)));
+    } catch (e) {
+      msg.innerHTML = '<div class="note warn">Could not encode this input.</div>';
+    }
+  });
+  document.getElementById('b64-dec').addEventListener('click', function () {
+    clear();
+    try {
+      out.value = decodeURIComponent(escape(atob(inEl.value.trim())));
+    } catch (e) {
+      out.value = '';
+      msg.innerHTML = '<div class="note warn">Not valid Base64.</div>';
+    }
+  });
+})();
+</script>
+
+<h2>Encode and decode Base64 the easy way</h2>
+<p>Base64 turns any text or binary data into a string of 64 plain ASCII characters that survive transports built for text — JSON payloads, data URLs, HTTP headers, and email. Paste your content and hit <strong>Encode</strong> to get the Base64 form, or paste a Base64 string and hit <strong>Decode</strong> to recover the original. This tool is UTF-8 aware, so emoji, accents, and non-Latin alphabets convert correctly in both directions.</p>
+<p>Remember that Base64 is <strong>encoding, not encryption</strong>: it hides nothing and adds no security, since anyone can reverse it. Use it to move data safely through text-only channels, not to protect secrets. Everything here runs in your browser with no network calls, so even sensitive strings stay on your machine.</p>

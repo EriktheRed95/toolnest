@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mortgage Recast Calculator</title>
+<meta name="description" content="See how a lump-sum payment and recast lowers your monthly mortgage payment. Compare your new payment, monthly savings, and total interest saved without refinancing.">
+<meta name="keywords" content="mortgage recast calculator, loan recast, recast vs refinance, lump sum mortgage payment, lower mortgage payment without refinancing">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/mortgage-recast-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Mortgage Recast Calculator">
+<meta property="og:description" content="See how a lump-sum payment and recast lowers your monthly mortgage payment. Compare your new payment, monthly savings, and total interest saved without refinancing.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/mortgage-recast-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Mortgage Recast Calculator", "url": "https://erikthered95.github.io/toolnest/mortgage-recast-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "See how a lump-sum payment and recast lowers your monthly mortgage payment. Compare your new payment, monthly savings, and total interest saved without refinancing."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is a mortgage recast?", "acceptedAnswer": {"@type": "Answer", "text": "A recast (or re-amortization) is when you make a large lump-sum payment toward your principal, and the lender recalculates your monthly payment over the same remaining term at the same interest rate. Your payment drops because the balance is smaller, but the loan's rate and payoff date stay the same."}}, {"@type": "Question", "name": "How is a recast different from a refinance?", "acceptedAnswer": {"@type": "Answer", "text": "A refinance replaces your loan with a new one \u2014 new rate, new term, full closing costs, and a credit check. A recast keeps your existing loan and rate; you just pay down principal and the payment is recalculated. Recasts usually cost a small flat fee (often $150\u2013$500) rather than thousands in closing costs."}}, {"@type": "Question", "name": "Does recasting save interest?", "acceptedAnswer": {"@type": "Answer", "text": "Yes \u2014 because you reduce the principal, you pay interest on a smaller balance for the rest of the loan, which lowers total interest. However, since the term and rate don't change, the savings come purely from the lump sum, not from a shorter payoff. Making the same lump sum without recasting saves the same interest but keeps your higher payment."}}, {"@type": "Question", "name": "Should I recast or just pay extra?", "acceptedAnswer": {"@type": "Answer", "text": "Paying extra without recasting shortens your loan and saves the most interest while keeping payments the same. Recasting instead lowers your required monthly payment for breathing room, at a slightly higher long-run cost. Choose a recast if cash flow matters more than the fastest possible payoff."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Mortgage Recast Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Mortgage Recast Calculator"}]}</script>
+<article class="tool"><h1>Mortgage Recast Calculator</h1><p class="lede">See how a lump-sum payment and recast lowers your monthly mortgage payment. Compare your new payment, monthly savings, and total interest saved without refinancing.</p><div class="row">
+  <div class="field"><label for="rc-balance">Current loan balance ($)</label><input type="number" id="rc-balance" value="300000" min="0" step="1000"></div>
+  <div class="field"><label for="rc-rate">Interest rate (%)</label><input type="number" id="rc-rate" value="6.5" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="rc-remain">Years left on loan</label><input type="number" id="rc-remain" value="28" min="1" max="40" step="1"></div>
+  <div class="field"><label for="rc-lump">Lump-sum payment ($)</label><input type="number" id="rc-lump" value="50000" min="0" step="1000"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="rc-fee">Recast fee ($) <span class="hint">optional</span></label><input type="number" id="rc-fee" value="250" min="0" step="50"></div>
+</div>
+
+<div class="result" id="rc-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['rc-balance', 'rc-rate', 'rc-remain', 'rc-lump', 'rc-fee'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function payment(P, r, n) { return r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1); }
+
+  function calc() {
+    var bal = v('rc-balance');
+    var r = v('rc-rate') / 100 / 12;
+    var n = Math.round(v('rc-remain') * 12);
+    var lump = Math.min(v('rc-lump'), bal);
+    var newBal = bal - lump;
+
+    var oldPay = payment(bal, r, n);
+    var newPay = payment(newBal, r, n);
+    var monthlySave = oldPay - newPay;
+
+    var oldInterest = oldPay * n - bal;
+    var newInterest = newPay * n - newBal;
+    var interestSaved = oldInterest - newInterest;
+
+    document.getElementById('rc-out').innerHTML =
+      '<div class="result-sub">New monthly payment after recast</div>' +
+      '<div class="result-big">' + money2.format(newPay) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Current payment (P&amp;I)', money2.format(oldPay)) +
+        kv('New payment (P&amp;I)', money2.format(newPay)) +
+        kv('<strong>Monthly savings</strong>', '<strong>' + money2.format(monthlySave) + '</strong>') +
+        kv('Lump-sum applied', money.format(lump)) +
+        kv('New balance', money.format(newBal)) +
+        (v('rc-fee') ? kv('Recast fee', money.format(v('rc-fee'))) : '') +
+        kv('Total interest saved', money.format(interestSaved)) +
+        kv('Same payoff date', v('rc-remain') + ' years (unchanged)') +
+      '</div>' +
+      '<p class="note">Your rate (' + v('rc-rate') + '%) and payoff date stay the same — only the balance and payment shrink. Paying the same ' + money.format(lump) + ' <em>without</em> recasting would save the same interest but keep your payment at ' + money2.format(oldPay) + ' and pay the loan off early instead.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Lower your payment without refinancing</h2>
+<p>A <strong>mortgage recast</strong> is one of the most underused tools in home finance. You make a large lump-sum payment toward your principal, and your lender <strong>re-amortizes</strong> the loan — recalculating your monthly payment over the same remaining term at the same interest rate. Because the balance is smaller, the payment drops. There's no refinance, no new rate, no credit check, and usually just a small flat fee.</p>
+<p>That makes a recast especially appealing when you already have a low rate you don't want to lose. Refinancing into today's higher rates to lower a payment can backfire; recasting keeps your existing rate and simply puts your extra cash to work.</p>
+<h2>Recast vs. refinance vs. paying extra</h2>
+<ul>
+  <li><strong>Recast</strong> — keeps your rate and payoff date, lowers the required monthly payment. Best when cash flow flexibility is the goal and you have a lump sum (an inheritance, bonus, or home-sale proceeds).</li>
+  <li><strong>Refinance</strong> — replaces the loan entirely. Worth it mainly when you can secure a meaningfully lower rate or need to change the term, and only if the savings beat the closing costs.</li>
+  <li><strong>Paying extra (no recast)</strong> — applies the lump sum but keeps your current payment, so the loan is paid off <em>early</em>. This saves the same interest as a recast while shortening the term — the fastest path to debt-free, if you don't need the lower payment.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> Not all loans are eligible to recast (many government-backed loans aren't), minimum lump sums and fees vary by servicer, and figures here use principal and interest only. Confirm the details with your loan servicer. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is a mortgage recast?</summary><div class="faq-a">A recast (or re-amortization) is when you make a large lump-sum payment toward your principal, and the lender recalculates your monthly payment over the same remaining term at the same interest rate. Your payment drops because the balance is smaller, but the loan's rate and payoff date stay the same.</div></details>
+<details class="faq-item"><summary>How is a recast different from a refinance?</summary><div class="faq-a">A refinance replaces your loan with a new one — new rate, new term, full closing costs, and a credit check. A recast keeps your existing loan and rate; you just pay down principal and the payment is recalculated. Recasts usually cost a small flat fee (often $150–$500) rather than thousands in closing costs.</div></details>
+<details class="faq-item"><summary>Does recasting save interest?</summary><div class="faq-a">Yes — because you reduce the principal, you pay interest on a smaller balance for the rest of the loan, which lowers total interest. However, since the term and rate don't change, the savings come purely from the lump sum, not from a shorter payoff. Making the same lump sum without recasting saves the same interest but keeps your higher payment.</div></details>
+<details class="faq-item"><summary>Should I recast or just pay extra?</summary><div class="faq-a">Paying extra without recasting shortens your loan and saves the most interest while keeping payments the same. Recasting instead lowers your required monthly payment for breathing room, at a slightly higher long-run cost. Choose a recast if cash flow matters more than the fastest possible payoff.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/refinance-calculator/"><h3>Mortgage Refinance Calculator</h3><p>See if refinancing your mortgage is worth it. Compare your current loan to a new rate, find your monthly savings, break-even point, and lifetime interest difference.</p></a><a class="card" href="/toolnest/net-worth-calculator/"><h3>Net Worth Calculator</h3><p>Calculate your net worth by adding up your assets and subtracting your debts. Enter cash, investments, property, and liabilities to see where you stand financially.</p></a><a class="card" href="/toolnest/pmi-removal-calculator/"><h3>PMI Removal Date Calculator</h3><p>Find out when you can drop private mortgage insurance (PMI). See the month you reach 80% LTV to request cancellation and 78% for automatic termination, with optional extra payments.</p></a><a class="card" href="/toolnest/price-per-square-foot-calculator/"><h3>Price Per Square Foot Calculator</h3><p>Calculate a home's price per square foot, or estimate a property's value from its size and a comparable price per square foot.</p></a><a class="card" href="/toolnest/property-tax-proration-calculator/"><h3>Property Tax Proration Calculator</h3><p>Split annual property taxes between buyer and seller at closing based on the closing date, using a simple calendar-year proration.</p></a><a class="card" href="/toolnest/real-estate-commission-calculator/"><h3>Real Estate Commission Calculator</h3><p>Calculate the total real estate commission on a home sale and how it splits between the listing side, buyer side, and the agent's brokerage.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

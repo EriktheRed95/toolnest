@@ -1,0 +1,106 @@
+<!--META
+{
+  "title": "Mortgage Comparison Calculator",
+  "slug": "mortgage-comparison-calculator",
+  "category": "finance",
+  "h1": "Mortgage Comparison Calculator",
+  "description": "Compare two mortgage offers side by side — monthly payment, total interest, and total cost — to see which loan actually costs less.",
+  "keywords": "mortgage comparison calculator, compare mortgages, loan comparison, mortgage rate comparison, monthly payment comparison",
+  "faq": [
+    {"q": "How do I compare two mortgages fairly?", "a": "Look beyond the monthly payment. A loan with a lower payment can cost far more over its life if it has a longer term or higher rate. This tool shows monthly principal and interest, total interest, and total amount paid for each loan, so you can weigh affordability against lifetime cost."},
+    {"q": "Why does a lower rate sometimes have a higher payment?", "a": "Because term matters too. A 15-year loan at a lower rate often has a higher monthly payment than a 30-year loan at a higher rate, since you're repaying the principal in half the time. You pay more each month but vastly less interest overall."},
+    {"q": "Does this include taxes, insurance, or PMI?", "a": "No — it compares principal and interest (P&I) only. Property taxes, homeowners insurance, HOA dues, and mortgage insurance are added on top of P&I in your real monthly payment, but they're usually similar across loan offers on the same home, so excluding them keeps the comparison clean."},
+    {"q": "What about points and closing costs?", "a": "This tool doesn't factor in points or fees, which can meaningfully change which loan is cheaper. A loan with a slightly higher rate but no points may beat a 'lower rate' loan that charges several thousand dollars upfront. Always compare the APR and the loan estimate, not just the rate."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="mc-a-amt">Loan A — amount ($)</label><input type="number" id="mc-a-amt" value="300000" min="0" step="1000"></div>
+  <div class="field"><label for="mc-b-amt">Loan B — amount ($)</label><input type="number" id="mc-b-amt" value="300000" min="0" step="1000"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="mc-a-rate">Loan A — rate (%)</label><input type="number" id="mc-a-rate" value="6.5" min="0" step="0.01"></div>
+  <div class="field"><label for="mc-b-rate">Loan B — rate (%)</label><input type="number" id="mc-b-rate" value="5.75" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="mc-a-term">Loan A — term (years)</label><input type="number" id="mc-a-term" value="30" min="1" step="1"></div>
+  <div class="field"><label for="mc-b-term">Loan B — term (years)</label><input type="number" id="mc-b-term" value="15" min="1" step="1"></div>
+</div>
+
+<div class="result" id="mc-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function loan(amt, ratePct, termYears) {
+    var r = ratePct / 100 / 12;
+    var n = Math.round(termYears * 12);
+    if (amt <= 0 || n <= 0) return null;
+    var pay = r === 0 ? amt / n : amt * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    var total = pay * n;
+    return { pay: pay, total: total, interest: total - amt, n: n };
+  }
+
+  function calc() {
+    var a = loan(v('mc-a-amt'), v('mc-a-rate'), v('mc-a-term'));
+    var b = loan(v('mc-b-amt'), v('mc-b-rate'), v('mc-b-term'));
+    var out = document.getElementById('mc-out');
+    if (!a || !b) {
+      out.innerHTML = '<p class="note">Enter an amount, rate, and term for both loans.</p>';
+      return;
+    }
+    var payDiff = Math.abs(a.pay - b.pay);
+    var intDiff = Math.abs(a.interest - b.interest);
+    var lowerPay = a.pay < b.pay ? 'A' : (b.pay < a.pay ? 'B' : null);
+    var lessTotal = a.total < b.total ? 'A' : (b.total < a.total ? 'B' : null);
+
+    var verdict;
+    if (lowerPay === null && lessTotal === null) {
+      verdict = '<p class="note">The two loans are identical.</p>';
+    } else {
+      var p1 = lowerPay
+        ? 'Loan ' + lowerPay + ' has the lower monthly payment, by ' + money2.format(payDiff) + '/mo.'
+        : 'Both loans have the same monthly payment.';
+      var p2 = lessTotal
+        ? 'Loan ' + lessTotal + ' costs less overall, saving ' + money.format(intDiff) + ' in total interest.'
+        : 'Both loans cost the same in total.';
+      var cls = (lowerPay && lessTotal && lowerPay !== lessTotal) ? 'note warn' : 'note ok';
+      verdict = '<p class="' + cls + '">' + p1 + ' ' + p2 +
+        (lowerPay && lessTotal && lowerPay !== lessTotal
+          ? ' That’s the classic tradeoff: Loan ' + lowerPay + ' is easier on monthly cash flow, while Loan ' + lessTotal + ' is cheaper in the long run.'
+          : '') + '</p>';
+    }
+
+    out.innerHTML =
+      '<div class="result-sub">Monthly payment (P&amp;I)</div>' +
+      '<div class="result-big">A ' + money2.format(a.pay) + ' &nbsp;&middot;&nbsp; B ' + money2.format(b.pay) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Loan A monthly', money2.format(a.pay)) +
+        kv('Loan A total interest', money.format(a.interest)) +
+        kv('Loan A total paid', money.format(a.total)) +
+        kv('Loan B monthly', money2.format(b.pay)) +
+        kv('Loan B total interest', money.format(b.interest)) +
+        kv('Loan B total paid', money.format(b.total)) +
+      '</div>' +
+      verdict;
+  }
+  ['mc-a-amt', 'mc-a-rate', 'mc-a-term', 'mc-b-amt', 'mc-b-rate', 'mc-b-term'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
+
+<h2>Comparing two mortgage offers</h2>
+<p>The lowest monthly payment and the lowest total cost are rarely the same loan, which is exactly why a side-by-side comparison is so useful. This tool computes monthly principal and interest, total interest, and total amount paid for two loans at once, then tells you which wins on each measure and by how much. A 30-year loan at a higher rate may be gentler on your monthly budget, while a 15-year loan at a lower rate can save six figures in interest — at the cost of a steeper payment.</p>
+<p>Use it to weigh a fixed-rate offer against a shorter term, a refinance against your current loan, or two lenders' quotes. Just remember it compares principal and interest only; taxes, insurance, and mortgage insurance ride on top, and points or closing costs can flip which loan is truly cheaper.</p>
+<ul>
+  <li><strong>Lower monthly payment</strong> helps cash flow today.</li>
+  <li><strong>Lower total interest</strong> wins over the life of the loan.</li>
+  <li>Compare <strong>APR</strong> and the lender's loan estimate to capture fees and points.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> This compares principal and interest with a fixed rate and equal payments, and excludes taxes, insurance, PMI, points, and fees. Use each lender's official loan estimate for a complete comparison. This is not financial advice.</p>

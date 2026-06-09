@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dice Roller</title>
+<meta name="description" content="Roll virtual dice online — any number of dice with any number of sides (d4, d6, d8, d10, d12, d20). See each die, the total, and a running roll history.">
+<meta name="keywords" content="dice roller, roll dice online, d20 roller, virtual dice, d6 d20 dice, random dice roll, tabletop dice">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/dice-roller/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Dice Roller">
+<meta property="og:description" content="Roll virtual dice online — any number of dice with any number of sides (d4, d6, d8, d10, d12, d20). See each die, the total, and a running roll history.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/dice-roller/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Dice Roller", "url": "https://erikthered95.github.io/toolnest/dice-roller/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Roll virtual dice online \u2014 any number of dice with any number of sides (d4, d6, d8, d10, d12, d20). See each die, the total, and a running roll history."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is this dice roller random?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Each die uses your browser's cryptographically secure random generator, so every face has an equal chance and rolls are independent. It behaves like fair physical dice, with no bias toward any number."}}, {"@type": "Question", "name": "What dice can I roll?", "acceptedAnswer": {"@type": "Answer", "text": "Any combination you like \u2014 set the number of dice and the number of sides. Common tabletop dice are d4, d6, d8, d10, d12, and d20, but you can enter any number of sides for custom games or unusual needs."}}, {"@type": "Question", "name": "Can I roll multiple dice at once?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Choose how many dice to roll and the tool rolls them together, showing each individual result plus the combined total \u2014 exactly what you need for tabletop games that call for rolls like 3d6 or 2d20."}}, {"@type": "Question", "name": "What does notation like 2d6 mean?", "acceptedAnswer": {"@type": "Answer", "text": "In tabletop gaming, '2d6' means roll two six-sided dice and add them together; 'd20' means one twenty-sided die. The first number is how many dice, the 'd' stands for die, and the second number is the sides. Set those two values above to match any notation."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>Online Dice Roller</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://erikthered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "Online Dice Roller"}]}</script>
+<article class="tool"><h1>Online Dice Roller</h1><p class="lede">Roll virtual dice online — any number of dice with any number of sides (d4, d6, d8, d10, d12, d20). See each die, the total, and a running roll history.</p><div class="row">
+  <div class="field"><label for="dr-count">Number of dice</label><input type="number" id="dr-count" value="2" min="1" max="50" step="1"></div>
+  <div class="field"><label for="dr-sides">Sides per die</label>
+    <select id="dr-sides"><option>6</option><option>4</option><option>8</option><option>10</option><option>12</option><option>20</option><option>100</option></select></div>
+</div>
+<div class="btn-row">
+  <button class="btn" id="dr-go">Roll</button>
+  <button class="btn secondary" id="dr-clear">Clear history</button>
+</div>
+
+<div class="result">
+  <div class="result-sub">Total</div>
+  <div class="result-big" id="dr-total">—</div>
+  <div id="dr-dice" style="margin-top:8px"></div>
+  <div class="result-sub" style="margin-top:14px" id="dr-hist-label"></div>
+  <div id="dr-hist"></div>
+</div>
+
+<script>
+(function () {
+  var history = [];
+  function rand(max) { var b = new Uint32Array(1); window.crypto.getRandomValues(b); return b[0] % max + 1; }
+
+  function roll() {
+    var n = Math.max(1, Math.min(50, +document.getElementById('dr-count').value || 1));
+    var sides = +document.getElementById('dr-sides').value || 6;
+    var rolls = [], total = 0;
+    for (var i = 0; i < n; i++) { var r = rand(sides); rolls.push(r); total += r; }
+
+    document.getElementById('dr-total').textContent = total;
+    document.getElementById('dr-dice').innerHTML = rolls.map(function (r) { return '<span class="chip">' + r + '</span>'; }).join(' ');
+
+    history.unshift(n + 'd' + sides + ' = ' + total + (n > 1 ? '  (' + rolls.join(', ') + ')' : ''));
+    history = history.slice(0, 10);
+    document.getElementById('dr-hist-label').textContent = history.length ? 'Recent rolls' : '';
+    document.getElementById('dr-hist').innerHTML = history.map(function (h) {
+      return '<div class="kv"><span>' + h + '</span><span class="v"></span></div>';
+    }).join('');
+  }
+  document.getElementById('dr-go').addEventListener('click', roll);
+  document.getElementById('dr-clear').addEventListener('click', function () {
+    history = [];
+    document.getElementById('dr-total').textContent = '—';
+    document.getElementById('dr-dice').innerHTML = '';
+    document.getElementById('dr-hist-label').textContent = '';
+    document.getElementById('dr-hist').innerHTML = '';
+  });
+})();
+</script>
+
+<h2>Roll dice online</h2>
+<p>Lost your dice, or just need a quick roll? This virtual dice roller handles any combination — set how many dice and how many sides, then roll. It shows <strong>each die's result</strong> and the <strong>combined total</strong>, plus a history of your recent rolls. Every die uses your browser's <strong>cryptographically secure</strong> random generator, so the results are genuinely fair and independent, with each face equally likely.</p>
+<h2>From board games to tabletop RPGs</h2>
+<p>Standard board games use the familiar six-sided die (d6), but tabletop role-playing games like Dungeons &amp; Dragons rely on a whole set: the four-sided d4, eight-sided d8, ten-sided d10, twelve-sided d12, and the iconic twenty-sided d20, plus the d100 for percentile rolls. This tool covers them all.</p>
+<p>If you're new to the notation, it's simple: <strong>2d6</strong> means "roll two six-sided dice and add them," while <strong>d20</strong> means a single twenty-sided die. The first number is the quantity, and the number after the "d" is the sides. Match those two fields above to any roll your game calls for, and let the dice decide.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>Is this dice roller random?</summary><div class="faq-a">Yes. Each die uses your browser's cryptographically secure random generator, so every face has an equal chance and rolls are independent. It behaves like fair physical dice, with no bias toward any number.</div></details>
+<details class="faq-item"><summary>What dice can I roll?</summary><div class="faq-a">Any combination you like — set the number of dice and the number of sides. Common tabletop dice are d4, d6, d8, d10, d12, and d20, but you can enter any number of sides for custom games or unusual needs.</div></details>
+<details class="faq-item"><summary>Can I roll multiple dice at once?</summary><div class="faq-a">Yes. Choose how many dice to roll and the tool rolls them together, showing each individual result plus the combined total — exactly what you need for tabletop games that call for rolls like 3d6 or 2d20.</div></details>
+<details class="faq-item"><summary>What does notation like 2d6 mean?</summary><div class="faq-a">In tabletop gaming, '2d6' means roll two six-sided dice and add them together; 'd20' means one twenty-sided die. The first number is how many dice, the 'd' stands for die, and the second number is the sides. Set those two values above to match any notation.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/hash-generator/"><h3>Hash Generator (SHA-256, SHA-1, SHA-512)</h3><p>Generate SHA-1, SHA-256, and SHA-512 hashes of any text directly in your browser. Live results, hex output, and one-click copy. Nothing is uploaded.</p></a><a class="card" href="/toolnest/json-formatter/"><h3>JSON Formatter & Validator</h3><p>Format, minify, and validate JSON in your browser. Pretty-print with clean indentation, compress to one line, and get clear error messages. Private and instant.</p></a><a class="card" href="/toolnest/lorem-ipsum-generator/"><h3>Lorem Ipsum Generator</h3><p>Generate placeholder lorem ipsum text by paragraphs, sentences, or words. Copy classic dummy text instantly for mockups, designs, and layouts.</p></a><a class="card" href="/toolnest/magic-8-ball/"><h3>Magic 8-Ball</h3><p>Ask the online Magic 8-Ball a yes-or-no question and get one of the 20 classic answers. A fun, random fortune-telling toy that runs in your browser.</p></a><a class="card" href="/toolnest/password-generator/"><h3>Password Generator</h3><p>Create strong, random passwords instantly. Choose length and character types, then copy with one click. Generated in your browser — never sent anywhere.</p></a><a class="card" href="/toolnest/password-strength-checker/"><h3>Password Strength Checker</h3><p>Check how strong a password is. See an entropy-bit estimate, a strength rating, and tips to improve it — all checked locally in your browser and never sent anywhere.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

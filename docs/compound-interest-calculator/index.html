@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compound Interest Calculator</title>
+<meta name="description" content="See how your savings grow with compound interest. Enter a starting amount, monthly contributions, rate, and time to project your future balance and total interest earned.">
+<meta name="keywords" content="compound interest calculator, savings growth calculator, investment calculator, future value calculator, interest compounding, retirement savings">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/compound-interest-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Compound Interest Calculator">
+<meta property="og:description" content="See how your savings grow with compound interest. Enter a starting amount, monthly contributions, rate, and time to project your future balance and total interest earned.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/compound-interest-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Compound Interest Calculator", "url": "https://erikthered95.github.io/toolnest/compound-interest-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "See how your savings grow with compound interest. Enter a starting amount, monthly contributions, rate, and time to project your future balance and total interest earned."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is compound interest?", "acceptedAnswer": {"@type": "Answer", "text": "Compound interest is interest earned on both your original money and the interest it has already earned. Over time this 'interest on interest' effect snowballs, which is why money invested early grows far more than the same amount invested later \u2014 the hallmark of long-term saving and investing."}}, {"@type": "Question", "name": "How is compound interest calculated?", "acceptedAnswer": {"@type": "Answer", "text": "For a lump sum, future value = principal \u00d7 (1 + rate/n)^(n\u00d7years), where n is how many times per year interest compounds. When you also add regular contributions, each deposit compounds from the date it's made. This calculator compounds monthly and adds your monthly contributions along the way."}}, {"@type": "Question", "name": "Does compounding frequency matter?", "acceptedAnswer": {"@type": "Answer", "text": "Somewhat. More frequent compounding (daily vs. annually) earns a little more, but the effect is small compared to the rate, the time invested, and how much you contribute. Time is the most powerful variable \u2014 decades of compounding dwarf small differences in frequency."}}, {"@type": "Question", "name": "What's a realistic return to assume?", "acceptedAnswer": {"@type": "Answer", "text": "It depends on where the money is. Savings accounts and CDs offer low, safe returns; a diversified stock-market portfolio has historically averaged higher returns over long periods but with year-to-year ups and downs. Use a conservative figure and remember past returns don't guarantee future ones."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Compound Interest Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Compound Interest Calculator"}]}</script>
+<article class="tool"><h1>Compound Interest Calculator</h1><p class="lede">See how your savings grow with compound interest. Enter a starting amount, monthly contributions, rate, and time to project your future balance and total interest earned.</p><div class="row">
+  <div class="field"><label for="ci-principal">Starting amount ($)</label><input type="number" id="ci-principal" value="5000" min="0" step="100"></div>
+  <div class="field"><label for="ci-monthly">Monthly contribution ($)</label><input type="number" id="ci-monthly" value="300" min="0" step="25"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="ci-rate">Annual return (%)</label><input type="number" id="ci-rate" value="7" min="0" step="0.1"></div>
+  <div class="field"><label for="ci-years">Years</label><input type="number" id="ci-years" value="25" min="1" max="80" step="1"></div>
+</div>
+
+<div class="result" id="ci-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['ci-principal', 'ci-monthly', 'ci-rate', 'ci-years'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var P = v('ci-principal');
+    var PMT = v('ci-monthly');
+    var i = v('ci-rate') / 100 / 12;
+    var N = Math.round(v('ci-years') * 12);
+
+    var fvPrincipal = P * Math.pow(1 + i, N);
+    var fvContrib = i === 0 ? PMT * N : PMT * ((Math.pow(1 + i, N) - 1) / i);
+    var fv = fvPrincipal + fvContrib;
+    var contributed = P + PMT * N;
+    var interest = fv - contributed;
+
+    document.getElementById('ci-out').innerHTML =
+      '<div class="result-sub">Future balance after ' + v('ci-years') + ' years</div>' +
+      '<div class="result-big">' + money.format(fv) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Total contributed', money.format(contributed)) +
+        kv('&nbsp;&nbsp;Starting amount', money.format(P)) +
+        kv('&nbsp;&nbsp;Contributions', money.format(PMT * N)) +
+        kv('<strong>Interest earned</strong>', '<strong>' + money.format(interest) + '</strong>') +
+        kv('Growth multiple', contributed ? (fv / contributed).toFixed(2) + '×' : '—') +
+      '</div>' +
+      '<p class="note">Of your final ' + money.format(fv) + ', ' + money.format(interest) + ' is compound growth — money you didn’t deposit. The longer you stay invested, the larger that share becomes.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>The eighth wonder of the world</h2>
+<p>Compound interest is the engine behind nearly all long-term wealth building. The idea is simple: you earn returns not just on your original money, but on all the returns it has already generated. That "interest on interest" compounds on itself, and over decades the effect becomes dramatic — the bulk of a long-term balance is usually growth, not deposits.</p>
+<p>This calculator projects your <strong>future balance</strong> from a starting amount, regular monthly contributions, an annual return, and a time horizon. It compounds monthly and shows how much of the result came from your own deposits versus how much the compounding added on top.</p>
+<h2>Why starting early beats saving more</h2>
+<p>Time is compound interest's most powerful ingredient — more than the rate, and often more than the amount you contribute. Money invested in your twenties has decades to multiply; the same amount invested later simply has fewer compounding cycles to work with. That's why financial advice so often stresses <em>starting</em>, even with small amounts, over waiting until you can contribute more.</p>
+<p>Try it yourself: nudge the years up or down and watch the interest figure swing far more than a similar change to the monthly contribution. That sensitivity to time is the whole point.</p>
+<p class="note"><strong>Estimate only.</strong> This assumes a steady annual return, but real investments fluctuate year to year and aren't guaranteed. It also ignores taxes, fees, and inflation, which reduce real-world results. Use conservative assumptions and treat this as a projection, not a promise. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is compound interest?</summary><div class="faq-a">Compound interest is interest earned on both your original money and the interest it has already earned. Over time this 'interest on interest' effect snowballs, which is why money invested early grows far more than the same amount invested later — the hallmark of long-term saving and investing.</div></details>
+<details class="faq-item"><summary>How is compound interest calculated?</summary><div class="faq-a">For a lump sum, future value = principal × (1 + rate/n)^(n×years), where n is how many times per year interest compounds. When you also add regular contributions, each deposit compounds from the date it's made. This calculator compounds monthly and adds your monthly contributions along the way.</div></details>
+<details class="faq-item"><summary>Does compounding frequency matter?</summary><div class="faq-a">Somewhat. More frequent compounding (daily vs. annually) earns a little more, but the effect is small compared to the rate, the time invested, and how much you contribute. Time is the most powerful variable — decades of compounding dwarf small differences in frequency.</div></details>
+<details class="faq-item"><summary>What's a realistic return to assume?</summary><div class="faq-a">It depends on where the money is. Savings accounts and CDs offer low, safe returns; a diversified stock-market portfolio has historically averaged higher returns over long periods but with year-to-year ups and downs. Use a conservative figure and remember past returns don't guarantee future ones.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/date-difference-calculator/"><h3>Date Difference Calculator</h3><p>Calculate the difference between two dates in years, months, and days, plus the total number of days, weeks, hours, and minutes between them.</p></a><a class="card" href="/toolnest/discount-calculator/"><h3>Discount Calculator</h3><p>Calculate the sale price and how much you save with a percent-off discount. Stack a second discount or add sales tax to find your real final price.</p></a><a class="card" href="/toolnest/final-grade-calculator/"><h3>Final Grade Calculator</h3><p>Find out the score you need on your final exam to reach your target overall grade, based on your current grade and the exam's weight.</p></a><a class="card" href="/toolnest/fraction-calculator/"><h3>Fraction Calculator</h3><p>Add, subtract, multiply, and divide fractions. Get the simplified result, its decimal value, and the mixed-number form, all calculated instantly.</p></a><a class="card" href="/toolnest/fuel-cost-calculator/"><h3>Fuel Cost Calculator</h3><p>Estimate the fuel cost of a trip from distance, MPG, and gas price. See total cost, gallons used, and cost per person when splitting a road trip.</p></a><a class="card" href="/toolnest/gpa-calculator/"><h3>GPA Calculator</h3><p>Calculate your grade point average on the 4.0 scale. Enter each course's letter grade and credit hours to get your weighted GPA instantly.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

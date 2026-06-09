@@ -1,0 +1,85 @@
+<!--META
+{
+  "title": "Color Converter (HEX, RGB, HSL)",
+  "slug": "color-converter",
+  "category": "random",
+  "h1": "Color Converter",
+  "description": "Convert colors between HEX, RGB, and HSL with a live preview swatch and a color picker. Pick a color or type a hex code and copy the values you need.",
+  "keywords": "color converter, hex to rgb, rgb to hsl, hex to hsl, color picker, css color converter",
+  "faq": [
+    {"q": "What's the difference between HEX, RGB, and HSL?", "a": "All three describe the same color. HEX is a six-digit hexadecimal code (#0f766e). RGB lists red, green, and blue from 0–255. HSL uses hue (0–360°), saturation, and lightness as percentages, which makes it easier to tweak a color by feel."},
+    {"q": "Can I use these values in CSS?", "a": "Yes. The HEX, rgb(), and hsl() strings shown here are all valid CSS color values. Copy whichever format your stylesheet prefers — modern browsers accept all three interchangeably."},
+    {"q": "Does the color picker stay in sync with the hex field?", "a": "Yes. Typing a valid hex code updates the picker, swatch, and RGB/HSL values, and choosing a color from the picker updates the hex field. They always reflect the same color."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field">
+    <label for="clr-hex">HEX</label>
+    <input type="text" id="clr-hex" value="#0f766e" style="width:100%">
+  </div>
+  <div class="field">
+    <label for="clr-pick">Picker</label>
+    <input type="color" id="clr-pick" value="#0f766e" style="width:100%;height:40px">
+  </div>
+</div>
+<div id="clr-swatch" style="height:64px;border-radius:8px;border:1px solid rgba(0,0,0,.15);margin:8px 0"></div>
+<div id="clr-msg"></div>
+<div class="result">
+  <div class="kv"><span>HEX</span><span class="v" id="clr-vhex"></span></div>
+  <div class="kv"><span>RGB</span><span class="v" id="clr-vrgb"></span></div>
+  <div class="kv"><span>HSL</span><span class="v" id="clr-vhsl"></span></div>
+</div>
+<div class="btn-row">
+  <button class="btn secondary" data-copy="#clr-vrgb">Copy RGB</button>
+  <button class="btn secondary" data-copy="#clr-vhsl">Copy HSL</button>
+</div>
+
+<script>
+(function () {
+  var hexEl = document.getElementById('clr-hex'), pickEl = document.getElementById('clr-pick'),
+      swatch = document.getElementById('clr-swatch'), msg = document.getElementById('clr-msg');
+
+  function normHex(v) {
+    v = v.trim();
+    if (v[0] !== '#') v = '#' + v;
+    if (/^#[0-9a-fA-F]{3}$/.test(v)) {
+      v = '#' + v[1] + v[1] + v[2] + v[2] + v[3] + v[3];
+    }
+    return /^#[0-9a-fA-F]{6}$/.test(v) ? v.toLowerCase() : null;
+  }
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b), h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+      else if (max === g) h = (b - r) / d + 2;
+      else h = (r - g) / d + 4;
+      h /= 6;
+    }
+    return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+  }
+  function update(hex) {
+    var h = normHex(hex);
+    if (!h) { msg.innerHTML = '<div class="note warn">Enter a valid hex color like #0f766e.</div>'; return; }
+    msg.innerHTML = '';
+    var r = parseInt(h.slice(1, 3), 16), g = parseInt(h.slice(3, 5), 16), b = parseInt(h.slice(5, 7), 16);
+    var hsl = rgbToHsl(r, g, b);
+    swatch.style.background = h;
+    pickEl.value = h;
+    document.getElementById('clr-vhex').textContent = h;
+    document.getElementById('clr-vrgb').textContent = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+    document.getElementById('clr-vhsl').textContent = 'hsl(' + hsl[0] + ', ' + hsl[1] + '%, ' + hsl[2] + '%)';
+  }
+  hexEl.addEventListener('input', function () { update(hexEl.value); });
+  pickEl.addEventListener('input', function () { hexEl.value = pickEl.value; update(pickEl.value); });
+  update(hexEl.value);
+})();
+</script>
+
+<h2>Convert colors between formats</h2>
+<p>Designers and developers juggle the same color in several notations. A design tool hands you a <strong>HEX</strong> code, a stylesheet might use <strong>rgb()</strong>, and you'll often reach for <strong>HSL</strong> when you want to nudge a hue or lightness by hand. This converter shows all three at once: type a hex value or pick a color visually, and the swatch plus the RGB and HSL strings update instantly.</p>
+<p>Each output is a ready-to-paste CSS value, and the copy buttons grab the rgb() or hsl() string in one click. The hex field and the color picker stay locked together, so whichever you change, every representation follows. It all runs locally in your browser, with no uploads and nothing stored.</p>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mortgage Refinance Calculator</title>
+<meta name="description" content="See if refinancing your mortgage is worth it. Compare your current loan to a new rate, find your monthly savings, break-even point, and lifetime interest difference.">
+<meta name="keywords" content="refinance calculator, mortgage refinance break even, should I refinance, refinance savings calculator, break even point refinance">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/refinance-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Mortgage Refinance Calculator">
+<meta property="og:description" content="See if refinancing your mortgage is worth it. Compare your current loan to a new rate, find your monthly savings, break-even point, and lifetime interest difference.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/refinance-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Mortgage Refinance Calculator", "url": "https://erikthered95.github.io/toolnest/refinance-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "See if refinancing your mortgage is worth it. Compare your current loan to a new rate, find your monthly savings, break-even point, and lifetime interest difference."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is the break-even point on a refinance?", "acceptedAnswer": {"@type": "Answer", "text": "It's the number of months it takes for your monthly savings to repay the closing costs of the new loan. If closing costs are $4,000 and you save $200 a month, you break even in 20 months. If you plan to keep the home longer than the break-even period, refinancing usually makes sense."}}, {"@type": "Question", "name": "How much does it cost to refinance?", "acceptedAnswer": {"@type": "Answer", "text": "Refinance closing costs commonly run about 2%\u20135% of the loan amount, covering the new loan's origination, appraisal, title, and recording fees. Some lenders offer 'no-cost' refinances by rolling fees into the rate or balance \u2014 useful to compare, since it changes the break-even math."}}, {"@type": "Question", "name": "Does a lower rate always save money?", "acceptedAnswer": {"@type": "Answer", "text": "Not necessarily. A lower rate cuts your monthly payment, but if you restart a 30-year term you may pay more total interest over time even at a lower rate, because you're stretching the loan back out. This calculator shows both the monthly saving and the lifetime interest difference so you can see both effects."}}, {"@type": "Question", "name": "Should I refinance to a shorter term?", "acceptedAnswer": {"@type": "Answer", "text": "Refinancing from a 30-year into a 15-year loan usually raises the monthly payment but can save a large amount of total interest and builds equity faster. Compare the new payment against your budget \u2014 the savings only help if you can comfortably afford the higher payment."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Mortgage Refinance Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Mortgage Refinance Calculator"}]}</script>
+<article class="tool"><h1>Mortgage Refinance Calculator</h1><p class="lede">See if refinancing your mortgage is worth it. Compare your current loan to a new rate, find your monthly savings, break-even point, and lifetime interest difference.</p><div class="row">
+  <div class="field"><label for="r-balance">Current loan balance ($)</label><input type="number" id="r-balance" value="280000" min="0" step="1000"></div>
+  <div class="field"><label for="r-rate">Current interest rate (%)</label><input type="number" id="r-rate" value="7.25" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="r-remain">Years left on current loan</label><input type="number" id="r-remain" value="27" min="1" max="40" step="1"></div>
+</div>
+<hr style="border:none;border-top:1px solid var(--line, #e5e7eb);margin:18px 0">
+<div class="row">
+  <div class="field"><label for="r-newrate">New interest rate (%)</label><input type="number" id="r-newrate" value="6.0" min="0" step="0.01"></div>
+  <div class="field"><label for="r-newterm">New loan term (years)</label>
+    <select id="r-newterm"><option>30</option><option>20</option><option>15</option><option>10</option></select></div>
+</div>
+<div class="row">
+  <div class="field"><label for="r-costs">Refinance closing costs ($)</label><input type="number" id="r-costs" value="4500" min="0" step="100"></div>
+</div>
+
+<div class="result" id="r-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['r-balance', 'r-rate', 'r-remain', 'r-newrate', 'r-newterm', 'r-costs'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function payment(P, annualRate, months) {
+    var r = annualRate / 100 / 12;
+    return r === 0 ? P / months : P * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1);
+  }
+
+  function calc() {
+    var bal = v('r-balance');
+    var curMonths = Math.round(v('r-remain') * 12);
+    var newMonths = v('r-newterm') * 12;
+    var costs = v('r-costs');
+
+    var curPay = payment(bal, v('r-rate'), curMonths);
+    var newPay = payment(bal, v('r-newrate'), newMonths);
+    var curTotalInt = curPay * curMonths - bal;
+    var newTotalInt = newPay * newMonths - bal;
+    var monthlySave = curPay - newPay;
+    var lifetimeIntDiff = curTotalInt - newTotalInt; // positive = new loan saves interest
+
+    var breakeven = monthlySave > 0 ? costs / monthlySave : null;
+
+    var verdict;
+    if (monthlySave <= 0) {
+      verdict = '<p class="note">The new loan does not lower your monthly payment. Refinancing makes sense here only if your goal is a shorter term or to pull out equity, not monthly savings.</p>';
+    } else if (breakeven === null) {
+      verdict = '';
+    } else {
+      var years = Math.floor(breakeven / 12), rem = Math.round(breakeven % 12);
+      verdict = '<p class="note">You recover the ' + money.format(costs) + ' in closing costs after about <strong>' +
+        Math.ceil(breakeven) + ' months</strong>' + (years ? ' (~' + years + ' yr ' + rem + ' mo)' : '') +
+        '. Refinancing pays off if you keep the home longer than that.</p>';
+    }
+
+    document.getElementById('r-out').innerHTML =
+      '<div class="result-sub">' + (monthlySave > 0 ? 'Monthly savings' : 'Monthly payment change') + '</div>' +
+      '<div class="result-big">' + (monthlySave >= 0 ? '' : '&minus;') + money2.format(Math.abs(monthlySave)) + '/mo</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Current payment (P&amp;I)', money2.format(curPay)) +
+        kv('New payment (P&amp;I)', money2.format(newPay)) +
+        kv('Closing costs', money.format(costs)) +
+        (breakeven !== null ? kv('Break-even', Math.ceil(breakeven) + ' months') : '') +
+        kv('Total interest — current loan', money.format(curTotalInt)) +
+        kv('Total interest — new loan', money.format(newTotalInt)) +
+        kv('Lifetime interest ' + (lifetimeIntDiff >= 0 ? 'saved' : 'added'), (lifetimeIntDiff >= 0 ? '' : '&minus;') + money.format(Math.abs(lifetimeIntDiff))) +
+      '</div>' +
+      verdict +
+      (lifetimeIntDiff < 0 && monthlySave > 0 ? '<p class="note">Note: your monthly payment drops, but stretching the loan back out means more total interest over its life. The lower payment still frees up cash now — just weigh both.</p>' : '');
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Is refinancing your mortgage worth it?</h2>
+<p>Refinancing replaces your current mortgage with a new one — ideally at a lower rate, a shorter term, or both. The catch is that the new loan has its own <strong>closing costs</strong>, typically 2%–5% of the balance. So the real question isn't just "is the rate lower?" but "do my monthly savings repay those costs before I sell or move?" That tipping point is your <strong>break-even point</strong>, and it's the single most important number on this page.</p>
+<h2>Monthly savings vs. lifetime interest</h2>
+<p>There are two different ways a refinance can help, and they don't always agree:</p>
+<ul>
+  <li><strong>Lower monthly payment</strong> — frees up cash flow now. But if you refinance a loan with 27 years left back into a fresh 30-year term, you re-stretch the schedule, which can <em>increase</em> total interest even at a lower rate.</li>
+  <li><strong>Less total interest</strong> — usually comes from a shorter term (say 30-year into 15-year). The monthly payment often rises, but you pay the loan off faster and pay far less interest overall.</li>
+</ul>
+<p>This calculator shows both so you can pick the trade-off that fits your goal — cash flow today, or the lowest lifetime cost.</p>
+<p class="note"><strong>Estimate only.</strong> Results use principal and interest and assume your full remaining balance is refinanced. Your actual rate, costs, taxes, and insurance depend on your lender, credit, and loan program. Always compare a written Loan Estimate before refinancing. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is the break-even point on a refinance?</summary><div class="faq-a">It's the number of months it takes for your monthly savings to repay the closing costs of the new loan. If closing costs are $4,000 and you save $200 a month, you break even in 20 months. If you plan to keep the home longer than the break-even period, refinancing usually makes sense.</div></details>
+<details class="faq-item"><summary>How much does it cost to refinance?</summary><div class="faq-a">Refinance closing costs commonly run about 2%–5% of the loan amount, covering the new loan's origination, appraisal, title, and recording fees. Some lenders offer 'no-cost' refinances by rolling fees into the rate or balance — useful to compare, since it changes the break-even math.</div></details>
+<details class="faq-item"><summary>Does a lower rate always save money?</summary><div class="faq-a">Not necessarily. A lower rate cuts your monthly payment, but if you restart a 30-year term you may pay more total interest over time even at a lower rate, because you're stretching the loan back out. This calculator shows both the monthly saving and the lifetime interest difference so you can see both effects.</div></details>
+<details class="faq-item"><summary>Should I refinance to a shorter term?</summary><div class="faq-a">Refinancing from a 30-year into a 15-year loan usually raises the monthly payment but can save a large amount of total interest and builds equity faster. Compare the new payment against your budget — the savings only help if you can comfortably afford the higher payment.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/net-worth-calculator/"><h3>Net Worth Calculator</h3><p>Calculate your net worth by adding up your assets and subtracting your debts. Enter cash, investments, property, and liabilities to see where you stand financially.</p></a><a class="card" href="/toolnest/pmi-removal-calculator/"><h3>PMI Removal Date Calculator</h3><p>Find out when you can drop private mortgage insurance (PMI). See the month you reach 80% LTV to request cancellation and 78% for automatic termination, with optional extra payments.</p></a><a class="card" href="/toolnest/price-per-square-foot-calculator/"><h3>Price Per Square Foot Calculator</h3><p>Calculate a home's price per square foot, or estimate a property's value from its size and a comparable price per square foot.</p></a><a class="card" href="/toolnest/property-tax-proration-calculator/"><h3>Property Tax Proration Calculator</h3><p>Split annual property taxes between buyer and seller at closing based on the closing date, using a simple calendar-year proration.</p></a><a class="card" href="/toolnest/real-estate-commission-calculator/"><h3>Real Estate Commission Calculator</h3><p>Calculate the total real estate commission on a home sale and how it splits between the listing side, buyer side, and the agent's brokerage.</p></a><a class="card" href="/toolnest/rent-affordability-calculator/"><h3>Rent Affordability Calculator</h3><p>Find out how much rent you can afford based on your income and the 30% rule. See comfortable, moderate, and stretch budgets, plus the income most landlords require.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>
