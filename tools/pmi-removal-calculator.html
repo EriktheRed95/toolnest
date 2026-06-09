@@ -1,0 +1,105 @@
+<!--META
+{
+  "title": "PMI Removal Date Calculator",
+  "slug": "pmi-removal-calculator",
+  "category": "finance",
+  "h1": "PMI Removal Date Calculator",
+  "description": "Find out when you can drop private mortgage insurance (PMI). See the month you reach 80% LTV to request cancellation and 78% for automatic termination, with optional extra payments.",
+  "keywords": "PMI removal calculator, when does PMI go away, 80 percent LTV calculator, cancel PMI, private mortgage insurance removal date, 78 percent automatic termination",
+  "faq": [
+    {"q": "When can I remove PMI?", "a": "On most conventional loans you can request PMI cancellation once your loan balance reaches 80% of the home's original value, and the lender must automatically cancel it at 78% based on the original amortization schedule. This calculator shows the month you hit each threshold."},
+    {"q": "What's the difference between 80% and 78% LTV?", "a": "At 80% loan-to-value (20% equity) you can proactively request that your servicer cancel PMI, usually in writing and if you're current on payments. At 78% LTV the law (the Homeowners Protection Act) requires the servicer to cancel it automatically — you don't have to ask. Requesting at 80% gets you out sooner."},
+    {"q": "Can extra payments make PMI go away faster?", "a": "Yes. Extra principal payments lower your balance faster, so you reach the 80% and 78% thresholds sooner. Enter an extra monthly amount to see how much earlier your PMI could drop off — it's one of the highest-return uses of extra cash early in a loan."},
+    {"q": "Does my home's rising value remove PMI?", "a": "It can, but not automatically. The 78% auto-termination rule is based on the original value. If your home has appreciated, you may be able to request cancellation earlier based on a new appraisal you pay for — check your servicer's rules. This calculator uses the original value for the standard schedule."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="p-value">Home value at purchase ($)</label><input type="number" id="p-value" value="350000" min="0" step="1000"></div>
+  <div class="field"><label for="p-dp">Down payment (%)</label><input type="number" id="p-dp" value="10" min="0" max="100" step="0.5"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="p-rate">Interest rate (%)</label><input type="number" id="p-rate" value="6.5" min="0" step="0.01"></div>
+  <div class="field"><label for="p-term">Loan term (years)</label>
+    <select id="p-term"><option>30</option><option>20</option><option>15</option></select></div>
+</div>
+<div class="row">
+  <div class="field"><label for="p-extra">Extra principal ($/mo) <span class="hint">optional</span></label><input type="number" id="p-extra" value="0" min="0" step="50"></div>
+  <div class="field"><label for="p-start">Loan start date <span class="hint">optional</span></label><input type="month" id="p-start"></div>
+</div>
+
+<div class="result" id="p-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['p-value', 'p-dp', 'p-rate', 'p-term', 'p-extra', 'p-start'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function dateAfter(startStr, months) {
+    if (!startStr) return '';
+    var parts = startStr.split('-'); if (parts.length < 2) return '';
+    var d = new Date(+parts[0], +parts[1] - 1 + months, 1);
+    return ' (' + d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) + ')';
+  }
+  function fmtMonths(m) {
+    var y = Math.floor(m / 12), mo = m % 12;
+    return (y ? y + ' yr ' : '') + mo + ' mo';
+  }
+
+  function calc() {
+    var value = v('p-value');
+    var down = value * v('p-dp') / 100;
+    var loan = Math.max(0, value - down);
+    var r = v('p-rate') / 100 / 12;
+    var n = v('p-term') * 12;
+    var extra = v('p-extra');
+    var startStr = document.getElementById('p-start').value;
+    var out = document.getElementById('p-out');
+
+    if (v('p-dp') >= 20) {
+      out.innerHTML = '<div class="result-sub">No PMI required</div>' +
+        '<p class="note ok">With ' + v('p-dp') + '% down, your starting loan-to-value is already at or below 80%, so a conventional loan typically requires no PMI at all.</p>';
+      return;
+    }
+
+    var pay = (r === 0 ? loan / n : loan * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1)) + extra;
+    var t80 = value * 0.80, t78 = value * 0.78;
+    var bal = loan, m80 = null, m78 = null;
+    for (var m = 1; m <= n + 1; m++) {
+      var interest = bal * r;
+      bal -= (pay - interest);
+      if (bal < 0) bal = 0;
+      if (m80 === null && bal <= t80) m80 = m;
+      if (m78 === null && bal <= t78) { m78 = m; break; }
+      if (bal === 0) break;
+    }
+
+    out.innerHTML =
+      '<div class="result-sub">PMI can be requested in</div>' +
+      '<div class="result-big">' + (m80 ? fmtMonths(m80) : '—') + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Request cancellation (80% LTV)', m80 ? 'month ' + m80 + dateAfter(startStr, m80) : '—') +
+        kv('Automatic termination (78% LTV)', m78 ? 'month ' + m78 + dateAfter(startStr, m78) : '—') +
+        kv('Starting loan-to-value', (loan / value * 100).toFixed(1) + '%') +
+        kv('Loan amount', money.format(loan)) +
+        kv('Balance at 80% LTV', money.format(t80)) +
+      '</div>' +
+      (extra ? '<p class="note">Your ' + money.format(extra) + '/mo extra principal pulls these dates earlier. Set it to 0 to see the standard schedule.</p>'
+             : '<p class="note">Add extra monthly principal above to reach these thresholds sooner.</p>');
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>When does your PMI go away?</h2>
+<p>If you bought with less than 20% down on a conventional loan, you're almost certainly paying <strong>private mortgage insurance (PMI)</strong> — a monthly premium that protects the lender, not you. The good news is it's temporary. As you pay down the loan, your <strong>loan-to-value (LTV)</strong> ratio falls, and two milestones let you shed PMI:</p>
+<ul>
+  <li><strong>80% LTV — request cancellation.</strong> Once your balance reaches 80% of the home's original value, you can ask your servicer in writing to cancel PMI (you'll typically need to be current and may need to confirm value).</li>
+  <li><strong>78% LTV — automatic termination.</strong> By law (the Homeowners Protection Act), the servicer must cancel PMI automatically when your balance reaches 78% of the original value on the original schedule — no request needed.</li>
+</ul>
+<p>This calculator runs your amortization to find the exact month you cross each line. Requesting at 80% rather than waiting for the 78% auto-cancel can save you several months of premiums.</p>
+<h2>Speeding it up with extra payments</h2>
+<p>Because PMI removal is tied to your <strong>balance</strong>, not time, paying extra principal early is one of the most effective ways to drop it sooner — and every month of PMI you eliminate is pure savings. Enter an extra monthly amount above to see how much earlier your premiums could end. Once PMI is gone, redirecting that former premium into extra principal accelerates everything further.</p>
+<p class="note"><strong>Estimate only.</strong> Rules differ by loan type — FHA loans handle mortgage insurance differently (often for the life of the loan), and servicer requirements vary. Appreciation can let you cancel earlier with a new appraisal, which this standard-schedule estimate doesn't assume. Confirm specifics with your servicer. This is not financial advice.</p>

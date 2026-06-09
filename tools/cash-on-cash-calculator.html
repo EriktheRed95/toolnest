@@ -1,0 +1,108 @@
+<!--META
+{
+  "title": "Rental Property Cash-on-Cash Calculator",
+  "slug": "cash-on-cash-calculator",
+  "category": "finance",
+  "h1": "Rental Property Cash-on-Cash Return Calculator",
+  "description": "Analyze a rental property deal: monthly cash flow, cash-on-cash return, cap rate, and NOI from rent, expenses, and financing. Built for real estate investors and BRRRR deals.",
+  "keywords": "cash on cash return calculator, rental property calculator, cap rate calculator, rental cash flow, BRRRR calculator, real estate ROI",
+  "faq": [
+    {"q": "What is a good cash-on-cash return?", "a": "Many rental investors target a cash-on-cash return of 8%–12% or higher, though what's 'good' depends on your market, risk, and goals. It measures the annual pre-tax cash flow against the actual cash you put in, so it reflects the return on your real out-of-pocket investment — not the property's full value."},
+    {"q": "What's the difference between cash-on-cash return and cap rate?", "a": "Cap rate is net operating income (NOI) divided by the purchase price, ignoring financing — it describes the property itself. Cash-on-cash return divides your annual cash flow (after the mortgage) by the cash you invested, so it reflects your leveraged return. A property can have a modest cap rate but a strong cash-on-cash return when financed well."},
+    {"q": "What counts as operating expenses on a rental?", "a": "Recurring costs to run the property: property taxes, insurance, maintenance and repairs, property management, HOA dues, and a vacancy allowance. By convention, operating expenses exclude the mortgage payment (debt service) and capital improvements — those are handled separately."},
+    {"q": "How does this work for a BRRRR deal?", "a": "BRRRR (Buy, Rehab, Rent, Refinance, Repeat) aims to recover most of your invested cash through a cash-out refinance, which shrinks the denominator in the cash-on-cash formula and can push returns very high. Enter your post-refinance loan and the cash you left in the deal to estimate the return on your remaining capital."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="co-price">Purchase price ($)</label><input type="number" id="co-price" value="250000" min="0" step="1000"></div>
+  <div class="field"><label for="co-rent">Monthly rent ($)</label><input type="number" id="co-rent" value="2100" min="0" step="50"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="co-dp">Down payment (%)</label><input type="number" id="co-dp" value="25" min="0" max="100" step="0.5"></div>
+  <div class="field"><label for="co-close">Closing + rehab costs ($)</label><input type="number" id="co-close" value="9000" min="0" step="500"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="co-rate">Interest rate (%)</label><input type="number" id="co-rate" value="7" min="0" step="0.01"></div>
+  <div class="field"><label for="co-term">Loan term (years)</label>
+    <select id="co-term"><option>30</option><option>20</option><option>15</option></select></div>
+</div>
+<div class="row">
+  <div class="field"><label for="co-vac">Vacancy (% of rent)</label><input type="number" id="co-vac" value="5" min="0" max="100" step="0.5"></div>
+  <div class="field"><label for="co-mgmt">Management (% of rent)</label><input type="number" id="co-mgmt" value="8" min="0" max="100" step="0.5"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="co-maint">Maintenance (% of rent)</label><input type="number" id="co-maint" value="8" min="0" max="100" step="0.5"></div>
+  <div class="field"><label for="co-hoa">HOA ($/mo) <span class="hint">optional</span></label><input type="number" id="co-hoa" value="0" min="0" step="10"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="co-tax">Property tax ($/yr)</label><input type="number" id="co-tax" value="3000" min="0" step="100"></div>
+  <div class="field"><label for="co-ins">Insurance ($/yr)</label><input type="number" id="co-ins" value="1400" min="0" step="100"></div>
+</div>
+
+<div class="result" id="co-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['co-price', 'co-rent', 'co-dp', 'co-close', 'co-rate', 'co-term', 'co-vac', 'co-mgmt', 'co-maint', 'co-hoa', 'co-tax', 'co-ins'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var price = v('co-price');
+    var rent = v('co-rent');
+    var down = price * v('co-dp') / 100;
+    var loan = Math.max(0, price - down);
+    var r = v('co-rate') / 100 / 12;
+    var n = v('co-term') * 12;
+    var pi = r === 0 ? loan / n : loan * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+
+    var grossAnnual = rent * 12;
+    var vacancy = grossAnnual * v('co-vac') / 100;
+    var effectiveGross = grossAnnual - vacancy;
+    var mgmt = grossAnnual * v('co-mgmt') / 100;
+    var maint = grossAnnual * v('co-maint') / 100;
+    var opex = v('co-tax') + v('co-ins') + mgmt + maint + v('co-hoa') * 12;
+    var noi = effectiveGross - opex;
+    var debtService = pi * 12;
+    var annualCashFlow = noi - debtService;
+    var monthlyCashFlow = annualCashFlow / 12;
+    var cashInvested = down + v('co-close');
+    var coc = cashInvested ? annualCashFlow / cashInvested * 100 : 0;
+    var capRate = price ? noi / price * 100 : 0;
+
+    document.getElementById('co-out').innerHTML =
+      '<div class="result-sub">Cash-on-cash return</div>' +
+      '<div class="result-big">' + coc.toFixed(1) + '%</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Monthly cash flow', (monthlyCashFlow < 0 ? '&minus; ' : '') + money.format(Math.abs(monthlyCashFlow))) +
+        kv('Annual cash flow', (annualCashFlow < 0 ? '&minus; ' : '') + money.format(Math.abs(annualCashFlow))) +
+        kv('Cap rate', capRate.toFixed(2) + '%') +
+        kv('Net operating income (NOI)', money.format(noi)) +
+        kv('&nbsp;&nbsp;Effective gross income', money.format(effectiveGross)) +
+        kv('&nbsp;&nbsp;Operating expenses', '&minus; ' + money.format(opex)) +
+        kv('Mortgage (P&amp;I) / yr', '&minus; ' + money.format(debtService)) +
+        kv('Total cash invested', money.format(cashInvested)) +
+      '</div>' +
+      (monthlyCashFlow < 0
+        ? '<p class="note">This deal has negative cash flow — the rent doesn’t cover expenses plus the mortgage. You’d pay in each month, betting on appreciation or paydown.</p>'
+        : '<p class="note">Positive cash flow of ' + money.format(monthlyCashFlow) + '/mo. Compare the ' + coc.toFixed(1) + '% cash-on-cash return against other deals and your target.</p>');
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Analyzing a rental property deal</h2>
+<p>Before you buy a rental, the numbers have to work — and the headline number most investors live by is <strong>cash-on-cash return</strong>: your annual pre-tax cash flow divided by the actual cash you put into the deal. It answers the question that matters most to a leveraged investor: "for every dollar I sink in, how much comes back each year?"</p>
+<p>Getting there means building the income statement from the top down:</p>
+<ul>
+  <li><strong>Effective gross income</strong> — annual rent minus a vacancy allowance, because no property is rented 100% of the time.</li>
+  <li><strong>Operating expenses</strong> — property taxes, insurance, maintenance, management, and HOA. By convention these exclude the mortgage.</li>
+  <li><strong>Net operating income (NOI)</strong> — effective gross income minus operating expenses. Divide it by price and you get the <strong>cap rate</strong>, which describes the property regardless of how it's financed.</li>
+  <li><strong>Cash flow</strong> — NOI minus the mortgage (debt service). Divide annual cash flow by your cash invested for the <strong>cash-on-cash return</strong>.</li>
+</ul>
+<h2>Cap rate vs. cash-on-cash — and BRRRR</h2>
+<p>Cap rate and cash-on-cash answer different questions. Cap rate ignores your loan and lets you compare properties apples-to-apples. Cash-on-cash reflects your leverage and your real out-of-pocket return. A deal financed with little money down can show a high cash-on-cash return even at a modest cap rate. That's the engine behind <strong>BRRRR</strong> (Buy, Rehab, Rent, Refinance, Repeat): pull most of your cash back out in a refinance, and the small amount left in the deal makes the return on remaining capital look outstanding.</p>
+<p class="note"><strong>Estimate only.</strong> Real deals carry costs this model simplifies — capital expenditures (roof, HVAC), leasing fees, utilities, and taxes on income. Always verify rents, expenses, and financing with real quotes before committing. This is not financial or investment advice.</p>

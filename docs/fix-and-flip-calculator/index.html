@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fix and Flip Calculator (70% Rule)</title>
+<meta name="description" content="Run the numbers on a house flip: maximum allowable offer using the 70% rule, total project cost, projected profit, and return on investment from ARV, rehab, and holding costs.">
+<meta name="keywords" content="fix and flip calculator, 70 percent rule calculator, house flipping calculator, maximum allowable offer, ARV calculator, flip profit calculator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/fix-and-flip-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Fix and Flip Calculator (70% Rule)">
+<meta property="og:description" content="Run the numbers on a house flip: maximum allowable offer using the 70% rule, total project cost, projected profit, and return on investment from ARV, rehab, and holding costs.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/fix-and-flip-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Fix and Flip Calculator (70% Rule)", "url": "https://erikthered95.github.io/toolnest/fix-and-flip-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Run the numbers on a house flip: maximum allowable offer using the 70% rule, total project cost, projected profit, and return on investment from ARV, rehab, and holding costs."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is the 70% rule in house flipping?", "acceptedAnswer": {"@type": "Answer", "text": "The 70% rule says an investor should pay no more than 70% of a property's after-repair value (ARV) minus the cost of repairs. So Max Offer = ARV \u00d7 0.70 \u2212 repair costs. The 30% buffer is meant to cover holding costs, financing, selling costs, and your profit. It's a quick screen, not a substitute for a full deal analysis."}}, {"@type": "Question", "name": "What is ARV?", "acceptedAnswer": {"@type": "Answer", "text": "ARV stands for After-Repair Value \u2014 what the property will be worth once renovations are complete, based on comparable sales of similar finished homes nearby. Every flip number flows from the ARV, so getting it right (ideally with an agent's comps) is the most important part of analyzing a flip."}}, {"@type": "Question", "name": "What costs do flippers forget?", "acceptedAnswer": {"@type": "Answer", "text": "Beyond the purchase and rehab, the big ones are holding costs (loan interest, property taxes, insurance, utilities while you own it), financing/points on a hard-money loan, and selling costs (agent commission, closing, staging). These can easily total 15%\u201320% of ARV and are exactly what the 70% rule's buffer is designed to absorb."}}, {"@type": "Question", "name": "What profit should I aim for on a flip?", "acceptedAnswer": {"@type": "Answer", "text": "Many flippers target a profit of at least 10%\u201315% of ARV, or a minimum dollar amount that justifies the risk and effort. Thin margins are dangerous because rehab overruns and slow sales eat into them fast. Use this calculator to see how your projected profit compares before you make an offer."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Fix and Flip Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Fix and Flip Calculator"}]}</script>
+<article class="tool"><h1>Fix and Flip Calculator</h1><p class="lede">Run the numbers on a house flip: maximum allowable offer using the 70% rule, total project cost, projected profit, and return on investment from ARV, rehab, and holding costs.</p><div class="row">
+  <div class="field"><label for="f-arv">After-repair value / ARV ($)</label><input type="number" id="f-arv" value="320000" min="0" step="1000"></div>
+  <div class="field"><label for="f-rehab">Rehab budget ($)</label><input type="number" id="f-rehab" value="45000" min="0" step="1000"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="f-rule">70% rule factor (%)</label><input type="number" id="f-rule" value="70" min="1" max="100" step="1"></div>
+  <div class="field"><label for="f-price">Your purchase price ($)</label><input type="number" id="f-price" value="180000" min="0" step="1000"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="f-buy">Buying + financing costs ($)</label><input type="number" id="f-buy" value="8000" min="0" step="500"></div>
+  <div class="field"><label for="f-hold-mo">Holding period (months)</label><input type="number" id="f-hold-mo" value="6" min="0" step="1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="f-hold-cost">Holding cost ($/mo) <span class="hint">interest, tax, utils</span></label><input type="number" id="f-hold-cost" value="1500" min="0" step="100"></div>
+  <div class="field"><label for="f-sell">Selling costs (% of ARV)</label><input type="number" id="f-sell" value="8" min="0" step="0.5"></div>
+</div>
+
+<div class="result" id="f-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['f-arv', 'f-rehab', 'f-rule', 'f-price', 'f-buy', 'f-hold-mo', 'f-hold-cost', 'f-sell'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var arv = v('f-arv');
+    var rehab = v('f-rehab');
+    var maxOffer = arv * v('f-rule') / 100 - rehab;
+
+    var price = v('f-price');
+    var holding = v('f-hold-mo') * v('f-hold-cost');
+    var selling = arv * v('f-sell') / 100;
+    var totalCost = price + rehab + v('f-buy') + holding + selling;
+    var profit = arv - totalCost;
+    var cashIn = price + rehab + v('f-buy') + holding;
+    var roi = cashIn ? profit / cashIn * 100 : 0;
+    var profitPctArv = arv ? profit / arv * 100 : 0;
+
+    var verdict;
+    if (price <= maxOffer) {
+      verdict = '<p class="note ok">Your purchase price is at or below the 70% rule’s max offer of ' + money.format(maxOffer) + ' — a healthy starting point.</p>';
+    } else {
+      verdict = '<p class="note warn">Your purchase price is ' + money.format(price - maxOffer) + ' above the 70% rule’s max offer of ' + money.format(maxOffer) + '. The margin is thinner than the rule recommends.</p>';
+    }
+
+    document.getElementById('f-out').innerHTML =
+      '<div class="result-sub">Maximum allowable offer (70% rule)</div>' +
+      '<div class="result-big">' + money.format(Math.max(0, maxOffer)) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('ARV', money.format(arv)) +
+        kv('Less rehab budget', '&minus; ' + money.format(rehab)) +
+        kv('<strong>70% rule max offer</strong>', '<strong>' + money.format(maxOffer) + '</strong>') +
+      '</div>' +
+      verdict +
+      '<div class="result-sub" style="margin-top:16px">Projected profit at your price</div>' +
+      '<div class="result-big">' + (profit < 0 ? '&minus; ' : '') + money.format(Math.abs(profit)) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Purchase price', '&minus; ' + money.format(price)) +
+        kv('Rehab', '&minus; ' + money.format(rehab)) +
+        kv('Buying + financing', '&minus; ' + money.format(v('f-buy'))) +
+        kv('Holding costs', '&minus; ' + money.format(holding)) +
+        kv('Selling costs', '&minus; ' + money.format(selling)) +
+        kv('<strong>Profit</strong>', '<strong>' + (profit < 0 ? '&minus; ' : '') + money.format(Math.abs(profit)) + '</strong>') +
+        kv('Return on cash invested', roi.toFixed(1) + '%') +
+        kv('Profit as % of ARV', profitPctArv.toFixed(1) + '%') +
+      '</div>' +
+      (profitPctArv < 10 && profit > 0 ? '<p class="note">Profit is under 10% of ARV — a slim margin for a flip. Rehab overruns or a slow sale could erase it.</p>' : '') +
+      (profit < 0 ? '<p class="note warn">This deal loses money at your inputs. Lower the purchase price or rehab budget, or confirm the ARV is realistic.</p>' : '');
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Does this flip pencil out?</h2>
+<p>House flipping lives and dies on the numbers, and they all start from one figure: the <strong>after-repair value (ARV)</strong> — what the home will sell for once it's fixed up, based on comparable sales. From there, experienced flippers screen deals with the <strong>70% rule</strong>: never pay more than 70% of ARV minus the rehab cost. That 30% gap is the cushion meant to swallow holding costs, financing, selling costs, and your profit.</p>
+<p>The rule is a fast first filter, not the whole story. This calculator does both jobs: it shows the <strong>maximum allowable offer</strong> the 70% rule suggests, then runs a full deal breakdown at your actual purchase price so you can see the projected <strong>profit</strong> and <strong>return on cash invested</strong>.</p>
+<h2>The costs that eat flip profits</h2>
+<p>New flippers consistently underestimate everything that isn't the purchase or the rehab:</p>
+<ul>
+  <li><strong>Holding costs</strong> — loan interest, property taxes, insurance, and utilities for every month you own it. Flips that drag on are profit killers.</li>
+  <li><strong>Financing costs</strong> — hard-money lenders charge points and high rates; private money has its own terms. Build these in from day one.</li>
+  <li><strong>Selling costs</strong> — agent commission, closing costs, and staging, typically 7%–9% of the sale price.</li>
+</ul>
+<p>Add them up and they routinely reach 15%–20% of ARV — which is exactly the buffer the 70% rule reserves. Run a deal where your purchase price creeps above the max offer and you'll watch the projected profit shrink in real time.</p>
+<p class="note"><strong>Estimate only.</strong> The biggest risk in any flip is an over-optimistic ARV or rehab budget. Confirm comps with a local agent and get contractor bids before you commit. This tool is for planning and is not financial or investment advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is the 70% rule in house flipping?</summary><div class="faq-a">The 70% rule says an investor should pay no more than 70% of a property's after-repair value (ARV) minus the cost of repairs. So Max Offer = ARV × 0.70 − repair costs. The 30% buffer is meant to cover holding costs, financing, selling costs, and your profit. It's a quick screen, not a substitute for a full deal analysis.</div></details>
+<details class="faq-item"><summary>What is ARV?</summary><div class="faq-a">ARV stands for After-Repair Value — what the property will be worth once renovations are complete, based on comparable sales of similar finished homes nearby. Every flip number flows from the ARV, so getting it right (ideally with an agent's comps) is the most important part of analyzing a flip.</div></details>
+<details class="faq-item"><summary>What costs do flippers forget?</summary><div class="faq-a">Beyond the purchase and rehab, the big ones are holding costs (loan interest, property taxes, insurance, utilities while you own it), financing/points on a hard-money loan, and selling costs (agent commission, closing, staging). These can easily total 15%–20% of ARV and are exactly what the 70% rule's buffer is designed to absorb.</div></details>
+<details class="faq-item"><summary>What profit should I aim for on a flip?</summary><div class="faq-a">Many flippers target a profit of at least 10%–15% of ARV, or a minimum dollar amount that justifies the risk and effort. Thin margins are dangerous because rehab overruns and slow sales eat into them fast. Use this calculator to see how your projected profit compares before you make an offer.</div></details></section></article>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>
