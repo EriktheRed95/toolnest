@@ -1,0 +1,92 @@
+<!--META
+{
+  "title": "Cash-Out Refinance Calculator",
+  "slug": "cash-out-refinance-calculator",
+  "category": "finance",
+  "h1": "Cash-Out Refinance Calculator",
+  "description": "Estimate your new loan amount, monthly payment, and loan-to-value when you refinance and pull cash out of your home's equity.",
+  "keywords": "cash out refinance calculator, cash out refi, home equity refinance, refinance ltv calculator, how much cash can i take out",
+  "faq": [
+    {"q": "How much cash can I take out of my home?", "a": "Most lenders cap a cash-out refinance at 80% loan-to-value on a primary residence, meaning your new loan can't exceed 80% of the home's appraised value. The cash available is that maximum loan minus your current balance and closing costs. Investment properties and second homes usually have lower limits."},
+    {"q": "What is loan-to-value (LTV)?", "a": "LTV is your loan amount divided by the home's value, as a percentage. A $240,000 loan on a $300,000 home is 80% LTV. Lenders use it to gauge risk — the more equity you keep, the lower your LTV and often the better your rate. Cash-out refinances raise your LTV because you're borrowing against equity."},
+    {"q": "Does a cash-out refinance reset my loan?", "a": "Yes. It replaces your existing mortgage with a brand-new loan, typically with a fresh term (often 30 years) and a new rate. That can lower your monthly payment if rates dropped, but extending the term can increase total interest even as it frees up cash today."},
+    {"q": "Are closing costs included?", "a": "They can be. Many borrowers roll closing costs into the new loan rather than paying out of pocket, which is why this calculator adds them to the new balance. That raises your loan amount and LTV, so factor them in when checking against the lender's cap."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="co-value">Home value ($)</label><input type="number" id="co-value" value="500000" min="0" step="1000"></div>
+  <div class="field"><label for="co-balance">Current mortgage balance ($)</label><input type="number" id="co-balance" value="250000" min="0" step="1000"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="co-cash">Cash to take out ($)</label><input type="number" id="co-cash" value="50000" min="0" step="1000"></div>
+  <div class="field"><label for="co-rate">New interest rate (%)</label><input type="number" id="co-rate" value="6.5" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="co-term">New term (years)</label><input type="number" id="co-term" value="30" min="1" step="1"></div>
+  <div class="field"><label for="co-costs">Closing costs ($)</label><input type="number" id="co-costs" value="5000" min="0" step="100"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="co-ltv">Max LTV (%)</label><input type="number" id="co-ltv" value="80" min="0" max="100" step="1"></div>
+</div>
+
+<div class="result" id="co-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['co-value', 'co-balance', 'co-cash', 'co-rate', 'co-term', 'co-costs', 'co-ltv'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function pmt(P, ratePct, n) {
+    var r = ratePct / 100 / 12;
+    if (r === 0) return P / n;
+    return P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+  }
+
+  function calc() {
+    var value = v('co-value');
+    var balance = v('co-balance');
+    var cash = v('co-cash');
+    var rate = v('co-rate');
+    var years = v('co-term');
+    var costs = v('co-costs');
+    var maxLtvPct = v('co-ltv');
+    var out = document.getElementById('co-out');
+    if (value <= 0 || years <= 0) { out.innerHTML = '<p class="note">Enter a home value and term.</p>'; return; }
+
+    var newLoan = balance + cash + costs;
+    var maxLoan = value * maxLtvPct / 100;
+    var maxCash = Math.max(0, maxLoan - balance - costs);
+    var n = Math.round(years * 12);
+    var newPayment = pmt(newLoan, rate, n);
+    var newLtv = newLoan / value * 100;
+
+    out.innerHTML =
+      '<div class="result-sub">New monthly payment (P&amp;I)</div>' +
+      '<div class="result-big">' + money2.format(newPayment) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('New loan amount', money.format(newLoan)) +
+        kv('New loan-to-value', newLtv.toFixed(1) + '%') +
+        kv('Cash to you', money.format(cash)) +
+        kv('Max cash available at ' + maxLtvPct + '% LTV', money.format(maxCash)) +
+      '</div>' +
+      (newLoan > maxLoan
+        ? '<p class="note warn">Your new loan of ' + money.format(newLoan) + ' exceeds the lender’s max of ' + money.format(maxLoan) + ' (' + maxLtvPct + '% LTV). You could take out up to about ' + money.format(maxCash) + ' in cash.</p>'
+        : '<p class="note ok">This fits within the ' + maxLtvPct + '% LTV cap. You have room for up to about ' + money.format(maxCash) + ' in cash.</p>');
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>What a cash-out refinance does</h2>
+<p>A cash-out refinance replaces your current mortgage with a larger new loan and hands you the difference in cash. The new balance is your <strong>existing balance plus the cash you take plus closing costs</strong> (if you roll them in). Because you're borrowing more against the same home, your <strong>loan-to-value</strong> rises — and lenders usually cap it around <strong>80%</strong> of the appraised value on a primary residence.</p>
+<p>This calculator shows the new loan amount, the monthly principal-and-interest payment at your new rate and term, the resulting LTV, and the maximum cash you could pull while staying under the cap. People use cash-out refinances to consolidate higher-rate debt, fund renovations, or cover large expenses — but it converts home equity into debt and often resets your payoff clock.</p>
+<ul>
+  <li><strong>Watch the LTV cap</strong> — exceeding it can mean a denial or a worse rate.</li>
+  <li><strong>Compare total interest</strong>, not just the monthly payment, before extending your term.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> Rates, LTV limits, and closing costs vary by lender, property type, and credit profile. This is not financial advice.</p>

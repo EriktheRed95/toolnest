@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Price Per Square Foot Calculator</title>
+<meta name="description" content="Calculate a home's price per square foot, or estimate a property's value from its size and a comparable price per square foot.">
+<meta name="keywords" content="price per square foot calculator, cost per square foot, home value calculator, price per sqft, real estate comparison">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/price-per-square-foot-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Price Per Square Foot Calculator">
+<meta property="og:description" content="Calculate a home's price per square foot, or estimate a property's value from its size and a comparable price per square foot.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/price-per-square-foot-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Price Per Square Foot Calculator", "url": "https://erikthered95.github.io/toolnest/price-per-square-foot-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Calculate a home's price per square foot, or estimate a property's value from its size and a comparable price per square foot."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How is price per square foot calculated?", "acceptedAnswer": {"@type": "Answer", "text": "Divide the total price by the finished square footage: a $400,000 home with 2,000 sq ft costs $200 per square foot. It's a quick way to normalize price across homes of different sizes, but it ignores condition, layout, lot size, and location quality."}}, {"@type": "Question", "name": "Is a lower price per square foot always better?", "acceptedAnswer": {"@type": "Answer", "text": "Not necessarily. A low price per square foot can signal a good value, but it can also reflect deferred maintenance, an inferior location, a poor layout, or a large home where extra space adds little usable value. Always look at the whole picture, not just the ratio."}}, {"@type": "Question", "name": "What square footage should I use?", "acceptedAnswer": {"@type": "Answer", "text": "Use finished, above-grade living area for the cleanest comparison, since that's how most listings and appraisers measure it. Basements, garages, and unfinished space are usually counted separately or excluded, so comparing on a consistent basis matters."}}, {"@type": "Question", "name": "Why do homes on the same street have different prices per square foot?", "acceptedAnswer": {"@type": "Answer", "text": "Condition, updates, views, lot size, and even the month they sold all move the number. Smaller homes often carry a higher price per square foot than larger ones nearby, because the value of land and fixed features is spread over less space."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Price Per Square Foot Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Price Per Square Foot Calculator"}]}</script>
+<article class="tool"><h1>Price Per Square Foot Calculator</h1><p class="lede">Calculate a home's price per square foot, or estimate a property's value from its size and a comparable price per square foot.</p><h2 style="margin-top:0">Calculate price per square foot</h2>
+<div class="row">
+  <div class="field"><label for="pps-price">Price ($)</label><input type="number" id="pps-price" value="400000" min="0" step="1000"></div>
+  <div class="field"><label for="pps-sqft">Square footage</label><input type="number" id="pps-sqft" value="2000" min="0" step="10"></div>
+</div>
+
+<div class="result" id="pps-out1"></div>
+
+<h2>Estimate value from price per square foot</h2>
+<div class="row">
+  <div class="field"><label for="pps-sqft2">Square footage</label><input type="number" id="pps-sqft2" value="1800" min="0" step="10"></div>
+  <div class="field"><label for="pps-comp">Comparable price per sq ft ($)</label><input type="number" id="pps-comp" value="210" min="0" step="1"></div>
+</div>
+
+<div class="result" id="pps-out2"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var price = v('pps-price');
+    var sqft = v('pps-sqft');
+    var out1 = document.getElementById('pps-out1');
+    if (price <= 0 || sqft <= 0) {
+      out1.innerHTML = '<p class="note">Enter a price and square footage.</p>';
+    } else {
+      var ppsf = price / sqft;
+      out1.innerHTML =
+        '<div class="result-sub">Price per square foot</div>' +
+        '<div class="result-big">' + money2.format(ppsf) + '</div>' +
+        '<div style="margin-top:12px">' +
+          kv('Price', money.format(price)) +
+          kv('Square footage', sqft.toLocaleString('en-US') + ' sq ft') +
+        '</div>';
+    }
+
+    var sqft2 = v('pps-sqft2');
+    var comp = v('pps-comp');
+    var out2 = document.getElementById('pps-out2');
+    if (sqft2 <= 0 || comp <= 0) {
+      out2.innerHTML = '<p class="note">Enter a square footage and a comparable price per square foot.</p>';
+    } else {
+      var value = sqft2 * comp;
+      out2.innerHTML =
+        '<div class="result-sub">Estimated value</div>' +
+        '<div class="result-big">' + money.format(value) + '</div>' +
+        '<div style="margin-top:12px">' +
+          kv('Square footage', sqft2.toLocaleString('en-US') + ' sq ft') +
+          kv('Price per sq ft', money2.format(comp)) +
+        '</div>';
+    }
+  }
+  ['pps-price', 'pps-sqft', 'pps-sqft2', 'pps-comp'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
+
+<h2>What price per square foot tells you</h2>
+<p>Price per square foot is the real estate world's favorite shorthand. Divide a home's price by its finished square footage and you get a single number that lets you compare a 1,500 sq ft cottage against a 3,000 sq ft colonial on a roughly common footing. Buyers use it to sanity-check a list price, sellers use it to position against recent sales, and appraisers lean on it as one input among several.</p>
+<p>The second section flips the math: pick a price per square foot from comparable sales nearby and multiply by a home's size to ballpark its value. It's a fast way to translate "homes around here go for about $210 a foot" into a dollar figure before you dig deeper.</p>
+<ul>
+  <li>Smaller homes usually carry a <strong>higher</strong> price per square foot than larger ones nearby.</li>
+  <li>Use consistent square footage — finished, above-grade area — when you compare.</li>
+  <li>Treat the result as a starting point, not an appraisal.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> Price per square foot varies widely with condition, updates, lot size, layout, and location — two identical-sized homes can be worth very different amounts. Use comparable sales and a professional opinion of value before making decisions. This is not financial or real estate advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How is price per square foot calculated?</summary><div class="faq-a">Divide the total price by the finished square footage: a $400,000 home with 2,000 sq ft costs $200 per square foot. It's a quick way to normalize price across homes of different sizes, but it ignores condition, layout, lot size, and location quality.</div></details>
+<details class="faq-item"><summary>Is a lower price per square foot always better?</summary><div class="faq-a">Not necessarily. A low price per square foot can signal a good value, but it can also reflect deferred maintenance, an inferior location, a poor layout, or a large home where extra space adds little usable value. Always look at the whole picture, not just the ratio.</div></details>
+<details class="faq-item"><summary>What square footage should I use?</summary><div class="faq-a">Use finished, above-grade living area for the cleanest comparison, since that's how most listings and appraisers measure it. Basements, garages, and unfinished space are usually counted separately or excluded, so comparing on a consistent basis matters.</div></details>
+<details class="faq-item"><summary>Why do homes on the same street have different prices per square foot?</summary><div class="faq-a">Condition, updates, views, lot size, and even the month they sold all move the number. Smaller homes often carry a higher price per square foot than larger ones nearby, because the value of land and fixed features is spread over less space.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/property-tax-proration-calculator/"><h3>Property Tax Proration Calculator</h3><p>Split annual property taxes between buyer and seller at closing based on the closing date, using a simple calendar-year proration.</p></a><a class="card" href="/toolnest/real-estate-commission-calculator/"><h3>Real Estate Commission Calculator</h3><p>Calculate the total real estate commission on a home sale and how it splits between the listing side, buyer side, and the agent's brokerage.</p></a><a class="card" href="/toolnest/rent-affordability-calculator/"><h3>Rent Affordability Calculator</h3><p>Find out how much rent you can afford based on your income and the 30% rule. See comfortable, moderate, and stretch budgets, plus the income most landlords require.</p></a><a class="card" href="/toolnest/rent-vs-buy-calculator/"><h3>Rent vs. Buy Calculator</h3><p>Should you rent or buy a home? Compare the true cost of buying — mortgage, taxes, upkeep, and equity — against renting and investing the difference, over your time horizon.</p></a><a class="card" href="/toolnest/cash-on-cash-calculator/"><h3>Rental Property Cash-on-Cash Calculator</h3><p>Analyze a rental property deal: monthly cash flow, cash-on-cash return, cap rate, and NOI from rent, expenses, and financing. Built for real estate investors and BRRRR deals.</p></a><a class="card" href="/toolnest/retirement-calculator/"><h3>Retirement Savings Calculator</h3><p>Project how much your retirement savings could grow. Enter your age, current balance, monthly contribution, and expected return to estimate your nest egg at retirement.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

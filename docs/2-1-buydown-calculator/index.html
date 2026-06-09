@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2-1 Buydown Calculator</title>
+<meta name="description" content="See your reduced mortgage payment in years 1 and 2 of a 2-1 temporary buydown, the monthly savings, and the upfront buydown cost.">
+<meta name="keywords" content="2-1 buydown calculator, temporary buydown calculator, seller buydown cost, mortgage rate buydown, 2-1 buydown payment">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/2-1-buydown-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="2-1 Buydown Calculator">
+<meta property="og:description" content="See your reduced mortgage payment in years 1 and 2 of a 2-1 temporary buydown, the monthly savings, and the upfront buydown cost.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/2-1-buydown-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "2-1 Buydown Calculator", "url": "https://erikthered95.github.io/toolnest/2-1-buydown-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "See your reduced mortgage payment in years 1 and 2 of a 2-1 temporary buydown, the monthly savings, and the upfront buydown cost."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does a 2-1 buydown work?", "acceptedAnswer": {"@type": "Answer", "text": "A 2-1 buydown temporarily lowers your mortgage rate by 2 percentage points in year 1 and 1 point in year 2, then returns to the full note rate from year 3 through the end of the loan. The loan balance and term don't change \u2014 only the interest rate used for the first two years' payments does."}}, {"@type": "Question", "name": "Who pays for a 2-1 buydown?", "acceptedAnswer": {"@type": "Answer", "text": "The cost is usually paid upfront as a lump sum, most often by the seller or builder as a concession, though a buyer or lender can fund it too. The money is held in escrow and used to cover the gap between your reduced payment and the full payment each month for the first two years."}}, {"@type": "Question", "name": "What happens in year 3?", "acceptedAnswer": {"@type": "Answer", "text": "The temporary subsidy ends and your payment rises to the full note-rate amount for the rest of the loan. Lenders qualify you at the full note rate, so you must be able to afford that higher payment \u2014 the buydown only eases the first two years."}}, {"@type": "Question", "name": "Is a buydown the same as buying points?", "acceptedAnswer": {"@type": "Answer", "text": "No. Discount points permanently lower your rate for the life of the loan. A 2-1 buydown is temporary, affecting only years 1 and 2. Buydowns help most when you expect income to rise or plan to refinance, while points suit a long hold at a fixed rate."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>2-1 Buydown Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "2-1 Buydown Calculator"}]}</script>
+<article class="tool"><h1>2-1 Buydown Calculator</h1><p class="lede">See your reduced mortgage payment in years 1 and 2 of a 2-1 temporary buydown, the monthly savings, and the upfront buydown cost.</p><div class="row">
+  <div class="field"><label for="bd-amount">Loan amount ($)</label><input type="number" id="bd-amount" value="400000" min="0" step="1000"></div>
+  <div class="field"><label for="bd-rate">Note interest rate (%)</label><input type="number" id="bd-rate" value="7" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="bd-term">Term (years)</label><input type="number" id="bd-term" value="30" min="1" step="1"></div>
+</div>
+
+<div class="result" id="bd-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['bd-amount', 'bd-rate', 'bd-term'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function pmt(P, ratePct, n) {
+    var r = ratePct / 100 / 12;
+    if (r === 0) return P / n;
+    return P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+  }
+
+  function calc() {
+    var P = v('bd-amount');
+    var note = v('bd-rate');
+    var years = v('bd-term');
+    var out = document.getElementById('bd-out');
+    if (P <= 0 || years <= 0) { out.innerHTML = '<p class="note">Enter a loan amount and term.</p>'; return; }
+    var n = Math.round(years * 12);
+    var year1Rate = Math.max(0, note - 2);
+    var year2Rate = Math.max(0, note - 1);
+    var fullPmt = pmt(P, note, n);
+    var y1 = pmt(P, year1Rate, n);
+    var y2 = pmt(P, year2Rate, n);
+    var save1 = fullPmt - y1;
+    var save2 = fullPmt - y2;
+    var cost = 12 * save1 + 12 * save2;
+
+    out.innerHTML =
+      '<div class="result-sub">Year 1 payment (rate ' + year1Rate.toFixed(2) + '%)</div>' +
+      '<div class="result-big">' + money2.format(y1) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Year 1 payment (P&amp;I)', money2.format(y1)) +
+        kv('Year 2 payment (rate ' + year2Rate.toFixed(2) + '%)', money2.format(y2)) +
+        kv('Year 3+ payment (rate ' + note.toFixed(2) + '%)', money2.format(fullPmt)) +
+        kv('Monthly savings, year 1', money2.format(save1)) +
+        kv('Monthly savings, year 2', money2.format(save2)) +
+        kv('<strong>Total buydown cost</strong>', '<strong>' + money.format(cost) + '</strong>') +
+      '</div>' +
+      '<p class="note warn">This is a <strong>temporary</strong> buydown. Your payment rises to ' + money2.format(fullPmt) + ' in year 3 and stays there for the rest of the loan.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How a 2-1 buydown lowers your first two years</h2>
+<p>A 2-1 temporary buydown shaves <strong>2 percentage points</strong> off your mortgage rate in the first year and <strong>1 point</strong> in the second, before settling at the full note rate from year 3 onward. The loan amount, term, and note rate never change — only the rate used to figure your payment during the buydown period. The result is a noticeably smaller payment early on, when a new mortgage often feels tightest.</p>
+<p>The savings aren't free. Someone funds the gap upfront — usually the seller or builder as a concession — and the lump sum is parked in an escrow account that tops up each month's payment to the full amount. This calculator adds up those twelve monthly differences in year 1 and year 2 to show the total <strong>buydown cost</strong>.</p>
+<ul>
+  <li><strong>Best when</strong> you expect rising income or plan to refinance before year 3.</li>
+  <li><strong>Remember</strong> lenders qualify you at the full note rate, not the reduced one.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> Actual buydown structures, escrow handling, and qualifying rules vary by lender and program. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How does a 2-1 buydown work?</summary><div class="faq-a">A 2-1 buydown temporarily lowers your mortgage rate by 2 percentage points in year 1 and 1 point in year 2, then returns to the full note rate from year 3 through the end of the loan. The loan balance and term don't change — only the interest rate used for the first two years' payments does.</div></details>
+<details class="faq-item"><summary>Who pays for a 2-1 buydown?</summary><div class="faq-a">The cost is usually paid upfront as a lump sum, most often by the seller or builder as a concession, though a buyer or lender can fund it too. The money is held in escrow and used to cover the gap between your reduced payment and the full payment each month for the first two years.</div></details>
+<details class="faq-item"><summary>What happens in year 3?</summary><div class="faq-a">The temporary subsidy ends and your payment rises to the full note-rate amount for the rest of the loan. Lenders qualify you at the full note rate, so you must be able to afford that higher payment — the buydown only eases the first two years.</div></details>
+<details class="faq-item"><summary>Is a buydown the same as buying points?</summary><div class="faq-a">No. Discount points permanently lower your rate for the life of the loan. A 2-1 buydown is temporary, affecting only years 1 and 2. Buydowns help most when you expect income to rise or plan to refinance, while points suit a long hold at a fixed rate.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/arm-vs-fixed-calculator/"><h3>ARM vs. Fixed Mortgage Calculator</h3><p>Compare an adjustable-rate mortgage (ARM) against a fixed-rate loan. See the intro-period savings, the payment after the rate adjusts, total cost, and the break-even point.</p></a><a class="card" href="/toolnest/auto-loan-calculator/"><h3>Auto Loan Calculator</h3><p>Calculate your monthly car payment including sales tax, trade-in, down payment, and fees. See total interest and the full cost of financing your vehicle.</p></a><a class="card" href="/toolnest/biweekly-mortgage-calculator/"><h3>Biweekly Mortgage Payment Calculator</h3><p>See how switching to biweekly mortgage payments pays off your loan faster. Compare biweekly vs monthly payments and the time and interest you'd save.</p></a><a class="card" href="/toolnest/cd-calculator/"><h3>CD Calculator</h3><p>Calculate the maturity value and total interest of a certificate of deposit from your deposit, APY, and term length.</p></a><a class="card" href="/toolnest/cap-rate-calculator/"><h3>Cap Rate, GRM & 1% Rule Calculator</h3><p>Screen a rental property fast with three classic metrics: capitalization rate, gross rent multiplier, and the 1% rule.</p></a><a class="card" href="/toolnest/cash-out-refinance-calculator/"><h3>Cash-Out Refinance Calculator</h3><p>Estimate your new loan amount, monthly payment, and loan-to-value when you refinance and pull cash out of your home's equity.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

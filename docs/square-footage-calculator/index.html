@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Square Footage Calculator</title>
+<meta name="description" content="Calculate square footage from length and width in feet. See the area in square feet, square yards, and square meters, plus total cost from a price per square foot.">
+<meta name="keywords" content="square footage calculator, square feet calculator, area calculator, sq ft, flooring calculator, square yards, price per square foot">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/square-footage-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Square Footage Calculator">
+<meta property="og:description" content="Calculate square footage from length and width in feet. See the area in square feet, square yards, and square meters, plus total cost from a price per square foot.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/square-footage-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Square Footage Calculator", "url": "https://erikthered95.github.io/toolnest/square-footage-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Calculate square footage from length and width in feet. See the area in square feet, square yards, and square meters, plus total cost from a price per square foot."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I calculate square footage?", "acceptedAnswer": {"@type": "Answer", "text": "Multiply the length in feet by the width in feet. For a room 12 ft long and 10 ft wide, the area is 12 \u00d7 10 = 120 square feet. This calculator does the math instantly and also converts to square yards and square meters."}}, {"@type": "Question", "name": "How do I convert square feet to square yards or square meters?", "acceptedAnswer": {"@type": "Answer", "text": "Divide square feet by 9 to get square yards, since a square yard is 3 ft by 3 ft. Multiply square feet by 0.092903 to get square meters. The calculator shows both conversions automatically."}}, {"@type": "Question", "name": "How do I estimate material cost from square footage?", "acceptedAnswer": {"@type": "Answer", "text": "Enter a price per square foot and the tool multiplies it by the total area. This gives a quick estimate for flooring, tile, carpet, or paint. Add 5\u201310% extra for waste, cuts, and mistakes."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Square Footage Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Square Footage Calculator"}]}</script>
+<article class="tool"><h1>Square Footage Calculator</h1><p class="lede">Calculate square footage from length and width in feet. See the area in square feet, square yards, and square meters, plus total cost from a price per square foot.</p><div class="row">
+  <div class="field"><label for="sqft-length">Length (ft)</label><input type="number" id="sqft-length" value="12" min="0" step="0.01"></div>
+  <div class="field"><label for="sqft-width">Width (ft)</label><input type="number" id="sqft-width" value="10" min="0" step="0.01"></div>
+  <div class="field"><label for="sqft-price">Price per sq ft ($, optional)</label><input type="number" id="sqft-price" value="0" min="0" step="0.01"></div>
+</div>
+<div class="result">
+  <div class="result-big" id="sqft-big">0 sq ft</div>
+  <div id="sqft-out" style="margin-top:12px"></div>
+</div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var num = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  var big = document.getElementById('sqft-big'), out = document.getElementById('sqft-out');
+
+  function calc() {
+    var l = +document.getElementById('sqft-length').value || 0;
+    var w = +document.getElementById('sqft-width').value || 0;
+    var price = +document.getElementById('sqft-price').value || 0;
+    var area = l * w;
+    big.textContent = num.format(area) + ' sq ft';
+    out.innerHTML =
+      kv('Square feet', num.format(area) + ' ft²') +
+      kv('Square yards', num.format(area / 9) + ' yd²') +
+      kv('Square meters', num.format(area * 0.092903) + ' m²') +
+      (price > 0 ? kv('Total cost', money.format(area * price)) : '');
+  }
+  ['sqft-length', 'sqft-width', 'sqft-price'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
+
+<h2>How to calculate square footage</h2>
+<p>Enter the <strong>length</strong> and <strong>width</strong> of a space in feet and the calculator multiplies them to give the area in square feet, then converts it to square yards and square meters. For an L-shaped or irregular room, split it into rectangles, measure each one, and add the results together.</p>
+<p>Add an optional <strong>price per square foot</strong> to estimate material cost — useful for flooring, carpet, tile, paint, or any project priced by area. Square footage is also the standard way real estate listings describe a home's size. Whatever you're measuring, it's smart to buy <strong>5–10% extra</strong> material to cover offcuts, breakage, and mistakes, so your project doesn't stall waiting on one more box.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How do I calculate square footage?</summary><div class="faq-a">Multiply the length in feet by the width in feet. For a room 12 ft long and 10 ft wide, the area is 12 × 10 = 120 square feet. This calculator does the math instantly and also converts to square yards and square meters.</div></details>
+<details class="faq-item"><summary>How do I convert square feet to square yards or square meters?</summary><div class="faq-a">Divide square feet by 9 to get square yards, since a square yard is 3 ft by 3 ft. Multiply square feet by 0.092903 to get square meters. The calculator shows both conversions automatically.</div></details>
+<details class="faq-item"><summary>How do I estimate material cost from square footage?</summary><div class="faq-a">Enter a price per square foot and the tool multiplies it by the total area. This gives a quick estimate for flooring, tile, carpet, or paint. Add 5–10% extra for waste, cuts, and mistakes.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/tdee-calculator/"><h3>TDEE & Calorie Calculator</h3><p>Estimate your Total Daily Energy Expenditure (TDEE) and BMR using the Mifflin-St Jeor equation, plus daily calorie targets for losing, maintaining, or gaining weight.</p></a><a class="card" href="/toolnest/tip-calculator/"><h3>Tip Calculator</h3><p>Calculate the tip and split the bill in seconds. Enter the bill, choose a tip percentage, and see the tip, total, and amount per person.</p></a><a class="card" href="/toolnest/unit-converter/"><h3>Unit Converter</h3><p>Convert between units of length, weight, temperature, and volume. Pick a category, enter a value, and choose your 'from' and 'to' units for an instant result.</p></a><a class="card" href="/toolnest/work-hours-calculator/"><h3>Work Hours Calculator</h3><p>Calculate hours worked from clock-in and clock-out times, minus unpaid breaks. See the result in hours and minutes, as decimal hours, and as gross pay if you add a rate.</p></a><a class="card" href="/toolnest/age-calculator/"><h3>Age Calculator</h3><p>Calculate your exact age in years, months, and days from your date of birth. See your total days lived and a countdown to your next birthday.</p></a><a class="card" href="/toolnest/average-calculator/"><h3>Average (Mean, Median, Mode) Calculator</h3><p>Paste numbers and instantly get the mean, median, and mode, plus count, sum, min, max, and range. Free online average calculator that updates live.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

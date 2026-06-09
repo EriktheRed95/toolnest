@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Credit Card Payoff Calculator</title>
+<meta name="description" content="Find out how long it will take to pay off your credit card and how much interest you'll pay. Enter your balance, APR, and monthly payment to see your payoff timeline.">
+<meta name="keywords" content="credit card payoff calculator, credit card interest calculator, pay off credit card, credit card debt calculator, how long to pay off credit card, minimum payment calculator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/credit-card-payoff-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Credit Card Payoff Calculator">
+<meta property="og:description" content="Find out how long it will take to pay off your credit card and how much interest you'll pay. Enter your balance, APR, and monthly payment to see your payoff timeline.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/credit-card-payoff-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Credit Card Payoff Calculator", "url": "https://erikthered95.github.io/toolnest/credit-card-payoff-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Find out how long it will take to pay off your credit card and how much interest you'll pay. Enter your balance, APR, and monthly payment to see your payoff timeline."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How is credit card interest calculated?", "acceptedAnswer": {"@type": "Answer", "text": "Most cards charge interest monthly based on your balance and APR. Each month roughly balance \u00d7 (APR / 12) is added as interest. This calculator applies that interest, subtracts your payment, and repeats until the balance reaches zero \u2014 counting the months and totaling the interest you pay along the way."}}, {"@type": "Question", "name": "What happens if my payment doesn't cover the interest?", "acceptedAnswer": {"@type": "Answer", "text": "If your monthly payment is less than the interest charged that month, your balance grows instead of shrinking and the card never gets paid off. The calculator warns you when this happens. You must pay more than the monthly interest for the balance to fall at all \u2014 and ideally far more to make real progress."}}, {"@type": "Question", "name": "Why is paying only the minimum so expensive?", "acceptedAnswer": {"@type": "Answer", "text": "Minimum payments are often set near the interest charge, so most of your money goes to interest and the balance barely moves. That can stretch repayment over a decade or more and cost far more in interest than the original purchases. Paying a fixed, larger amount each month dramatically shortens the timeline."}}, {"@type": "Question", "name": "How can I pay off my card faster?", "acceptedAnswer": {"@type": "Answer", "text": "Pay a fixed amount well above the minimum every month, avoid adding new charges, and consider a lower-rate balance transfer or personal loan if you qualify. Even a modest increase in your monthly payment can cut months or years off the payoff and save hundreds or thousands in interest."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Credit Card Payoff Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Credit Card Payoff Calculator"}]}</script>
+<article class="tool"><h1>Credit Card Payoff Calculator</h1><p class="lede">Find out how long it will take to pay off your credit card and how much interest you'll pay. Enter your balance, APR, and monthly payment to see your payoff timeline.</p><div class="row">
+  <div class="field"><label for="cc-balance">Card balance ($)</label><input type="number" id="cc-balance" value="6000" min="0" step="100"></div>
+  <div class="field"><label for="cc-apr">APR (%)</label><input type="number" id="cc-apr" value="22" min="0" step="0.1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="cc-payment">Monthly payment ($)</label><input type="number" id="cc-payment" value="250" min="0" step="10"></div>
+</div>
+
+<div class="result" id="cc-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['cc-balance', 'cc-apr', 'cc-payment'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function fmtMonths(m) { var y = Math.floor(m / 12), mo = m % 12; return (y ? y + ' yr ' : '') + mo + ' mo'; }
+
+  function calc() {
+    var balance = v('cc-balance');
+    var monthlyRate = v('cc-apr') / 100 / 12;
+    var payment = v('cc-payment');
+    var out = document.getElementById('cc-out');
+
+    if (balance <= 0) { out.innerHTML = '<p class="note">Enter a card balance to see your payoff timeline.</p>'; return; }
+
+    var firstInterest = balance * monthlyRate;
+    if (payment <= firstInterest) {
+      out.innerHTML =
+        '<p class="note warn"><strong>This payment won’t pay off the card.</strong> Your monthly interest is about ' + money.format(firstInterest) +
+        ', but you’re only paying ' + money.format(payment) + '. The balance will grow instead of shrink. Increase your payment above ' + money.format(firstInterest) + ' to make progress.</p>';
+      return;
+    }
+
+    var bal = balance, months = 0, totalInterest = 0;
+    while (bal > 0.005 && months < 1200) {
+      months++;
+      var it = bal * monthlyRate;
+      totalInterest += it;
+      bal = bal + it - payment;
+      if (bal < 0) bal = 0;
+    }
+    var totalPaid = balance + totalInterest;
+
+    out.innerHTML =
+      '<div class="result-sub">Time to pay off your card</div>' +
+      '<div class="result-big">' + fmtMonths(months) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Starting balance', money.format(balance)) +
+        kv('Monthly payment', money.format(payment)) +
+        kv('<strong>Total interest paid</strong>', '<strong>' + money.format(totalInterest) + '</strong>') +
+        kv('Total amount paid', money.format(totalPaid)) +
+      '</div>' +
+      '<p class="note">You’ll pay ' + money.format(totalInterest) + ' in interest on top of your ' + money.format(balance) +
+      ' balance. Paying more than ' + money.format(payment) + '/month would shrink both the timeline and the interest.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How long until your card is paid off?</h2>
+<p>Credit card debt is some of the most expensive debt most people carry, with APRs often above 20%. This calculator simulates your payoff month by month: it adds interest to your balance, subtracts your fixed monthly payment, and counts how many months it takes to reach zero — while tallying the total interest you'll pay. It also warns you if your payment is too small to cover the monthly interest, in which case the balance never falls.</p>
+<p>The big lesson is almost always the same: pay more than the minimum. Minimums are designed to keep the balance lingering for years, with most of your money going to interest rather than principal. A fixed, higher payment flips that ratio and gets you out of debt far faster.</p>
+<ul>
+  <li><strong>Pay a fixed amount</strong> above the minimum every month, not just whatever's "left over."</li>
+  <li><strong>Stop adding charges</strong> while you pay it down so you're not refilling the balance.</li>
+  <li><strong>Consider a balance transfer</strong> to a lower or 0% intro rate if you qualify — more of each payment then hits the principal.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> This assumes a fixed balance, rate, and monthly payment with no new charges. Real cards have changing minimums, variable rates, and fees, so your actual payoff may differ. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How is credit card interest calculated?</summary><div class="faq-a">Most cards charge interest monthly based on your balance and APR. Each month roughly balance × (APR / 12) is added as interest. This calculator applies that interest, subtracts your payment, and repeats until the balance reaches zero — counting the months and totaling the interest you pay along the way.</div></details>
+<details class="faq-item"><summary>What happens if my payment doesn't cover the interest?</summary><div class="faq-a">If your monthly payment is less than the interest charged that month, your balance grows instead of shrinking and the card never gets paid off. The calculator warns you when this happens. You must pay more than the monthly interest for the balance to fall at all — and ideally far more to make real progress.</div></details>
+<details class="faq-item"><summary>Why is paying only the minimum so expensive?</summary><div class="faq-a">Minimum payments are often set near the interest charge, so most of your money goes to interest and the balance barely moves. That can stretch repayment over a decade or more and cost far more in interest than the original purchases. Paying a fixed, larger amount each month dramatically shortens the timeline.</div></details>
+<details class="faq-item"><summary>How can I pay off my card faster?</summary><div class="faq-a">Pay a fixed amount well above the minimum every month, avoid adding new charges, and consider a lower-rate balance transfer or personal loan if you qualify. Even a modest increase in your monthly payment can cut months or years off the payoff and save hundreds or thousands in interest.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/dscr-calculator/"><h3>DSCR Calculator for Rental Property</h3><p>Calculate the debt service coverage ratio (DSCR) on a rental property. See whether your rental income covers the mortgage and meets the 1.0–1.25 thresholds DSCR lenders require.</p></a><a class="card" href="/toolnest/debt-payoff-calculator/"><h3>Debt Payoff Calculator (Snowball vs. Avalanche)</h3><p>Compare the debt snowball and debt avalanche methods. Enter your debts and an extra monthly payment to see which strategy pays off your debt faster and saves the most interest.</p></a><a class="card" href="/toolnest/debt-to-income-calculator/"><h3>Debt-to-Income (DTI) Calculator</h3><p>Calculate your debt-to-income (DTI) ratio for a mortgage. Enter your income and monthly debts to see your front-end and back-end ratios and how lenders view them.</p></a><a class="card" href="/toolnest/down-payment-savings-calculator/"><h3>Down Payment Savings Calculator</h3><p>Find out how long it will take to save your target home down payment based on your current savings, monthly contributions, and interest earned.</p></a><a class="card" href="/toolnest/fha-loan-calculator/"><h3>FHA Loan Calculator</h3><p>Estimate your FHA mortgage payment including upfront and monthly MIP, property taxes, and insurance, plus the financed loan amount.</p></a><a class="card" href="/toolnest/fix-and-flip-calculator/"><h3>Fix and Flip Calculator (70% Rule)</h3><p>Run the numbers on a house flip: maximum allowable offer using the 70% rule, total project cost, projected profit, and return on investment from ARV, rehab, and holding costs.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

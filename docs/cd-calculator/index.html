@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CD Calculator</title>
+<meta name="description" content="Calculate the maturity value and total interest of a certificate of deposit from your deposit, APY, and term length.">
+<meta name="keywords" content="cd calculator, certificate of deposit calculator, cd interest calculator, cd maturity value, apy calculator">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/cd-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="CD Calculator">
+<meta property="og:description" content="Calculate the maturity value and total interest of a certificate of deposit from your deposit, APY, and term length.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/cd-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "CD Calculator", "url": "https://erikthered95.github.io/toolnest/cd-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Calculate the maturity value and total interest of a certificate of deposit from your deposit, APY, and term length."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How is CD interest calculated?", "acceptedAnswer": {"@type": "Answer", "text": "Because APY already reflects how often interest compounds, this tool grows your deposit by the APY once per year: maturity value equals deposit times (1 + APY) raised to the number of years. A $10,000 CD at 4.5% APY for 1 year matures at $10,450; the same CD for 2 years matures at about $10,920."}}, {"@type": "Question", "name": "What's the difference between APY and interest rate?", "acceptedAnswer": {"@type": "Answer", "text": "The interest rate is the nominal rate before compounding. APY (annual percentage yield) folds compounding in, so it shows the true yearly return. Banks advertise CDs by APY, which is why this calculator uses it directly \u2014 no need to specify a compounding frequency separately."}}, {"@type": "Question", "name": "What happens if I withdraw from a CD early?", "acceptedAnswer": {"@type": "Answer", "text": "Most CDs charge an early-withdrawal penalty, often several months of interest, if you take your money out before the term ends. That penalty can erase much of your earnings, so only commit funds you won't need until maturity. Some 'no-penalty' CDs exist but usually pay a lower APY."}}, {"@type": "Question", "name": "Are CDs a safe investment?", "acceptedAnswer": {"@type": "Answer", "text": "CDs at FDIC-insured banks (or NCUA-insured credit unions) are insured up to the legal limit, making them very low risk for the principal. The main risks are inflation outpacing your APY and the opportunity cost of locking up money you might otherwise invest for higher returns."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>CD Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "CD Calculator"}]}</script>
+<article class="tool"><h1>CD Calculator</h1><p class="lede">Calculate the maturity value and total interest of a certificate of deposit from your deposit, APY, and term length.</p><div class="row">
+  <div class="field"><label for="cd-deposit">Deposit amount ($)</label><input type="number" id="cd-deposit" value="10000" min="0" step="100"></div>
+  <div class="field"><label for="cd-apy">APY (%)</label><input type="number" id="cd-apy" value="4.5" min="0" step="0.01"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="cd-years">Term (years) <span class="hint">fractional allowed</span></label><input type="number" id="cd-years" value="1" min="0" step="0.25"></div>
+</div>
+
+<div class="result" id="cd-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var deposit = v('cd-deposit');
+    var apy = v('cd-apy');
+    var years = v('cd-years');
+    var out = document.getElementById('cd-out');
+    if (deposit <= 0 || years <= 0) {
+      out.innerHTML = '<p class="note">Enter a deposit amount and term.</p>';
+      return;
+    }
+    var maturity = deposit * Math.pow(1 + apy / 100, years);
+    var interest = maturity - deposit;
+
+    out.innerHTML =
+      '<div class="result-sub">Value at maturity</div>' +
+      '<div class="result-big">' + money.format(maturity) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Deposit', money.format(deposit)) +
+        kv('Total interest earned', money.format(interest)) +
+        kv('APY', apy.toFixed(2) + '%') +
+        kv('Term', years + ' year' + (years === 1 ? '' : 's')) +
+      '</div>' +
+      '<p class="note ok">This CD earns ' + money.format(interest) + ' in interest over ' + years + ' year' + (years === 1 ? '' : 's') + ' at a ' + apy.toFixed(2) + '% APY.</p>';
+  }
+  ['cd-deposit', 'cd-apy', 'cd-years'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
+
+<h2>What a CD earns</h2>
+<p>A certificate of deposit (CD) is a savings product where you agree to leave a lump sum with a bank or credit union for a fixed term — a few months to several years — in exchange for a guaranteed interest rate that's usually higher than a regular savings account. This calculator takes your deposit, the advertised APY, and the term, and shows what the CD will be worth at maturity along with the total interest earned.</p>
+<p>Because the APY a bank quotes already accounts for compounding, the math is clean: the deposit grows by the APY once per year for the length of the term. The tradeoff for that locked-in, predictable return is access — pull your money out before the term ends and you'll typically owe an early-withdrawal penalty. CDs at insured institutions are very low risk for your principal, which makes them popular for money you want to grow safely on a known timeline.</p>
+<ul>
+  <li><strong>Maturity value</strong> — deposit grown by the APY over the full term.</li>
+  <li><strong>Total interest</strong> — what you earn above your original deposit.</li>
+  <li><strong>APY</strong> — the true annual yield, with compounding included.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> APY accounts for compounding, but actual returns depend on your bank's terms; early withdrawal usually incurs a penalty that can reduce or erase interest. Verify rates and terms before depositing. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How is CD interest calculated?</summary><div class="faq-a">Because APY already reflects how often interest compounds, this tool grows your deposit by the APY once per year: maturity value equals deposit times (1 + APY) raised to the number of years. A $10,000 CD at 4.5% APY for 1 year matures at $10,450; the same CD for 2 years matures at about $10,920.</div></details>
+<details class="faq-item"><summary>What's the difference between APY and interest rate?</summary><div class="faq-a">The interest rate is the nominal rate before compounding. APY (annual percentage yield) folds compounding in, so it shows the true yearly return. Banks advertise CDs by APY, which is why this calculator uses it directly — no need to specify a compounding frequency separately.</div></details>
+<details class="faq-item"><summary>What happens if I withdraw from a CD early?</summary><div class="faq-a">Most CDs charge an early-withdrawal penalty, often several months of interest, if you take your money out before the term ends. That penalty can erase much of your earnings, so only commit funds you won't need until maturity. Some 'no-penalty' CDs exist but usually pay a lower APY.</div></details>
+<details class="faq-item"><summary>Are CDs a safe investment?</summary><div class="faq-a">CDs at FDIC-insured banks (or NCUA-insured credit unions) are insured up to the legal limit, making them very low risk for the principal. The main risks are inflation outpacing your APY and the opportunity cost of locking up money you might otherwise invest for higher returns.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/cap-rate-calculator/"><h3>Cap Rate, GRM & 1% Rule Calculator</h3><p>Screen a rental property fast with three classic metrics: capitalization rate, gross rent multiplier, and the 1% rule.</p></a><a class="card" href="/toolnest/cash-out-refinance-calculator/"><h3>Cash-Out Refinance Calculator</h3><p>Estimate your new loan amount, monthly payment, and loan-to-value when you refinance and pull cash out of your home's equity.</p></a><a class="card" href="/toolnest/closing-cost-calculator/"><h3>Closing Cost Calculator</h3><p>Estimate the closing costs and total cash to close when buying a home — loan fees, title insurance, appraisal, escrow, and prepaid taxes and insurance.</p></a><a class="card" href="/toolnest/credit-card-payoff-calculator/"><h3>Credit Card Payoff Calculator</h3><p>Find out how long it will take to pay off your credit card and how much interest you'll pay. Enter your balance, APR, and monthly payment to see your payoff timeline.</p></a><a class="card" href="/toolnest/dscr-calculator/"><h3>DSCR Calculator for Rental Property</h3><p>Calculate the debt service coverage ratio (DSCR) on a rental property. See whether your rental income covers the mortgage and meets the 1.0–1.25 thresholds DSCR lenders require.</p></a><a class="card" href="/toolnest/debt-payoff-calculator/"><h3>Debt Payoff Calculator (Snowball vs. Avalanche)</h3><p>Compare the debt snowball and debt avalanche methods. Enter your debts and an extra monthly payment to see which strategy pays off your debt faster and saves the most interest.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

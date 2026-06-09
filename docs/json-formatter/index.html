@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JSON Formatter & Validator</title>
+<meta name="description" content="Format, minify, and validate JSON in your browser. Pretty-print with clean indentation, compress to one line, and get clear error messages. Private and instant.">
+<meta name="keywords" content="json formatter, json validator, json beautifier, json minifier, pretty print json, format json online">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/json-formatter/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="JSON Formatter & Validator">
+<meta property="og:description" content="Format, minify, and validate JSON in your browser. Pretty-print with clean indentation, compress to one line, and get clear error messages. Private and instant.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/json-formatter/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "JSON Formatter & Validator", "url": "https://erikthered95.github.io/toolnest/json-formatter/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Format, minify, and validate JSON in your browser. Pretty-print with clean indentation, compress to one line, and get clear error messages. Private and instant."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What does formatting do?", "acceptedAnswer": {"@type": "Answer", "text": "Formatting parses your JSON and re-prints it with consistent two-space indentation and line breaks, making nested objects and arrays easy to read. Minifying does the opposite: it strips all unnecessary whitespace to produce the smallest valid one-line version."}}, {"@type": "Question", "name": "How does validation work?", "acceptedAnswer": {"@type": "Answer", "text": "The tool runs your text through the browser's JSON parser. If it parses cleanly you get a 'Valid JSON' confirmation; if not, you get the parser's error message, which usually points to the character or position where the problem is."}}, {"@type": "Question", "name": "Is my JSON sent to a server?", "acceptedAnswer": {"@type": "Answer", "text": "No. Parsing, formatting, and validation all happen locally in your browser using built-in JavaScript. Your data is never uploaded or stored, so you can safely work with configuration or API responses that contain sensitive values."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>JSON Formatter & Validator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://erikthered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "JSON Formatter & Validator"}]}</script>
+<article class="tool"><h1>JSON Formatter & Validator</h1><p class="lede">Format, minify, and validate JSON in your browser. Pretty-print with clean indentation, compress to one line, and get clear error messages. Private and instant.</p><div class="field">
+  <label for="jsn-in">JSON input</label>
+  <textarea id="jsn-in" rows="6" style="width:100%;resize:vertical" placeholder="Paste JSON…">{"name":"ToolNest","tools":3,"tags":["fast","private"],"nested":{"ok":true}}</textarea>
+</div>
+<div class="btn-row">
+  <button class="btn" id="jsn-format">Format</button>
+  <button class="btn" id="jsn-minify">Minify</button>
+  <button class="btn" id="jsn-validate">Validate</button>
+  <button class="btn secondary" data-copy="#jsn-out" id="jsn-copy">Copy result</button>
+</div>
+<div id="jsn-msg"></div>
+<div class="field">
+  <label for="jsn-out">Output</label>
+  <textarea id="jsn-out" rows="8" readonly style="width:100%;resize:vertical"></textarea>
+</div>
+
+<script>
+(function () {
+  var inEl = document.getElementById('jsn-in'), out = document.getElementById('jsn-out'),
+      msg = document.getElementById('jsn-msg');
+  function parse() {
+    msg.innerHTML = '';
+    try {
+      return { ok: true, value: JSON.parse(inEl.value) };
+    } catch (e) {
+      msg.innerHTML = '<div class="note warn">Invalid JSON: ' + e.message + '</div>';
+      return { ok: false };
+    }
+  }
+  document.getElementById('jsn-format').addEventListener('click', function () {
+    var r = parse();
+    if (r.ok) out.value = JSON.stringify(r.value, null, 2);
+  });
+  document.getElementById('jsn-minify').addEventListener('click', function () {
+    var r = parse();
+    if (r.ok) out.value = JSON.stringify(r.value);
+  });
+  document.getElementById('jsn-validate').addEventListener('click', function () {
+    var r = parse();
+    if (r.ok) msg.innerHTML = '<div class="note ok">Valid JSON</div>';
+  });
+})();
+</script>
+
+<h2>Clean up and check your JSON</h2>
+<p>JSON is everywhere — API responses, config files, log lines — but it's often delivered as one unreadable blob or with a stray comma that breaks parsing. Paste it here and click <strong>Format</strong> to pretty-print it with tidy two-space indentation, or <strong>Minify</strong> to collapse it back to the smallest valid single line for transport. <strong>Validate</strong> tells you immediately whether the document parses, and shows the parser's error message when it doesn't.</p>
+<p>Everything runs through your browser's native JSON engine, so the results match exactly how your code will interpret the data. Because nothing is uploaded, you can safely paste responses that include tokens, customer data, or internal configuration — it never leaves your device.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What does formatting do?</summary><div class="faq-a">Formatting parses your JSON and re-prints it with consistent two-space indentation and line breaks, making nested objects and arrays easy to read. Minifying does the opposite: it strips all unnecessary whitespace to produce the smallest valid one-line version.</div></details>
+<details class="faq-item"><summary>How does validation work?</summary><div class="faq-a">The tool runs your text through the browser's JSON parser. If it parses cleanly you get a 'Valid JSON' confirmation; if not, you get the parser's error message, which usually points to the character or position where the problem is.</div></details>
+<details class="faq-item"><summary>Is my JSON sent to a server?</summary><div class="faq-a">No. Parsing, formatting, and validation all happen locally in your browser using built-in JavaScript. Your data is never uploaded or stored, so you can safely work with configuration or API responses that contain sensitive values.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/lorem-ipsum-generator/"><h3>Lorem Ipsum Generator</h3><p>Generate placeholder lorem ipsum text by paragraphs, sentences, or words. Copy classic dummy text instantly for mockups, designs, and layouts.</p></a><a class="card" href="/toolnest/magic-8-ball/"><h3>Magic 8-Ball</h3><p>Ask the online Magic 8-Ball a yes-or-no question and get one of the 20 classic answers. A fun, random fortune-telling toy that runs in your browser.</p></a><a class="card" href="/toolnest/password-generator/"><h3>Password Generator</h3><p>Create strong, random passwords instantly. Choose length and character types, then copy with one click. Generated in your browser — never sent anywhere.</p></a><a class="card" href="/toolnest/random-number-generator/"><h3>Random Number Generator</h3><p>Generate random numbers in any range — pick a min and max, choose how many, and toggle duplicates. Free, instant, works on any device.</p></a><a class="card" href="/toolnest/random-picker/"><h3>Random Picker (Decision Maker)</h3><p>Paste a list of names or options and let chance choose. Perfect for giveaways, raffles, picking a winner, or settling a decision. Free and instant.</p></a><a class="card" href="/toolnest/text-sorter/"><h3>Text Sorter & Deduplicator</h3><p>Sort lines of text alphabetically, reverse or shuffle them, and remove duplicate lines. Case-insensitive and trim options. Free, private, in-browser.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

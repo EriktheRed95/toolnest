@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>URL Slug Generator</title>
+<meta name="description" content="Turn any title into a clean, SEO-friendly URL slug. Lowercases text, strips accents, and replaces spaces and symbols with hyphens. Free and instant.">
+<meta name="keywords" content="url slug generator, slug maker, slugify, permalink generator, seo url, make a slug from title">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/slug-generator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="URL Slug Generator">
+<meta property="og:description" content="Turn any title into a clean, SEO-friendly URL slug. Lowercases text, strips accents, and replaces spaces and symbols with hyphens. Free and instant.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/slug-generator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "URL Slug Generator", "url": "https://erikthered95.github.io/toolnest/slug-generator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Turn any title into a clean, SEO-friendly URL slug. Lowercases text, strips accents, and replaces spaces and symbols with hyphens. Free and instant."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is a URL slug?", "acceptedAnswer": {"@type": "Answer", "text": "A slug is the readable part of a URL that identifies a page, like 'best-coffee-shops' in example.com/best-coffee-shops. Good slugs are lowercase, use hyphens between words, and avoid spaces and special characters so they're clean and easy to share."}}, {"@type": "Question", "name": "Why use hyphens instead of underscores or spaces?", "acceptedAnswer": {"@type": "Answer", "text": "Search engines treat hyphens as word separators, so 'red-running-shoes' reads as three words. Spaces get encoded as ugly '%20' sequences, and underscores aren't always treated as separators. Hyphens are the web standard for readable, SEO-friendly URLs."}}, {"@type": "Question", "name": "Does this handle accents and special characters?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Accented letters like \u00e9 or \u00f1 are normalized to their plain ASCII form (e to n), and any run of symbols, spaces, or punctuation is collapsed into a single hyphen. Leading and trailing hyphens are trimmed for a clean result."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>URL Slug Generator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://erikthered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "URL Slug Generator"}]}</script>
+<article class="tool"><h1>URL Slug Generator</h1><p class="lede">Turn any title into a clean, SEO-friendly URL slug. Lowercases text, strips accents, and replaces spaces and symbols with hyphens. Free and instant.</p><div class="field">
+  <label for="slug-input">Title or text</label>
+  <textarea id="slug-input" rows="3" style="width:100%;resize:vertical" placeholder="Type a title…">10 Café Façade Ideas You'll Love!</textarea>
+</div>
+<div class="pw-out" id="slug-out"></div>
+<div class="btn-row">
+  <button class="btn secondary" data-copy="#slug-out" id="slug-copy">Copy slug</button>
+</div>
+
+<script>
+(function () {
+  var input = document.getElementById('slug-input'), out = document.getElementById('slug-out');
+  function slugify(s) {
+    return s
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .toLowerCase().trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+  function update() {
+    var slug = slugify(input.value);
+    out.textContent = slug || '(empty)';
+  }
+  input.addEventListener('input', update);
+  update();
+})();
+</script>
+
+<h2>Make a clean URL slug from any title</h2>
+<p>A slug is the human-readable tail of a web address — the part after the last slash that tells both people and search engines what a page is about. Type a headline or any text above and this tool generates a tidy slug instantly: it lowercases everything, <strong>strips accents</strong> down to plain letters, and replaces every run of spaces, punctuation, and symbols with a single hyphen. Leading and trailing hyphens are trimmed so the result is always clean.</p>
+<p>Good slugs are short, descriptive, and made of real words separated by hyphens — the web standard that search engines read as distinct terms. Use them for blog posts, product pages, documentation, and anywhere you want a <strong>readable, shareable, SEO-friendly URL</strong>. The conversion runs entirely in your browser, so nothing you type is sent anywhere; just edit the text and copy the slug with one click.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is a URL slug?</summary><div class="faq-a">A slug is the readable part of a URL that identifies a page, like 'best-coffee-shops' in example.com/best-coffee-shops. Good slugs are lowercase, use hyphens between words, and avoid spaces and special characters so they're clean and easy to share.</div></details>
+<details class="faq-item"><summary>Why use hyphens instead of underscores or spaces?</summary><div class="faq-a">Search engines treat hyphens as word separators, so 'red-running-shoes' reads as three words. Spaces get encoded as ugly '%20' sequences, and underscores aren't always treated as separators. Hyphens are the web standard for readable, SEO-friendly URLs.</div></details>
+<details class="faq-item"><summary>Does this handle accents and special characters?</summary><div class="faq-a">Yes. Accented letters like é or ñ are normalized to their plain ASCII form (e to n), and any run of symbols, spaces, or punctuation is collapsed into a single hyphen. Leading and trailing hyphens are trimmed for a clean result.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/uuid-generator/"><h3>UUID Generator</h3><p>Generate random RFC 4122 version-4 UUIDs in your browser. Choose how many you need and copy them all with one click. Cryptographically secure and completely private.</p></a><a class="card" href="/toolnest/username-generator/"><h3>Username Generator</h3><p>Generate fun, memorable usernames by combining an adjective and a noun, with optional numbers and capitalization. Cryptographically random and private.</p></a><a class="card" href="/toolnest/word-counter/"><h3>Word Counter</h3><p>Count words, characters, sentences, and paragraphs in your text instantly. See reading time too. Everything runs in your browser — your text never leaves the page.</p></a><a class="card" href="/toolnest/base64-encode-decode/"><h3>Base64 Encode & Decode</h3><p>Encode text to Base64 or decode Base64 back to text, right in your browser. UTF-8 safe, handles emoji and accents, and never sends your data anywhere.</p></a><a class="card" href="/toolnest/case-converter/"><h3>Case Converter</h3><p>Convert text between UPPERCASE, lowercase, Title Case, Sentence case, camelCase, snake_case, and kebab-case. Fast, free, and private — runs in your browser.</p></a><a class="card" href="/toolnest/coin-flip/"><h3>Coin Flip</h3><p>Flip a virtual coin online. Get a fair, random heads or tails result, flip several at once, and keep a running tally. Free instant coin toss.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

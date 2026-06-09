@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Real Estate Commission Calculator</title>
+<meta name="description" content="Calculate the total real estate commission on a home sale and how it splits between the listing side, buyer side, and the agent's brokerage.">
+<meta name="keywords" content="real estate commission calculator, agent commission calculator, listing commission, realtor commission split, home sale commission">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/real-estate-commission-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Real Estate Commission Calculator">
+<meta property="og:description" content="Calculate the total real estate commission on a home sale and how it splits between the listing side, buyer side, and the agent's brokerage.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/real-estate-commission-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Real Estate Commission Calculator", "url": "https://erikthered95.github.io/toolnest/real-estate-commission-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Calculate the total real estate commission on a home sale and how it splits between the listing side, buyer side, and the agent's brokerage."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How much is a typical real estate commission?", "acceptedAnswer": {"@type": "Answer", "text": "Total commission has historically run around 5%\u20136% of the sale price, usually split between the listing brokerage and the buyer's brokerage. Rates are not fixed by law and are fully negotiable, and recent industry changes have made commissions more openly negotiated than they once were."}}, {"@type": "Question", "name": "Who pays the real estate commission?", "acceptedAnswer": {"@type": "Answer", "text": "Traditionally the seller paid the full commission out of the sale proceeds, with the listing broker sharing a portion with the buyer's broker. Newer rules in many markets mean buyers may now negotiate and pay their own agent directly. Either way, the total still comes out of the transaction."}}, {"@type": "Question", "name": "What is the brokerage split?", "acceptedAnswer": {"@type": "Answer", "text": "An agent rarely keeps the full side commission. They share it with their brokerage under an agreed split \u2014 for example, 70/30 or, for top producers, 100% minus flat fees. Set the agent split above to see roughly what an agent nets on the listing side before taxes and expenses."}}, {"@type": "Question", "name": "Are commissions negotiable?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Commission rates and splits are negotiable between you and your agent, and they vary by market, price point, and service level. Some brokerages offer flat fees or discounted listings. Always confirm the exact rate and who pays it in your listing or buyer agreement."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Real Estate Commission Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Real Estate Commission Calculator"}]}</script>
+<article class="tool"><h1>Real Estate Commission Calculator</h1><p class="lede">Calculate the total real estate commission on a home sale and how it splits between the listing side, buyer side, and the agent's brokerage.</p><div class="row">
+  <div class="field"><label for="rc-price">Sale price ($)</label><input type="number" id="rc-price" value="400000" min="0" step="1000"></div>
+  <div class="field"><label for="rc-comm">Total commission (%)</label><input type="number" id="rc-comm" value="5.5" min="0" max="100" step="0.1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="rc-list">Listing-side share (%) <span class="hint">rest goes to buyer side</span></label><input type="number" id="rc-list" value="50" min="0" max="100" step="1"></div>
+  <div class="field"><label for="rc-split">Agent split with brokerage (%) <span class="hint">100 = keeps all</span></label><input type="number" id="rc-split" value="100" min="0" max="100" step="1"></div>
+</div>
+
+<div class="result" id="rc-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['rc-price', 'rc-comm', 'rc-list', 'rc-split'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var price = v('rc-price');
+    var commPct = v('rc-comm');
+    var listPct = v('rc-list');
+    var splitPct = v('rc-split');
+    var out = document.getElementById('rc-out');
+    if (price <= 0 || commPct <= 0) { out.innerHTML = '<p class="note">Enter a sale price and commission rate.</p>'; return; }
+
+    var total = price * commPct / 100;
+    var listingSide = total * listPct / 100;
+    var buyerSide = total - listingSide;
+    var agentNet = listingSide * splitPct / 100;
+
+    out.innerHTML =
+      '<div class="result-sub">Total commission</div>' +
+      '<div class="result-big">' + money.format(total) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Listing-side commission', money.format(listingSide)) +
+        kv('Buyer-side commission', money.format(buyerSide)) +
+        kv('Agent net, listing side (after ' + splitPct + '% split)', money.format(agentNet)) +
+      '</div>' +
+      '<p class="note">Commissions are negotiable and splits vary by brokerage, market, and agreement.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How real estate commissions split</h2>
+<p>When a home sells, the total commission is a percentage of the <strong>sale price</strong> — historically around 5%–6%, though it's fully negotiable. That total is then divided between the <strong>listing side</strong> (the seller's agent and brokerage) and the <strong>buyer side</strong> (the buyer's agent and brokerage). This calculator lets you set the listing-side share, with the remainder going to the buyer side, so you can model an even 50/50 split or anything else you've agreed to.</p>
+<p>An individual agent rarely pockets a whole side. They share it with their brokerage under a <strong>commission split</strong> — anything from a junior agent's 60/40 to a top producer keeping 100% minus flat fees. Set the agent split to see roughly what an agent nets on the listing side before taxes, marketing, and other business expenses.</p>
+<ul>
+  <li><strong>Negotiable</strong> — rates and splits are not fixed and vary widely by market and price point.</li>
+  <li><strong>Who pays</strong> — recent rule changes mean buyers may now negotiate and pay their own agent directly.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> Actual commission terms, who pays them, and brokerage splits depend on your agreements and local market. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How much is a typical real estate commission?</summary><div class="faq-a">Total commission has historically run around 5%–6% of the sale price, usually split between the listing brokerage and the buyer's brokerage. Rates are not fixed by law and are fully negotiable, and recent industry changes have made commissions more openly negotiated than they once were.</div></details>
+<details class="faq-item"><summary>Who pays the real estate commission?</summary><div class="faq-a">Traditionally the seller paid the full commission out of the sale proceeds, with the listing broker sharing a portion with the buyer's broker. Newer rules in many markets mean buyers may now negotiate and pay their own agent directly. Either way, the total still comes out of the transaction.</div></details>
+<details class="faq-item"><summary>What is the brokerage split?</summary><div class="faq-a">An agent rarely keeps the full side commission. They share it with their brokerage under an agreed split — for example, 70/30 or, for top producers, 100% minus flat fees. Set the agent split above to see roughly what an agent nets on the listing side before taxes and expenses.</div></details>
+<details class="faq-item"><summary>Are commissions negotiable?</summary><div class="faq-a">Yes. Commission rates and splits are negotiable between you and your agent, and they vary by market, price point, and service level. Some brokerages offer flat fees or discounted listings. Always confirm the exact rate and who pays it in your listing or buyer agreement.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/rent-affordability-calculator/"><h3>Rent Affordability Calculator</h3><p>Find out how much rent you can afford based on your income and the 30% rule. See comfortable, moderate, and stretch budgets, plus the income most landlords require.</p></a><a class="card" href="/toolnest/rent-vs-buy-calculator/"><h3>Rent vs. Buy Calculator</h3><p>Should you rent or buy a home? Compare the true cost of buying — mortgage, taxes, upkeep, and equity — against renting and investing the difference, over your time horizon.</p></a><a class="card" href="/toolnest/cash-on-cash-calculator/"><h3>Rental Property Cash-on-Cash Calculator</h3><p>Analyze a rental property deal: monthly cash flow, cash-on-cash return, cap rate, and NOI from rent, expenses, and financing. Built for real estate investors and BRRRR deals.</p></a><a class="card" href="/toolnest/retirement-calculator/"><h3>Retirement Savings Calculator</h3><p>Project how much your retirement savings could grow. Enter your age, current balance, monthly contribution, and expected return to estimate your nest egg at retirement.</p></a><a class="card" href="/toolnest/roth-ira-calculator/"><h3>Roth IRA Calculator</h3><p>Estimate how much your Roth IRA could grow tax-free. Enter your balance, annual contribution, time horizon, and expected return to project your tax-free retirement savings.</p></a><a class="card" href="/toolnest/savings-goal-calculator/"><h3>Savings Goal Calculator</h3><p>Find out how much to save each month to reach a goal. Enter your target, current savings, timeline, and APY to see the monthly contribution and interest you'll earn.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

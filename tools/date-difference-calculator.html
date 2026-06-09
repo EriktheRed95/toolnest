@@ -1,0 +1,70 @@
+<!--META
+{
+  "title": "Date Difference Calculator",
+  "slug": "date-difference-calculator",
+  "category": "everyday",
+  "h1": "Date Difference Calculator",
+  "description": "Calculate the difference between two dates in years, months, and days, plus the total number of days, weeks, hours, and minutes between them.",
+  "keywords": "date difference calculator, days between dates, time between two dates, date duration calculator, how many days between",
+  "faq": [
+    {"q": "How is the difference calculated?", "a": "The calculator counts whole calendar years from the start date, then leftover months, then leftover days — using the real calendar so different month lengths and leap years are handled exactly, not approximated. It also gives totals in days, weeks, hours, and minutes."},
+    {"q": "What if the end date is before the start date?", "a": "The calculator uses the absolute difference, so the order of the two dates doesn't matter. It will note that the dates were swapped but still show the same duration."},
+    {"q": "Are leap years included?", "a": "Yes. Because the tool works directly with calendar dates, February 29 and the varying lengths of months are counted automatically in both the breakdown and the totals."},
+    {"q": "Does it count both the start and end days?", "a": "It measures the span between the two dates, so a difference from one day to the next counts as one day. If you need to include both endpoints, add one to the total days."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="dd-start">Start date</label><input type="date" id="dd-start"></div>
+  <div class="field"><label for="dd-end">End date</label><input type="date" id="dd-end"></div>
+</div>
+
+<div class="result" id="dd-out"></div>
+
+<script>
+(function () {
+  var nf = new Intl.NumberFormat('en-US');
+  var start = document.getElementById('dd-start'), end = document.getElementById('dd-end');
+  var t = new Date();
+  start.value = t.toISOString().slice(0, 10);
+  end.value = t.toISOString().slice(0, 10);
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var out = document.getElementById('dd-out');
+    if (!start.value || !end.value) { out.innerHTML = '<p class="note">Enter both dates.</p>'; return; }
+    var a = new Date(start.value + 'T00:00:00'), b = new Date(end.value + 'T00:00:00');
+    var swapped = false;
+    if (b < a) { var tmp = a; a = b; b = tmp; swapped = true; }
+
+    var years = b.getFullYear() - a.getFullYear();
+    var months = b.getMonth() - a.getMonth();
+    var days = b.getDate() - a.getDate();
+    if (days < 0) { months--; var prevMonth = new Date(b.getFullYear(), b.getMonth(), 0); days += prevMonth.getDate(); }
+    if (months < 0) { years--; months += 12; }
+
+    var totalDays = Math.floor((b - a) / 86400000);
+    var weeks = Math.floor(totalDays / 7), remDays = totalDays % 7;
+
+    var breakdown = years + ' yr ' + months + ' mo ' + days + ' d';
+    out.innerHTML =
+      '<div class="result-sub">Difference between the dates</div>' +
+      '<div class="result-big">' + breakdown + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Total days', nf.format(totalDays) + ' days') +
+        kv('Total weeks', nf.format(weeks) + ' weeks ' + remDays + ' day' + (remDays === 1 ? '' : 's')) +
+        kv('Total hours', nf.format(totalDays * 24) + ' hours') +
+        kv('Total minutes', nf.format(totalDays * 24 * 60) + ' minutes') +
+      '</div>' +
+      (swapped ? '<p class="note warn">The end date was before the start date, so the dates were swapped to show the absolute difference.</p>' : '');
+  }
+  [start, end].forEach(function (el) { el.addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>The exact span between two dates</h2>
+<p>Whether you're counting down to an event, measuring how long a project ran, or working out someone's tenure, this calculator gives the precise gap between any two dates. It breaks the difference into <strong>years, months, and days</strong> by reading the actual calendar — so the uneven lengths of months and every leap day are counted correctly rather than averaged away.</p>
+<p>Alongside the calendar breakdown, it converts the same span into <strong>total days, weeks, hours, and minutes</strong>. These figures are handy for billing, deadlines, or simply satisfying curiosity about how much time has really passed.</p>
+<h2>Order doesn't matter</h2>
+<p>You can put the later date first or second — the calculator always shows the absolute difference and simply notes when it has swapped the inputs for you. Both fields default to today, so you can change just one date to measure forward or backward from now. Everything recalculates the instant you change a field, making it quick to compare several spans in a row.</p>

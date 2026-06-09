@@ -1,0 +1,62 @@
+<!--META
+{
+  "title": "Fuel Cost Calculator",
+  "slug": "fuel-cost-calculator",
+  "category": "everyday",
+  "h1": "Fuel Cost Calculator",
+  "description": "Estimate the fuel cost of a trip from distance, MPG, and gas price. See total cost, gallons used, and cost per person when splitting a road trip.",
+  "keywords": "fuel cost calculator, gas cost calculator, trip cost calculator, road trip gas, cost per person, mpg fuel cost",
+  "faq": [
+    {"q": "How do I calculate the fuel cost of a trip?", "a": "Divide the trip distance by your vehicle's MPG to get the gallons needed, then multiply by the price per gallon. For a 280-mile trip at 28 MPG and $3.50 per gallon, that's 10 gallons × $3.50 = $35.00."},
+    {"q": "What MPG should I use?", "a": "Use your car's real-world average if you know it. Otherwise, check the EPA combined rating on the window sticker or the manufacturer's site. Highway driving usually beats the rating; city driving and heavy loads lower it."},
+    {"q": "How does splitting fuel cost work?", "a": "Enter the number of people sharing the cost and the calculator divides the total fuel cost evenly. Tick round trip to count both legs of the journey so nobody is short-changed on the way home."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="fuel-dist">Trip distance (miles)</label><input type="number" id="fuel-dist" value="280" min="0" step="0.1"></div>
+  <div class="field"><label for="fuel-mpg">Fuel efficiency (MPG)</label><input type="number" id="fuel-mpg" value="28" min="0.1" step="0.1"></div>
+  <div class="field"><label for="fuel-price">Gas price ($ / gallon)</label><input type="number" id="fuel-price" value="3.50" min="0" step="0.01"></div>
+  <div class="field"><label for="fuel-people">Split between (people)</label><input type="number" id="fuel-people" value="1" min="1" step="1"></div>
+</div>
+<div class="checks"><label><input type="checkbox" id="fuel-round"> Round trip (there and back)</label></div>
+<div class="result">
+  <div class="result-big" id="fuel-big">$0.00</div>
+  <div id="fuel-out" style="margin-top:12px"></div>
+</div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var num = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  var big = document.getElementById('fuel-big'), out = document.getElementById('fuel-out');
+
+  function calc() {
+    var input = +document.getElementById('fuel-dist').value || 0;
+    var mpg = +document.getElementById('fuel-mpg').value || 0;
+    var price = +document.getElementById('fuel-price').value || 0;
+    var people = Math.max(1, Math.floor(+document.getElementById('fuel-people').value) || 1);
+    var roundTrip = document.getElementById('fuel-round').checked;
+    var distance = roundTrip ? input * 2 : input;
+    var gallons = mpg > 0 ? distance / mpg : 0;
+    var totalCost = gallons * price;
+    var perPerson = totalCost / people;
+
+    big.textContent = money.format(totalCost);
+    out.innerHTML =
+      kv('Distance', num.format(distance) + ' mi' + (roundTrip ? ' (round trip)' : '')) +
+      kv('Total fuel cost', money.format(totalCost)) +
+      kv('Gallons used', num.format(gallons) + ' gal') +
+      (people > 1 ? kv('Cost per person (' + people + ')', money.format(perPerson)) : '');
+  }
+  ['fuel-dist', 'fuel-mpg', 'fuel-price', 'fuel-people', 'fuel-round'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
+
+<h2>Estimate the fuel cost of any trip</h2>
+<p>Enter your <strong>trip distance</strong>, your car's <strong>MPG</strong>, and the current <strong>gas price</strong> to see exactly what the drive will cost. Tick <strong>round trip</strong> to double the distance for the return leg, and set the number of people to split the bill fairly on a shared road trip. Everything updates live as you type.</p>
+<p>For the most accurate result, use your real-world fuel economy rather than the sticker number — highway driving tends to beat it, while city traffic, roof racks, and a full load of passengers and luggage all drag it down. Fuel is usually the largest variable cost of a road trip, so a quick estimate up front makes it easy to compare routes, decide whether to carpool, and agree on who chips in what before you set off.</p>

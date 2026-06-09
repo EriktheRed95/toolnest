@@ -1,0 +1,64 @@
+<!--META
+{
+  "title": "Final Grade Calculator",
+  "slug": "final-grade-calculator",
+  "category": "everyday",
+  "h1": "Final Grade Calculator",
+  "description": "Find out the score you need on your final exam to reach your target overall grade, based on your current grade and the exam's weight.",
+  "keywords": "final grade calculator, final exam grade calculator, what do I need on my final, required final score, grade needed calculator",
+  "faq": [
+    {"q": "How does the final grade calculator work?", "a": "It takes your current grade, the share of your overall grade the final is worth, and the overall grade you want. It then solves for the score you'd need on the final so that your weighted total hits your target."},
+    {"q": "What if the score needed is over 100%?", "a": "If the required score exceeds 100, your target isn't reachable through the final alone — you'd need extra credit or a higher-scoring opportunity. The calculator flags this so you can set a realistic goal."},
+    {"q": "What if I need a negative score?", "a": "A required score of zero or below means you've already locked in your desired grade — even scoring nothing on the final would still leave you at or above your target. The calculator marks this as secured."},
+    {"q": "What is the exam weight?", "a": "It's the percentage of your total course grade that the final exam counts for. If your final is worth 30% of the grade, enter 30. The rest of your grade comes from work you've already completed."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="fg-current">Current grade (%)</label><input type="number" id="fg-current" value="88" step="0.1"></div>
+  <div class="field"><label for="fg-weight">Final exam weight (%)</label><input type="number" id="fg-weight" value="30" min="0" max="100" step="0.1"></div>
+  <div class="field"><label for="fg-desired">Desired overall grade (%)</label><input type="number" id="fg-desired" value="90" step="0.1"></div>
+</div>
+
+<div class="result" id="fg-out"></div>
+
+<script>
+(function () {
+  var ids = ['fg-current', 'fg-weight', 'fg-desired'];
+  function v(id) { return document.getElementById(id).value; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var out = document.getElementById('fg-out');
+    var current = parseFloat(v('fg-current')), weight = parseFloat(v('fg-weight')), desired = parseFloat(v('fg-desired'));
+    if (isNaN(current) || isNaN(weight) || isNaN(desired)) { out.innerHTML = '<p class="note">Enter your current grade, exam weight, and desired grade.</p>'; return; }
+    if (weight <= 0) { out.innerHTML = '<p class="note warn">The final exam weight must be greater than 0%.</p>'; return; }
+    var w = weight / 100;
+    var needed = (desired - current * (1 - w)) / w;
+    var rounded = Math.round(needed * 10) / 10;
+
+    var note;
+    if (needed > 100) note = '<p class="note warn">A score of ' + rounded + '% isn\'t achievable on a standard 100-point final — you\'d need extra credit to reach your target.</p>';
+    else if (needed <= 0) note = '<p class="note ok">You\'ve already secured your desired grade — even a 0% on the final keeps you at or above ' + desired + '%.</p>';
+    else note = '<p class="note ok">This is within reach on a standard 100-point exam.</p>';
+
+    out.innerHTML =
+      '<div class="result-sub">Score needed on the final exam</div>' +
+      '<div class="result-big">' + rounded + '%</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Current grade', current + '%') +
+        kv('Final exam weight', weight + '%') +
+        kv('Desired overall grade', desired + '%') +
+      '</div>' + note;
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Know exactly what you need</h2>
+<p>Heading into finals, the question on everyone's mind is simple: <strong>what do I need to score to hit my goal?</strong> This calculator answers it. Give it your current grade, how much the final is worth toward your overall mark, and the grade you're aiming for, and it solves for the exact score the exam requires. The result updates live, so you can try different target grades and see what each one demands.</p>
+<p>The math weights your existing grade by everything that isn't the final, then works out how high the final must be to pull your total up to your target. It's the same calculation a professor uses, just instant.</p>
+<h2>Reading the result</h2>
+<p>Two outcomes are worth watching for. If the needed score comes out <strong>above 100%</strong>, your target isn't reachable through the final alone — time to either lower the goal or look for extra credit. If it comes out at <strong>zero or below</strong>, congratulations: you've already secured your desired grade and could skip the exam (figuratively) without dropping below it. Anything in between is your real target.</p>
+<p class="note">This assumes a standard weighted average and a 100-point final. Confirm your course's exact grading policy, since curves and bonus points can shift the result.</p>

@@ -1,0 +1,84 @@
+<!--META
+{
+  "title": "Net Worth Calculator",
+  "slug": "net-worth-calculator",
+  "category": "finance",
+  "h1": "Net Worth Calculator",
+  "description": "Calculate your net worth by adding up your assets and subtracting your debts. Enter cash, investments, property, and liabilities to see where you stand financially.",
+  "keywords": "net worth calculator, net worth tracker, assets and liabilities calculator, personal balance sheet, calculate net worth, financial health",
+  "faq": [
+    {"q": "What is net worth?", "a": "Net worth is the value of everything you own minus everything you owe. Add up your assets — cash, investments, retirement accounts, home, vehicles — then subtract your liabilities like mortgages, loans, and credit card balances. The result is a single number that captures your overall financial position at a moment in time."},
+    {"q": "What counts as an asset versus a liability?", "a": "Assets are things of value you own: bank balances, investment and retirement accounts, real estate, vehicles, and valuables. Liabilities are debts you owe: mortgage balance, auto and student loans, credit card debt, and any other borrowing. Net worth is simply total assets minus total liabilities."},
+    {"q": "Is it normal to have a negative net worth?", "a": "Yes, especially early on. Recent graduates with student loans or new homeowners with large mortgages often have a negative net worth. What matters is the trend: as you pay down debt and build savings, the number should climb over time. A negative figure is a starting point, not a verdict."},
+    {"q": "How often should I calculate my net worth?", "a": "Checking once or twice a year is plenty for most people. Tracking it periodically — rather than obsessing daily — shows whether your finances are moving in the right direction and helps you spot whether debt is shrinking and savings are growing as planned."}
+  ]
+}
+META-->
+<h2 style="margin-top:0">Assets — what you own</h2>
+<div class="row">
+  <div class="field"><label for="nw-cash">Cash &amp; savings ($)</label><input type="number" id="nw-cash" value="15000" min="0" step="500"></div>
+  <div class="field"><label for="nw-invest">Investments ($)</label><input type="number" id="nw-invest" value="40000" min="0" step="500"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="nw-retire">Retirement accounts ($)</label><input type="number" id="nw-retire" value="80000" min="0" step="500"></div>
+  <div class="field"><label for="nw-home">Home value ($)</label><input type="number" id="nw-home" value="350000" min="0" step="1000"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="nw-vehicles">Vehicles ($)</label><input type="number" id="nw-vehicles" value="20000" min="0" step="500"></div>
+  <div class="field"><label for="nw-otherassets">Other assets ($)</label><input type="number" id="nw-otherassets" value="5000" min="0" step="500"></div>
+</div>
+
+<h2>Liabilities — what you owe</h2>
+<div class="row">
+  <div class="field"><label for="nw-mortgage">Mortgage balance ($)</label><input type="number" id="nw-mortgage" value="250000" min="0" step="1000"></div>
+  <div class="field"><label for="nw-auto">Auto loans ($)</label><input type="number" id="nw-auto" value="12000" min="0" step="500"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="nw-student">Student loans ($)</label><input type="number" id="nw-student" value="18000" min="0" step="500"></div>
+  <div class="field"><label for="nw-cards">Credit card debt ($)</label><input type="number" id="nw-cards" value="4000" min="0" step="100"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="nw-otherdebt">Other debts ($)</label><input type="number" id="nw-otherdebt" value="0" min="0" step="500"></div>
+</div>
+
+<div class="result" id="nw-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var assetIds = ['nw-cash', 'nw-invest', 'nw-retire', 'nw-home', 'nw-vehicles', 'nw-otherassets'];
+  var liabIds = ['nw-mortgage', 'nw-auto', 'nw-student', 'nw-cards', 'nw-otherdebt'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var totalAssets = assetIds.reduce(function (s, id) { return s + v(id); }, 0);
+    var totalLiabilities = liabIds.reduce(function (s, id) { return s + v(id); }, 0);
+    var netWorth = totalAssets - totalLiabilities;
+
+    document.getElementById('nw-out').innerHTML =
+      '<div class="result-sub">Your net worth</div>' +
+      '<div class="result-big">' + money.format(netWorth) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Total assets', money.format(totalAssets)) +
+        kv('Total liabilities', money.format(totalLiabilities)) +
+        kv('<strong>Net worth</strong>', '<strong>' + money.format(netWorth) + '</strong>') +
+      '</div>' +
+      (netWorth >= 0
+        ? '<p class="note ok">You own more than you owe. Keep growing the gap by paying down debt and building savings and investments over time.</p>'
+        : '<p class="note warn">You currently owe more than you own. That’s common with mortgages or student loans early on — focus on chipping away at debt and the number should climb.</p>');
+  }
+  assetIds.concat(liabIds).forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Your personal balance sheet</h2>
+<p>Net worth is the clearest single snapshot of your financial health. It works just like a company's balance sheet: add up everything you own, subtract everything you owe, and the difference is what's truly yours. This calculator groups your assets — cash, investments, retirement accounts, home, vehicles, and anything else of value — and your liabilities, from your mortgage to credit card balances, then computes the bottom line.</p>
+<p>The exact figure matters less than its direction over time. As you pay down debt and accumulate savings and investments, your net worth should trend upward. Recalculating every six or twelve months turns vague feelings about money into a concrete trendline you can act on.</p>
+<ul>
+  <li><strong>Grow assets</strong> — automate saving and investing so balances build without ongoing effort.</li>
+  <li><strong>Shrink liabilities</strong> — paying off high-rate debt boosts net worth dollar for dollar.</li>
+  <li><strong>Track the trend</strong> — compare snapshots over time rather than fixating on one number.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> Asset values like homes and vehicles are estimates that change with the market, and this is a simplified snapshot, not a formal valuation. Use it to track your progress over time. This is not financial advice.</p>

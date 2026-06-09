@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UUID Generator</title>
+<meta name="description" content="Generate random RFC 4122 version-4 UUIDs in your browser. Choose how many you need and copy them all with one click. Cryptographically secure and completely private.">
+<meta name="keywords" content="uuid generator, guid generator, version 4 uuid, random uuid, rfc 4122, unique identifier">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/uuid-generator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="UUID Generator">
+<meta property="og:description" content="Generate random RFC 4122 version-4 UUIDs in your browser. Choose how many you need and copy them all with one click. Cryptographically secure and completely private.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/uuid-generator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "UUID Generator", "url": "https://erikthered95.github.io/toolnest/uuid-generator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Generate random RFC 4122 version-4 UUIDs in your browser. Choose how many you need and copy them all with one click. Cryptographically secure and completely private."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is a version-4 UUID?", "acceptedAnswer": {"@type": "Answer", "text": "A version-4 UUID is a 128-bit identifier where almost all bits are random. It's written as 32 hexadecimal digits in the 8-4-4-4-12 pattern, with version and variant bits fixed by RFC 4122. With 122 random bits, the chance of two colliding is vanishingly small."}}, {"@type": "Question", "name": "Are these UUIDs cryptographically random?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The random bytes come from window.crypto.getRandomValues, the browser's cryptographically secure generator. Everything happens locally, so no UUID is ever sent to a server or stored."}}, {"@type": "Question", "name": "Can I use these as database keys or API tokens?", "acceptedAnswer": {"@type": "Answer", "text": "UUIDs are great as primary keys and request IDs where you need uniqueness without coordination. For security tokens they're acceptable given 122 bits of entropy, though a dedicated secret generator is often clearer for that purpose."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>UUID Generator (v4)</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://erikthered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "UUID Generator (v4)"}]}</script>
+<article class="tool"><h1>UUID Generator (v4)</h1><p class="lede">Generate random RFC 4122 version-4 UUIDs in your browser. Choose how many you need and copy them all with one click. Cryptographically secure and completely private.</p><div class="field">
+  <label for="uuid-count">How many: <span id="uuid-count-val">5</span></label>
+  <input type="range" id="uuid-count" min="1" max="100" value="5" style="width:100%">
+</div>
+<div class="btn-row">
+  <button class="btn" id="uuid-go">Generate</button>
+  <button class="btn secondary" data-copy="#uuid-out" id="uuid-copy">Copy</button>
+</div>
+<div class="result"><div class="pw-out" id="uuid-out" style="white-space:pre-wrap"></div></div>
+
+<script>
+(function () {
+  var countEl = document.getElementById('uuid-count'), out = document.getElementById('uuid-out');
+  document.getElementById('uuid-count-val').textContent = countEl.value;
+  countEl.addEventListener('input', function () { document.getElementById('uuid-count-val').textContent = countEl.value; });
+
+  var hex = [];
+  for (var i = 0; i < 256; i++) hex[i] = (i + 0x100).toString(16).slice(1);
+
+  function uuid() {
+    var b = new Uint8Array(16);
+    window.crypto.getRandomValues(b);
+    b[6] = (b[6] & 0x0f) | 0x40;
+    b[8] = (b[8] & 0x3f) | 0x80;
+    return hex[b[0]] + hex[b[1]] + hex[b[2]] + hex[b[3]] + '-' +
+           hex[b[4]] + hex[b[5]] + '-' + hex[b[6]] + hex[b[7]] + '-' +
+           hex[b[8]] + hex[b[9]] + '-' +
+           hex[b[10]] + hex[b[11]] + hex[b[12]] + hex[b[13]] + hex[b[14]] + hex[b[15]];
+  }
+  function go() {
+    var n = +countEl.value, list = [];
+    for (var i = 0; i < n; i++) list.push(uuid());
+    out.textContent = list.join('\n');
+  }
+  document.getElementById('uuid-go').addEventListener('click', go);
+  go();
+})();
+</script>
+
+<h2>Generate unique identifiers instantly</h2>
+<p>A UUID (Universally Unique Identifier, also called a GUID) is a 128-bit value used to label something without needing a central authority to hand out IDs. This tool produces <strong>version-4</strong> UUIDs, the random variety defined by RFC 4122, formatted in the familiar <code>8-4-4-4-12</code> hexadecimal pattern. Drag the slider to pick how many you want and click Generate; copy the whole batch with one button.</p>
+<p>Because every value draws its random bytes from your browser's cryptographically secure generator, the identifiers are suitable for database primary keys, message IDs, file names, test fixtures, and anywhere else you need values that practically never collide. Nothing leaves your device — the UUIDs are created locally and are gone as soon as you close the tab.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is a version-4 UUID?</summary><div class="faq-a">A version-4 UUID is a 128-bit identifier where almost all bits are random. It's written as 32 hexadecimal digits in the 8-4-4-4-12 pattern, with version and variant bits fixed by RFC 4122. With 122 random bits, the chance of two colliding is vanishingly small.</div></details>
+<details class="faq-item"><summary>Are these UUIDs cryptographically random?</summary><div class="faq-a">Yes. The random bytes come from window.crypto.getRandomValues, the browser's cryptographically secure generator. Everything happens locally, so no UUID is ever sent to a server or stored.</div></details>
+<details class="faq-item"><summary>Can I use these as database keys or API tokens?</summary><div class="faq-a">UUIDs are great as primary keys and request IDs where you need uniqueness without coordination. For security tokens they're acceptable given 122 bits of entropy, though a dedicated secret generator is often clearer for that purpose.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/username-generator/"><h3>Username Generator</h3><p>Generate fun, memorable usernames by combining an adjective and a noun, with optional numbers and capitalization. Cryptographically random and private.</p></a><a class="card" href="/toolnest/word-counter/"><h3>Word Counter</h3><p>Count words, characters, sentences, and paragraphs in your text instantly. See reading time too. Everything runs in your browser — your text never leaves the page.</p></a><a class="card" href="/toolnest/base64-encode-decode/"><h3>Base64 Encode & Decode</h3><p>Encode text to Base64 or decode Base64 back to text, right in your browser. UTF-8 safe, handles emoji and accents, and never sends your data anywhere.</p></a><a class="card" href="/toolnest/case-converter/"><h3>Case Converter</h3><p>Convert text between UPPERCASE, lowercase, Title Case, Sentence case, camelCase, snake_case, and kebab-case. Fast, free, and private — runs in your browser.</p></a><a class="card" href="/toolnest/coin-flip/"><h3>Coin Flip</h3><p>Flip a virtual coin online. Get a fair, random heads or tails result, flip several at once, and keep a running tally. Free instant coin toss.</p></a><a class="card" href="/toolnest/color-converter/"><h3>Color Converter (HEX, RGB, HSL)</h3><p>Convert colors between HEX, RGB, and HSL with a live preview swatch and a color picker. Pick a color or type a hex code and copy the values you need.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

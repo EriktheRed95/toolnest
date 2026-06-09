@@ -1,0 +1,77 @@
+<!--META
+{
+  "title": "Property Tax Proration Calculator",
+  "slug": "property-tax-proration-calculator",
+  "category": "finance",
+  "h1": "Property Tax Proration Calculator",
+  "description": "Split annual property taxes between buyer and seller at closing based on the closing date, using a simple calendar-year proration.",
+  "keywords": "property tax proration calculator, tax proration at closing, seller tax credit, prorated property taxes, real estate closing taxes",
+  "faq": [
+    {"q": "What is property tax proration?", "a": "At closing, property taxes are split between buyer and seller based on how long each owned the home during the tax period. The seller is responsible for the days they owned the property, and the buyer for the rest. Because taxes are often paid in arrears, the seller's share is typically credited to the buyer at closing."},
+    {"q": "How is the proration calculated here?", "a": "This tool uses a simple calendar-year method: it divides the annual tax by 365 to get a daily rate, then charges the seller for every day from January 1 through the day before closing. The buyer owns the closing day and the rest of the year, so the buyer covers the remaining days."},
+    {"q": "Who actually pays the prorated taxes?", "a": "It depends on local custom and whether taxes are paid in advance or in arrears. Commonly the seller's share appears as a credit to the buyer on the closing statement, since the buyer will pay the full tax bill when it comes due. Your settlement statement spells out the exact mechanics."},
+    {"q": "Why might my actual proration differ?", "a": "Many areas prorate on a fiscal year rather than a calendar year, use a 360-day year, or assign the closing day to the seller. Local custom, the purchase contract, and the title company's conventions all affect the split, so treat this as an estimate and confirm with your closing documents."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="pt-tax">Annual property tax ($)</label><input type="number" id="pt-tax" value="4380" min="0" step="10"></div>
+  <div class="field"><label for="pt-date">Closing date</label><input type="date" id="pt-date" value="2026-07-01"></div>
+</div>
+
+<div class="result" id="pt-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var tax = v('pt-tax');
+    var dateStr = document.getElementById('pt-date').value;
+    var out = document.getElementById('pt-out');
+    if (tax <= 0 || !dateStr) {
+      out.innerHTML = '<p class="note">Enter an annual tax amount and a closing date.</p>';
+      return;
+    }
+    var parts = dateStr.split('-');
+    var year = +parts[0], month = +parts[1], day = +parts[2];
+    // Day of year, Jan 1 = day 1 (treat as non-leap 365-day basis)
+    var start = Date.UTC(year, 0, 1);
+    var close = Date.UTC(year, month - 1, day);
+    var dayOfYear = Math.round((close - start) / 86400000) + 1;
+
+    var dailyRate = tax / 365;
+    var sellerDays = dayOfYear - 1;
+    var sellerShare = dailyRate * sellerDays;
+    var buyerShare = tax - sellerShare;
+    var buyerDays = 365 - sellerDays;
+
+    out.innerHTML =
+      '<div class="result-sub">Seller&rsquo;s share (credit to buyer)</div>' +
+      '<div class="result-big">' + money.format(sellerShare) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Buyer&rsquo;s share', money.format(buyerShare)) +
+        kv('Daily tax rate', money.format(dailyRate)) +
+        kv('Seller owns (days)', sellerDays + ' (Jan 1 &ndash; day before closing)') +
+        kv('Buyer owns (days)', buyerDays + ' (closing day &ndash; Dec 31)') +
+      '</div>' +
+      '<p class="note">The seller&rsquo;s ' + money.format(sellerShare) + ' covers the ' + sellerDays + ' days they owned the home and is typically credited to the buyer at closing.</p>';
+  }
+  document.getElementById('pt-tax').addEventListener('input', calc);
+  document.getElementById('pt-date').addEventListener('input', calc);
+  document.getElementById('pt-date').addEventListener('change', calc);
+  calc();
+})();
+</script>
+
+<h2>How property tax proration works</h2>
+<p>When a home changes hands mid-year, neither party should pay taxes for days they didn't own the place. Proration splits the annual bill fairly: the seller covers everything from January 1 up to the day before closing, and the buyer takes over from the closing day through the end of the year. This calculator finds the closing date's day of the year, multiplies a daily tax rate by the seller's days, and shows each side's share.</p>
+<p>Because property taxes are frequently billed in arrears, the seller's portion usually shows up as a <strong>credit to the buyer</strong> on the settlement statement — the buyer then pays the full bill when it arrives. The math here uses a clean calendar-year, 365-day basis, which is the easiest method to reason about.</p>
+<ul>
+  <li><strong>Daily rate</strong> — annual tax divided by 365.</li>
+  <li><strong>Seller days</strong> — January 1 through the day before closing.</li>
+  <li><strong>Buyer days</strong> — closing day through December 31.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> Proration customs differ widely — some areas use a fiscal year, a 360-day basis, or assign the closing day to the seller. The purchase contract and local practice govern the real split. Always rely on your official closing statement. This is not financial, tax, or legal advice.</p>

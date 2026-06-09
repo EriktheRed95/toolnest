@@ -1,0 +1,62 @@
+<!--META
+{
+  "title": "JSON Formatter & Validator",
+  "slug": "json-formatter",
+  "category": "random",
+  "h1": "JSON Formatter & Validator",
+  "description": "Format, minify, and validate JSON in your browser. Pretty-print with clean indentation, compress to one line, and get clear error messages. Private and instant.",
+  "keywords": "json formatter, json validator, json beautifier, json minifier, pretty print json, format json online",
+  "faq": [
+    {"q": "What does formatting do?", "a": "Formatting parses your JSON and re-prints it with consistent two-space indentation and line breaks, making nested objects and arrays easy to read. Minifying does the opposite: it strips all unnecessary whitespace to produce the smallest valid one-line version."},
+    {"q": "How does validation work?", "a": "The tool runs your text through the browser's JSON parser. If it parses cleanly you get a 'Valid JSON' confirmation; if not, you get the parser's error message, which usually points to the character or position where the problem is."},
+    {"q": "Is my JSON sent to a server?", "a": "No. Parsing, formatting, and validation all happen locally in your browser using built-in JavaScript. Your data is never uploaded or stored, so you can safely work with configuration or API responses that contain sensitive values."}
+  ]
+}
+META-->
+<div class="field">
+  <label for="jsn-in">JSON input</label>
+  <textarea id="jsn-in" rows="6" style="width:100%;resize:vertical" placeholder="Paste JSON…">{"name":"ToolNest","tools":3,"tags":["fast","private"],"nested":{"ok":true}}</textarea>
+</div>
+<div class="btn-row">
+  <button class="btn" id="jsn-format">Format</button>
+  <button class="btn" id="jsn-minify">Minify</button>
+  <button class="btn" id="jsn-validate">Validate</button>
+  <button class="btn secondary" data-copy="#jsn-out" id="jsn-copy">Copy result</button>
+</div>
+<div id="jsn-msg"></div>
+<div class="field">
+  <label for="jsn-out">Output</label>
+  <textarea id="jsn-out" rows="8" readonly style="width:100%;resize:vertical"></textarea>
+</div>
+
+<script>
+(function () {
+  var inEl = document.getElementById('jsn-in'), out = document.getElementById('jsn-out'),
+      msg = document.getElementById('jsn-msg');
+  function parse() {
+    msg.innerHTML = '';
+    try {
+      return { ok: true, value: JSON.parse(inEl.value) };
+    } catch (e) {
+      msg.innerHTML = '<div class="note warn">Invalid JSON: ' + e.message + '</div>';
+      return { ok: false };
+    }
+  }
+  document.getElementById('jsn-format').addEventListener('click', function () {
+    var r = parse();
+    if (r.ok) out.value = JSON.stringify(r.value, null, 2);
+  });
+  document.getElementById('jsn-minify').addEventListener('click', function () {
+    var r = parse();
+    if (r.ok) out.value = JSON.stringify(r.value);
+  });
+  document.getElementById('jsn-validate').addEventListener('click', function () {
+    var r = parse();
+    if (r.ok) msg.innerHTML = '<div class="note ok">Valid JSON</div>';
+  });
+})();
+</script>
+
+<h2>Clean up and check your JSON</h2>
+<p>JSON is everywhere — API responses, config files, log lines — but it's often delivered as one unreadable blob or with a stray comma that breaks parsing. Paste it here and click <strong>Format</strong> to pretty-print it with tidy two-space indentation, or <strong>Minify</strong> to collapse it back to the smallest valid single line for transport. <strong>Validate</strong> tells you immediately whether the document parses, and shows the parser's error message when it doesn't.</p>
+<p>Everything runs through your browser's native JSON engine, so the results match exactly how your code will interpret the data. Because nothing is uploaded, you can safely paste responses that include tokens, customer data, or internal configuration — it never leaves your device.</p>

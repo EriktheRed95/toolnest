@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Username Generator</title>
+<meta name="description" content="Generate fun, memorable usernames by combining an adjective and a noun, with optional numbers and capitalization. Cryptographically random and private.">
+<meta name="keywords" content="username generator, random username, gamertag generator, handle generator, cool usernames">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/username-generator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Username Generator">
+<meta property="og:description" content="Generate fun, memorable usernames by combining an adjective and a noun, with optional numbers and capitalization. Cryptographically random and private.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/username-generator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Username Generator", "url": "https://erikthered95.github.io/toolnest/username-generator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Generate fun, memorable usernames by combining an adjective and a noun, with optional numbers and capitalization. Cryptographically random and private."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How are the usernames made?", "acceptedAnswer": {"@type": "Answer", "text": "Each username pairs a random adjective with a random noun \u2014 like swiftfalcon or lunarpanda \u2014 and can append a two- or three-digit number. You can choose whether words are capitalized. The randomness comes from your browser's secure crypto generator."}}, {"@type": "Question", "name": "Will these usernames be available?", "acceptedAnswer": {"@type": "Answer", "text": "This tool generates ideas; it can't check whether a name is already taken on a given site. Adding numbers greatly increases the odds of finding a free variant. Generate a fresh batch and try a few on the service you have in mind."}}, {"@type": "Question", "name": "Are the generated names private?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Everything is created locally in your browser and nothing is sent anywhere or saved. Reload the page and you get a brand-new set with no history kept."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>Username Generator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://erikthered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "Username Generator"}]}</script>
+<article class="tool"><h1>Username Generator</h1><p class="lede">Generate fun, memorable usernames by combining an adjective and a noun, with optional numbers and capitalization. Cryptographically random and private.</p><div class="field">
+  <label for="usr-count">How many: <span id="usr-count-val">8</span></label>
+  <input type="range" id="usr-count" min="1" max="20" value="8" style="width:100%">
+</div>
+<div class="checks">
+  <label><input type="checkbox" id="usr-num" checked> Add numbers</label>
+  <label><input type="checkbox" id="usr-cap"> Capitalize</label>
+</div>
+<div class="btn-row">
+  <button class="btn" id="usr-go">Generate</button>
+  <button class="btn secondary" data-copy="#usr-out" id="usr-copy">Copy</button>
+</div>
+<div class="result"><div class="pw-out" id="usr-out" style="white-space:pre-wrap"></div></div>
+
+<script>
+(function () {
+  var ADJ = ['swift','cosmic','silent','brave','lunar','mighty','clever','royal','fuzzy','turbo',
+             'neon','shadow','golden','rapid','frost','crimson','electric','mellow','rogue','atomic'];
+  var NOUN = ['falcon','tiger','pixel','comet','ninja','otter','raven','panda','dragon','wolf',
+              'phoenix','koala','hawk','viper','bear','fox','lynx','orca','gecko','badger'];
+  var countEl = document.getElementById('usr-count'), out = document.getElementById('usr-out');
+  document.getElementById('usr-count-val').textContent = countEl.value;
+  countEl.addEventListener('input', function () { document.getElementById('usr-count-val').textContent = countEl.value; });
+
+  function rand(max) {
+    var buf = new Uint32Array(1);
+    window.crypto.getRandomValues(buf);
+    return buf[0] % max;
+  }
+  function cap(w) { return w.charAt(0).toUpperCase() + w.slice(1); }
+  function go() {
+    var n = +countEl.value, addNum = document.getElementById('usr-num').checked,
+        doCap = document.getElementById('usr-cap').checked, list = [];
+    for (var i = 0; i < n; i++) {
+      var a = ADJ[rand(ADJ.length)], b = NOUN[rand(NOUN.length)];
+      if (doCap) { a = cap(a); b = cap(b); }
+      var name = a + b;
+      if (addNum) name += (10 + rand(990));
+      list.push(name);
+    }
+    out.textContent = list.join('\n');
+  }
+  document.getElementById('usr-go').addEventListener('click', go);
+  go();
+})();
+</script>
+
+<h2>Find a username you actually like</h2>
+<p>Coming up with a good handle on the spot is hard. This generator does the brainstorming for you by stitching together a random <strong>adjective</strong> and <strong>noun</strong> — pairings like <em>swiftfalcon</em>, <em>lunarpanda</em>, or <em>turbogecko</em> — that read well and are easy to remember. Toggle <strong>Add numbers</strong> to tack on a couple of digits, which makes it far more likely a name is still free, and toggle <strong>Capitalize</strong> for a CamelCase look.</p>
+<p>Slide to choose how many ideas you want and hit Generate for a fresh batch any time; copy the whole list with one click. The names are built with your browser's cryptographically secure randomness, entirely on your device, so nothing is uploaded or stored. Try a few on the site you're signing up for and pick the one that fits.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How are the usernames made?</summary><div class="faq-a">Each username pairs a random adjective with a random noun — like swiftfalcon or lunarpanda — and can append a two- or three-digit number. You can choose whether words are capitalized. The randomness comes from your browser's secure crypto generator.</div></details>
+<details class="faq-item"><summary>Will these usernames be available?</summary><div class="faq-a">This tool generates ideas; it can't check whether a name is already taken on a given site. Adding numbers greatly increases the odds of finding a free variant. Generate a fresh batch and try a few on the service you have in mind.</div></details>
+<details class="faq-item"><summary>Are the generated names private?</summary><div class="faq-a">Yes. Everything is created locally in your browser and nothing is sent anywhere or saved. Reload the page and you get a brand-new set with no history kept.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/word-counter/"><h3>Word Counter</h3><p>Count words, characters, sentences, and paragraphs in your text instantly. See reading time too. Everything runs in your browser — your text never leaves the page.</p></a><a class="card" href="/toolnest/base64-encode-decode/"><h3>Base64 Encode & Decode</h3><p>Encode text to Base64 or decode Base64 back to text, right in your browser. UTF-8 safe, handles emoji and accents, and never sends your data anywhere.</p></a><a class="card" href="/toolnest/case-converter/"><h3>Case Converter</h3><p>Convert text between UPPERCASE, lowercase, Title Case, Sentence case, camelCase, snake_case, and kebab-case. Fast, free, and private — runs in your browser.</p></a><a class="card" href="/toolnest/coin-flip/"><h3>Coin Flip</h3><p>Flip a virtual coin online. Get a fair, random heads or tails result, flip several at once, and keep a running tally. Free instant coin toss.</p></a><a class="card" href="/toolnest/color-converter/"><h3>Color Converter (HEX, RGB, HSL)</h3><p>Convert colors between HEX, RGB, and HSL with a live preview swatch and a color picker. Pick a color or type a hex code and copy the values you need.</p></a><a class="card" href="/toolnest/dice-roller/"><h3>Dice Roller</h3><p>Roll virtual dice online — any number of dice with any number of sides (d4, d6, d8, d10, d12, d20). See each die, the total, and a running roll history.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retirement Savings Calculator</title>
+<meta name="description" content="Project how much your retirement savings could grow. Enter your age, current balance, monthly contribution, and expected return to estimate your nest egg at retirement.">
+<meta name="keywords" content="retirement calculator, retirement savings calculator, 401k calculator, nest egg calculator, retirement planning, how much to retire">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/retirement-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Retirement Savings Calculator">
+<meta property="og:description" content="Project how much your retirement savings could grow. Enter your age, current balance, monthly contribution, and expected return to estimate your nest egg at retirement.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/retirement-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Retirement Savings Calculator", "url": "https://erikthered95.github.io/toolnest/retirement-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Project how much your retirement savings could grow. Enter your age, current balance, monthly contribution, and expected return to estimate your nest egg at retirement."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does this retirement calculator work?", "acceptedAnswer": {"@type": "Answer", "text": "It compounds your current balance and your monthly contributions monthly until your chosen retirement age. The formula is future value = balance \u00d7 (1 + i)^N + contribution \u00d7 (((1 + i)^N \u2212 1) / i), where i is the monthly return and N is the number of months until retirement. The result separates what you put in from what compounding added."}}, {"@type": "Question", "name": "What return should I assume?", "acceptedAnswer": {"@type": "Answer", "text": "It depends on your investment mix. A diversified stock-heavy portfolio has historically averaged higher returns over long periods but swings year to year; bonds and cash are steadier but lower. The 7% default is a common long-run assumption for a balanced portfolio before inflation. Use a conservative figure and remember returns aren't guaranteed."}}, {"@type": "Question", "name": "Does this account for inflation and taxes?", "acceptedAnswer": {"@type": "Answer", "text": "No. This is a nominal projection. Inflation reduces what your future balance can actually buy, and taxes may apply when you withdraw from accounts like a traditional 401(k) or IRA. A Roth account grows tax-free. Treat the figure as a gross estimate, not spendable, after-tax dollars."}}, {"@type": "Question", "name": "How much do I need to retire?", "acceptedAnswer": {"@type": "Answer", "text": "A common rule of thumb is to save enough to withdraw about 4% of your balance per year in retirement, so you'd need roughly 25 times your desired annual spending. Your real number depends on your lifestyle, Social Security, pensions, and how long your retirement lasts. This tool estimates the balance side only."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Retirement Savings Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Retirement Savings Calculator"}]}</script>
+<article class="tool"><h1>Retirement Savings Calculator</h1><p class="lede">Project how much your retirement savings could grow. Enter your age, current balance, monthly contribution, and expected return to estimate your nest egg at retirement.</p><div class="row">
+  <div class="field"><label for="rc-age">Current age</label><input type="number" id="rc-age" value="35" min="0" max="100" step="1"></div>
+  <div class="field"><label for="rc-retire">Retirement age</label><input type="number" id="rc-retire" value="65" min="1" max="100" step="1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="rc-balance">Current balance ($)</label><input type="number" id="rc-balance" value="50000" min="0" step="1000"></div>
+  <div class="field"><label for="rc-monthly">Monthly contribution ($)</label><input type="number" id="rc-monthly" value="500" min="0" step="50"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="rc-rate">Annual return (%)</label><input type="number" id="rc-rate" value="7" min="0" step="0.1"></div>
+</div>
+
+<div class="result" id="rc-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['rc-age', 'rc-retire', 'rc-balance', 'rc-monthly', 'rc-rate'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var age = v('rc-age');
+    var retire = v('rc-retire');
+    var P = v('rc-balance');
+    var PMT = v('rc-monthly');
+    var i = v('rc-rate') / 100 / 12;
+    var out = document.getElementById('rc-out');
+
+    var years = retire - age;
+    if (years <= 0) {
+      out.innerHTML = '<p class="note warn">Your retirement age must be greater than your current age. Adjust the ages to see a projection.</p>';
+      return;
+    }
+    var N = Math.round(years * 12);
+
+    var fv = i === 0
+      ? P + PMT * N
+      : P * Math.pow(1 + i, N) + PMT * ((Math.pow(1 + i, N) - 1) / i);
+    var contributed = P + PMT * N;
+    var growth = fv - contributed;
+
+    out.innerHTML =
+      '<div class="result-sub">Projected balance at age ' + retire + '</div>' +
+      '<div class="result-big">' + money.format(fv) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Years until retirement', years) +
+        kv('Total contributed', money.format(contributed)) +
+        kv('&nbsp;&nbsp;Starting balance', money.format(P)) +
+        kv('&nbsp;&nbsp;Contributions', money.format(PMT * N)) +
+        kv('<strong>Investment growth</strong>', '<strong>' + money.format(growth) + '</strong>') +
+      '</div>' +
+      '<p class="note">Of your projected ' + money.format(fv) + ', ' + money.format(growth) + ' comes from compounding — money you never deposited. Starting earlier gives that growth more time to build.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>Estimate your nest egg</h2>
+<p>This calculator projects how large your retirement savings could grow by the time you stop working. It takes your current balance and adds your monthly contributions, compounding everything monthly at your expected return until your chosen retirement age. The result shows not just the final figure, but how much of it came from your own deposits versus how much compounding added on top.</p>
+<p>The single most powerful variable is time. Money you invest in your thirties has decades of compounding cycles ahead of it; the same dollars added in your fifties simply have fewer. That's why even modest contributions, started early and left alone, often end up dwarfing larger contributions made later.</p>
+<ul>
+  <li><strong>Contribute consistently</strong> — automatic monthly deposits keep compounding working without relying on willpower.</li>
+  <li><strong>Capture any employer match</strong> — a 401(k) match is an immediate, guaranteed return you don't want to leave behind.</li>
+  <li><strong>Stay invested through dips</strong> — long horizons smooth out year-to-year swings.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> This assumes a steady annual return, but real investments fluctuate and aren't guaranteed. It ignores inflation, taxes, and fees, which reduce real-world results, and doesn't account for Social Security or pensions. Treat it as a projection, not a promise. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How does this retirement calculator work?</summary><div class="faq-a">It compounds your current balance and your monthly contributions monthly until your chosen retirement age. The formula is future value = balance × (1 + i)^N + contribution × (((1 + i)^N − 1) / i), where i is the monthly return and N is the number of months until retirement. The result separates what you put in from what compounding added.</div></details>
+<details class="faq-item"><summary>What return should I assume?</summary><div class="faq-a">It depends on your investment mix. A diversified stock-heavy portfolio has historically averaged higher returns over long periods but swings year to year; bonds and cash are steadier but lower. The 7% default is a common long-run assumption for a balanced portfolio before inflation. Use a conservative figure and remember returns aren't guaranteed.</div></details>
+<details class="faq-item"><summary>Does this account for inflation and taxes?</summary><div class="faq-a">No. This is a nominal projection. Inflation reduces what your future balance can actually buy, and taxes may apply when you withdraw from accounts like a traditional 401(k) or IRA. A Roth account grows tax-free. Treat the figure as a gross estimate, not spendable, after-tax dollars.</div></details>
+<details class="faq-item"><summary>How much do I need to retire?</summary><div class="faq-a">A common rule of thumb is to save enough to withdraw about 4% of your balance per year in retirement, so you'd need roughly 25 times your desired annual spending. Your real number depends on your lifestyle, Social Security, pensions, and how long your retirement lasts. This tool estimates the balance side only.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/roth-ira-calculator/"><h3>Roth IRA Calculator</h3><p>Estimate how much your Roth IRA could grow tax-free. Enter your balance, annual contribution, time horizon, and expected return to project your tax-free retirement savings.</p></a><a class="card" href="/toolnest/savings-goal-calculator/"><h3>Savings Goal Calculator</h3><p>Find out how much to save each month to reach a goal. Enter your target, current savings, timeline, and APY to see the monthly contribution and interest you'll earn.</p></a><a class="card" href="/toolnest/seller-net-proceeds-calculator/"><h3>Seller Net Proceeds Calculator</h3><p>Estimate how much cash you'll walk away with after selling your home — sale price minus mortgage payoff, agent commission, and closing costs. Free seller net sheet.</p></a><a class="card" href="/toolnest/va-loan-calculator/"><h3>VA Loan Calculator</h3><p>Estimate your VA mortgage payment including the VA funding fee, property taxes, and insurance — with no down payment and no monthly mortgage insurance.</p></a><a class="card" href="/toolnest/2-1-buydown-calculator/"><h3>2-1 Buydown Calculator</h3><p>See your reduced mortgage payment in years 1 and 2 of a 2-1 temporary buydown, the monthly savings, and the upfront buydown cost.</p></a><a class="card" href="/toolnest/arm-vs-fixed-calculator/"><h3>ARM vs. Fixed Mortgage Calculator</h3><p>Compare an adjustable-rate mortgage (ARM) against a fixed-rate loan. See the intro-period savings, the payment after the rate adjusts, total cost, and the break-even point.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

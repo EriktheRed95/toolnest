@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Magic 8-Ball</title>
+<meta name="description" content="Ask the online Magic 8-Ball a yes-or-no question and get one of the 20 classic answers. A fun, random fortune-telling toy that runs in your browser.">
+<meta name="keywords" content="magic 8 ball, magic 8-ball online, ask the 8 ball, yes or no generator, fortune teller, random answer">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/magic-8-ball/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Magic 8-Ball">
+<meta property="og:description" content="Ask the online Magic 8-Ball a yes-or-no question and get one of the 20 classic answers. A fun, random fortune-telling toy that runs in your browser.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/magic-8-ball/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Magic 8-Ball", "url": "https://erikthered95.github.io/toolnest/magic-8-ball/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Ask the online Magic 8-Ball a yes-or-no question and get one of the 20 classic answers. A fun, random fortune-telling toy that runs in your browser."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does the Magic 8-Ball work?", "acceptedAnswer": {"@type": "Answer", "text": "Think of a yes-or-no question, then tap the button. The 8-Ball randomly picks one of the 20 classic replies \u2014 ten positive, five non-committal, and five negative \u2014 using your browser's secure random generator. Just like the real toy, the answer is pure chance."}}, {"@type": "Question", "name": "What are the 20 possible answers?", "acceptedAnswer": {"@type": "Answer", "text": "They range from confident yeses like 'It is certain' and 'Without a doubt' to hedges like 'Reply hazy, try again' and 'Ask again later', and firm noes like 'Don't count on it' and 'Very doubtful'. Ten are affirmative, five are neutral, and five are negative."}}, {"@type": "Question", "name": "Should I make real decisions with it?", "acceptedAnswer": {"@type": "Answer", "text": "It's for fun. The 8-Ball is a novelty toy with no insight into your future \u2014 it's a random reply, nothing more. Enjoy it for games, icebreakers, and settling silly debates, but make important choices the old-fashioned way."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#random">Word & Random Tools</a> &rsaquo; <span>Magic 8-Ball — Ask a Question</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Word & Random Tools", "item": "https://erikthered95.github.io/toolnest/#random"}, {"@type": "ListItem", "position": 3, "name": "Magic 8-Ball \u2014 Ask a Question"}]}</script>
+<article class="tool"><h1>Magic 8-Ball — Ask a Question</h1><p class="lede">Ask the online Magic 8-Ball a yes-or-no question and get one of the 20 classic answers. A fun, random fortune-telling toy that runs in your browser.</p><div class="field">
+  <label for="m8-q">Your question (optional)</label>
+  <input type="text" id="m8-q" placeholder="Will it be sunny tomorrow?">
+</div>
+<div class="btn-row">
+  <button class="btn" id="m8-go">Ask the 8-Ball</button>
+</div>
+<div class="result">
+  <div class="result-sub" id="m8-echo"></div>
+  <div class="result-big" id="m8-answer" style="font-size:2rem">Ask a question…</div>
+</div>
+
+<script>
+(function () {
+  var answers = ["It is certain.","It is decidedly so.","Without a doubt.","Yes definitely.","You may rely on it.","As I see it, yes.","Most likely.","Outlook good.","Yes.","Signs point to yes.","Reply hazy, try again.","Ask again later.","Better not tell you now.","Cannot predict now.","Concentrate and ask again.","Don't count on it.","My reply is no.","My sources say no.","Outlook not so good.","Very doubtful."];
+  function rand(max) { var b = new Uint32Array(1); window.crypto.getRandomValues(b); return Math.floor(b[0] / 4294967296 * max); }
+  var qEl = document.getElementById('m8-q'), echo = document.getElementById('m8-echo'), ans = document.getElementById('m8-answer');
+
+  document.getElementById('m8-go').addEventListener('click', function () {
+    var q = qEl.value.trim();
+    echo.textContent = q ? '“' + q + '”' : '';
+    ans.textContent = answers[rand(answers.length)];
+  });
+})();
+</script>
+
+<h2>Ask the Magic 8-Ball</h2>
+<p>Think of a <strong>yes-or-no question</strong>, type it in if you like, and tap the button to receive your fortune. The 8-Ball draws from the <strong>20 classic answers</strong> — ten encouraging, five non-committal, and five discouraging — picked at random with your browser's cryptographically secure generator. Every shake is independent, so you can ask the same question twice and get a different reply, exactly like the toy that's been settling playground debates since 1950.</p>
+<p>It's a novelty, of course: the 8-Ball has no idea what your future holds, and "Outlook good" carries no more weight than the flip of a coin. That's the whole charm — it takes the pressure off a trivial decision and hands it to chance. Use it for icebreakers, party games, picking where to eat, or just for a little fun. For the choices that actually matter, trust your own judgment instead.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How does the Magic 8-Ball work?</summary><div class="faq-a">Think of a yes-or-no question, then tap the button. The 8-Ball randomly picks one of the 20 classic replies — ten positive, five non-committal, and five negative — using your browser's secure random generator. Just like the real toy, the answer is pure chance.</div></details>
+<details class="faq-item"><summary>What are the 20 possible answers?</summary><div class="faq-a">They range from confident yeses like 'It is certain' and 'Without a doubt' to hedges like 'Reply hazy, try again' and 'Ask again later', and firm noes like 'Don't count on it' and 'Very doubtful'. Ten are affirmative, five are neutral, and five are negative.</div></details>
+<details class="faq-item"><summary>Should I make real decisions with it?</summary><div class="faq-a">It's for fun. The 8-Ball is a novelty toy with no insight into your future — it's a random reply, nothing more. Enjoy it for games, icebreakers, and settling silly debates, but make important choices the old-fashioned way.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/password-generator/"><h3>Password Generator</h3><p>Create strong, random passwords instantly. Choose length and character types, then copy with one click. Generated in your browser — never sent anywhere.</p></a><a class="card" href="/toolnest/random-number-generator/"><h3>Random Number Generator</h3><p>Generate random numbers in any range — pick a min and max, choose how many, and toggle duplicates. Free, instant, works on any device.</p></a><a class="card" href="/toolnest/random-picker/"><h3>Random Picker (Decision Maker)</h3><p>Paste a list of names or options and let chance choose. Perfect for giveaways, raffles, picking a winner, or settling a decision. Free and instant.</p></a><a class="card" href="/toolnest/text-sorter/"><h3>Text Sorter & Deduplicator</h3><p>Sort lines of text alphabetically, reverse or shuffle them, and remove duplicate lines. Case-insensitive and trim options. Free, private, in-browser.</p></a><a class="card" href="/toolnest/slug-generator/"><h3>URL Slug Generator</h3><p>Turn any title into a clean, SEO-friendly URL slug. Lowercases text, strips accents, and replaces spaces and symbols with hyphens. Free and instant.</p></a><a class="card" href="/toolnest/uuid-generator/"><h3>UUID Generator</h3><p>Generate random RFC 4122 version-4 UUIDs in your browser. Choose how many you need and copy them all with one click. Cryptographically secure and completely private.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!--META
+{
+  "title": "FHA Loan Calculator",
+  "slug": "fha-loan-calculator",
+  "category": "finance",
+  "h1": "FHA Loan Calculator",
+  "description": "Estimate your FHA mortgage payment including upfront and monthly MIP, property taxes, and insurance, plus the financed loan amount.",
+  "keywords": "fha loan calculator, fha mortgage calculator, fha mip calculator, fha monthly payment, upfront mortgage insurance premium",
+  "faq": [
+    {"q": "What is the minimum down payment on an FHA loan?", "a": "FHA loans allow as little as 3.5% down for borrowers with a credit score of 580 or higher. Those with scores between 500 and 579 typically need 10% down. The low minimum is a major reason FHA loans are popular with first-time buyers who haven't saved a large down payment."},
+    {"q": "What is FHA mortgage insurance (MIP)?", "a": "FHA loans carry two mortgage insurance premiums. An upfront premium of 1.75% of the base loan is usually financed into the balance. An annual premium (commonly around 0.55%) is split into monthly payments. Both protect the lender, since FHA loans accept lower credit and down payments."},
+    {"q": "Does FHA mortgage insurance ever go away?", "a": "Often not on its own. For most FHA loans with the minimum down payment, the annual MIP lasts the entire life of the loan. The common way to remove it is to refinance into a conventional loan once you have enough equity, typically around 20%."},
+    {"q": "Is the upfront MIP paid in cash?", "a": "Usually it's rolled into the loan rather than paid at closing, which is why this calculator adds it to the base loan to get your total financed amount. That slightly increases your monthly principal and interest, but keeps cash in your pocket at closing."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="fha-price">Home price ($)</label><input type="number" id="fha-price" value="350000" min="0" step="1000"></div>
+  <div class="field"><label for="fha-dp">Down payment (%)</label><input type="number" id="fha-dp" value="3.5" min="3.5" step="0.5"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="fha-rate">Interest rate (%)</label><input type="number" id="fha-rate" value="6.5" min="0" step="0.01"></div>
+  <div class="field"><label for="fha-term">Term (years)</label><input type="number" id="fha-term" value="30" min="1" step="1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="fha-tax">Property tax ($/yr)</label><input type="number" id="fha-tax" value="3600" min="0" step="100"></div>
+  <div class="field"><label for="fha-ins">Home insurance ($/yr)</label><input type="number" id="fha-ins" value="1400" min="0" step="100"></div>
+</div>
+
+<div class="result" id="fha-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var ids = ['fha-price', 'fha-dp', 'fha-rate', 'fha-term', 'fha-tax', 'fha-ins'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function pmt(P, ratePct, n) {
+    var r = ratePct / 100 / 12;
+    if (r === 0) return P / n;
+    return P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+  }
+
+  function calc() {
+    var price = v('fha-price');
+    var dpPct = v('fha-dp');
+    var rate = v('fha-rate');
+    var years = v('fha-term');
+    var tax = v('fha-tax');
+    var ins = v('fha-ins');
+    var out = document.getElementById('fha-out');
+    if (price <= 0 || years <= 0) { out.innerHTML = '<p class="note">Enter a home price and term.</p>'; return; }
+
+    var baseLoan = price - price * dpPct / 100;
+    var upfrontMIP = baseLoan * 0.0175;
+    var totalLoan = baseLoan + upfrontMIP;
+    var n = Math.round(years * 12);
+    var pi = pmt(totalLoan, rate, n);
+    var monthlyMIP = baseLoan * 0.0055 / 12;
+    var monthlyTax = tax / 12;
+    var monthlyIns = ins / 12;
+    var total = pi + monthlyMIP + monthlyTax + monthlyIns;
+
+    out.innerHTML =
+      '<div class="result-sub">Total monthly payment</div>' +
+      '<div class="result-big">' + money2.format(total) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Base loan amount', money.format(baseLoan)) +
+        kv('Upfront MIP (financed)', money.format(upfrontMIP)) +
+        kv('Total loan amount', money.format(totalLoan)) +
+        kv('Principal &amp; interest', money2.format(pi)) +
+        kv('Monthly MIP', money2.format(monthlyMIP)) +
+        kv('Property tax', money2.format(monthlyTax)) +
+        kv('Home insurance', money2.format(monthlyIns)) +
+        kv('<strong>Total monthly payment</strong>', '<strong>' + money2.format(total) + '</strong>') +
+      '</div>' +
+      '<p class="note warn">FHA’s annual MIP often lasts the <strong>life of the loan</strong> unless you refinance into a conventional mortgage once you have enough equity.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How FHA loan payments are built</h2>
+<p>FHA loans are government-backed mortgages designed to help buyers with smaller down payments or lower credit scores get into a home — with as little as <strong>3.5% down</strong>. In exchange for that flexibility, they carry two layers of mortgage insurance. An <strong>upfront premium</strong> of 1.75% of the base loan is usually financed into the balance, and an <strong>annual premium</strong> (commonly about 0.55%) is collected monthly.</p>
+<p>This calculator builds your full monthly payment from the financed loan amount plus monthly MIP, property taxes, and homeowners insurance. The biggest catch to plan around is longevity: on most FHA loans with the minimum down payment, the annual MIP doesn't fall off automatically.</p>
+<ul>
+  <li><strong>Upfront MIP</strong> is rolled into the loan, so it raises your balance, not your closing cash.</li>
+  <li><strong>Refinancing</strong> to a conventional loan is the usual way to shed FHA mortgage insurance.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> MIP rates and rules change over time and depend on your loan term and down payment. Confirm current figures with your lender. This is not financial advice.</p>

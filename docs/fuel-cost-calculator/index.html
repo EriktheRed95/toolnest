@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fuel Cost Calculator</title>
+<meta name="description" content="Estimate the fuel cost of a trip from distance, MPG, and gas price. See total cost, gallons used, and cost per person when splitting a road trip.">
+<meta name="keywords" content="fuel cost calculator, gas cost calculator, trip cost calculator, road trip gas, cost per person, mpg fuel cost">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/fuel-cost-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Fuel Cost Calculator">
+<meta property="og:description" content="Estimate the fuel cost of a trip from distance, MPG, and gas price. See total cost, gallons used, and cost per person when splitting a road trip.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/fuel-cost-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Fuel Cost Calculator", "url": "https://erikthered95.github.io/toolnest/fuel-cost-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Estimate the fuel cost of a trip from distance, MPG, and gas price. See total cost, gallons used, and cost per person when splitting a road trip."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I calculate the fuel cost of a trip?", "acceptedAnswer": {"@type": "Answer", "text": "Divide the trip distance by your vehicle's MPG to get the gallons needed, then multiply by the price per gallon. For a 280-mile trip at 28 MPG and $3.50 per gallon, that's 10 gallons \u00d7 $3.50 = $35.00."}}, {"@type": "Question", "name": "What MPG should I use?", "acceptedAnswer": {"@type": "Answer", "text": "Use your car's real-world average if you know it. Otherwise, check the EPA combined rating on the window sticker or the manufacturer's site. Highway driving usually beats the rating; city driving and heavy loads lower it."}}, {"@type": "Question", "name": "How does splitting fuel cost work?", "acceptedAnswer": {"@type": "Answer", "text": "Enter the number of people sharing the cost and the calculator divides the total fuel cost evenly. Tick round trip to count both legs of the journey so nobody is short-changed on the way home."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Fuel Cost Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Fuel Cost Calculator"}]}</script>
+<article class="tool"><h1>Fuel Cost Calculator</h1><p class="lede">Estimate the fuel cost of a trip from distance, MPG, and gas price. See total cost, gallons used, and cost per person when splitting a road trip.</p><div class="row">
+  <div class="field"><label for="fuel-dist">Trip distance (miles)</label><input type="number" id="fuel-dist" value="280" min="0" step="0.1"></div>
+  <div class="field"><label for="fuel-mpg">Fuel efficiency (MPG)</label><input type="number" id="fuel-mpg" value="28" min="0.1" step="0.1"></div>
+  <div class="field"><label for="fuel-price">Gas price ($ / gallon)</label><input type="number" id="fuel-price" value="3.50" min="0" step="0.01"></div>
+  <div class="field"><label for="fuel-people">Split between (people)</label><input type="number" id="fuel-people" value="1" min="1" step="1"></div>
+</div>
+<div class="checks"><label><input type="checkbox" id="fuel-round"> Round trip (there and back)</label></div>
+<div class="result">
+  <div class="result-big" id="fuel-big">$0.00</div>
+  <div id="fuel-out" style="margin-top:12px"></div>
+</div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var num = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  var big = document.getElementById('fuel-big'), out = document.getElementById('fuel-out');
+
+  function calc() {
+    var input = +document.getElementById('fuel-dist').value || 0;
+    var mpg = +document.getElementById('fuel-mpg').value || 0;
+    var price = +document.getElementById('fuel-price').value || 0;
+    var people = Math.max(1, Math.floor(+document.getElementById('fuel-people').value) || 1);
+    var roundTrip = document.getElementById('fuel-round').checked;
+    var distance = roundTrip ? input * 2 : input;
+    var gallons = mpg > 0 ? distance / mpg : 0;
+    var totalCost = gallons * price;
+    var perPerson = totalCost / people;
+
+    big.textContent = money.format(totalCost);
+    out.innerHTML =
+      kv('Distance', num.format(distance) + ' mi' + (roundTrip ? ' (round trip)' : '')) +
+      kv('Total fuel cost', money.format(totalCost)) +
+      kv('Gallons used', num.format(gallons) + ' gal') +
+      (people > 1 ? kv('Cost per person (' + people + ')', money.format(perPerson)) : '');
+  }
+  ['fuel-dist', 'fuel-mpg', 'fuel-price', 'fuel-people', 'fuel-round'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
+
+<h2>Estimate the fuel cost of any trip</h2>
+<p>Enter your <strong>trip distance</strong>, your car's <strong>MPG</strong>, and the current <strong>gas price</strong> to see exactly what the drive will cost. Tick <strong>round trip</strong> to double the distance for the return leg, and set the number of people to split the bill fairly on a shared road trip. Everything updates live as you type.</p>
+<p>For the most accurate result, use your real-world fuel economy rather than the sticker number — highway driving tends to beat it, while city traffic, roof racks, and a full load of passengers and luggage all drag it down. Fuel is usually the largest variable cost of a road trip, so a quick estimate up front makes it easy to compare routes, decide whether to carpool, and agree on who chips in what before you set off.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How do I calculate the fuel cost of a trip?</summary><div class="faq-a">Divide the trip distance by your vehicle's MPG to get the gallons needed, then multiply by the price per gallon. For a 280-mile trip at 28 MPG and $3.50 per gallon, that's 10 gallons × $3.50 = $35.00.</div></details>
+<details class="faq-item"><summary>What MPG should I use?</summary><div class="faq-a">Use your car's real-world average if you know it. Otherwise, check the EPA combined rating on the window sticker or the manufacturer's site. Highway driving usually beats the rating; city driving and heavy loads lower it.</div></details>
+<details class="faq-item"><summary>How does splitting fuel cost work?</summary><div class="faq-a">Enter the number of people sharing the cost and the calculator divides the total fuel cost evenly. Tick round trip to count both legs of the journey so nobody is short-changed on the way home.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/gpa-calculator/"><h3>GPA Calculator</h3><p>Calculate your grade point average on the 4.0 scale. Enter each course's letter grade and credit hours to get your weighted GPA instantly.</p></a><a class="card" href="/toolnest/loan-calculator/"><h3>Loan Calculator</h3><p>Calculate the monthly payment, total interest, and total cost of any loan — personal, student, or installment. Enter the amount, rate, and term to see your numbers.</p></a><a class="card" href="/toolnest/percentage-calculator/"><h3>Percentage Calculator</h3><p>Work out percentages three ways: what is X% of Y, X is what percent of Y, and the percent increase or decrease between two numbers. Free and instant.</p></a><a class="card" href="/toolnest/salary-to-hourly-calculator/"><h3>Salary to Hourly Calculator</h3><p>Convert an annual salary to an hourly wage, or an hourly rate to a yearly salary. See weekly, biweekly, monthly, and daily pay based on your hours and weeks worked.</p></a><a class="card" href="/toolnest/sales-tax-calculator/"><h3>Sales Tax Calculator</h3><p>Add sales tax to a price or work backward from a tax-included total. Enter the amount and tax rate to see the tax owed and the final total instantly.</p></a><a class="card" href="/toolnest/square-footage-calculator/"><h3>Square Footage Calculator</h3><p>Calculate square footage from length and width in feet. See the area in square feet, square yards, and square meters, plus total cost from a price per square foot.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

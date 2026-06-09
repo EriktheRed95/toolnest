@@ -1,0 +1,77 @@
+<!--META
+{
+  "title": "Cap Rate, GRM & 1% Rule Calculator",
+  "slug": "cap-rate-calculator",
+  "category": "finance",
+  "h1": "Cap Rate, GRM & 1% Rule Calculator",
+  "description": "Screen a rental property fast with three classic metrics: capitalization rate, gross rent multiplier, and the 1% rule.",
+  "keywords": "cap rate calculator, gross rent multiplier, GRM calculator, 1 percent rule, rental property screening, NOI calculator",
+  "faq": [
+    {"q": "What is a cap rate?", "a": "The capitalization rate is a property's net operating income (NOI) divided by its purchase price, expressed as a percentage. It estimates the unleveraged annual yield — what the property would return if you paid all cash. Higher cap rates suggest more income relative to price, often paired with more risk or a weaker location."},
+    {"q": "What is the gross rent multiplier (GRM)?", "a": "GRM is the purchase price divided by the gross annual rent. It's a rough valuation shortcut: a lower GRM means you're paying less for each dollar of rent. Because it ignores expenses, it's only useful as a first-pass screen for comparing similar properties."},
+    {"q": "What is the 1% rule?", "a": "The 1% rule says a rental's monthly rent should be at least 1% of the purchase price — so a $200,000 home should rent for about $2,000/month. It's a quick filter to decide whether a deal is worth a closer look, not a guarantee of cash flow."},
+    {"q": "Are these metrics enough to evaluate a deal?", "a": "No. Cap rate, GRM, and the 1% rule are screening tools that help you reject obvious misfits quickly. A full analysis needs financing terms, vacancy, capital expenditures, management, and local market trends. Use these to shortlist, then underwrite the survivors carefully."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="cap-price">Purchase price ($)</label><input type="number" id="cap-price" value="250000" min="0" step="1000"></div>
+  <div class="field"><label for="cap-gross">Gross annual rental income ($)</label><input type="number" id="cap-gross" value="27000" min="0" step="100"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="cap-opex">Annual operating expenses ($) <span class="hint">taxes, insurance, maintenance, management — exclude mortgage</span></label><input type="number" id="cap-opex" value="9000" min="0" step="100"></div>
+</div>
+
+<div class="result" id="cap-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var price = v('cap-price');
+    var gross = v('cap-gross');
+    var opex = v('cap-opex');
+    var out = document.getElementById('cap-out');
+    if (price <= 0 || gross <= 0) {
+      out.innerHTML = '<p class="note">Enter a purchase price and gross annual rent.</p>';
+      return;
+    }
+    var noi = gross - opex;
+    var capRate = noi / price * 100;
+    var grm = gross > 0 ? price / gross : 0;
+    var monthlyRent = gross / 12;
+    var onePct = monthlyRent / price * 100;
+    var pass = onePct >= 1.0;
+
+    out.innerHTML =
+      '<div class="result-sub">Cap rate</div>' +
+      '<div class="result-big">' + capRate.toFixed(2) + '%</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Net operating income (NOI)', money.format(noi)) +
+        kv('Gross rent multiplier (GRM)', grm.toFixed(1)) +
+        kv('Monthly rent', money.format(monthlyRent)) +
+        kv('Rent as % of price (1% rule)', onePct.toFixed(2) + '%') +
+      '</div>' +
+      (pass
+        ? '<p class="note ok">Passes the 1% rule — monthly rent is ' + onePct.toFixed(2) + '% of the price. Worth a closer look.</p>'
+        : '<p class="note warn">Fails the 1% rule — monthly rent is ' + onePct.toFixed(2) + '% of the price, below the 1% screen.</p>');
+  }
+  ['cap-price', 'cap-gross', 'cap-opex'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
+
+<h2>Three quick screens for a rental</h2>
+<p>Investors look at dozens of properties for every one they buy, so they need fast filters. This calculator runs three of the classics at once. The <strong>cap rate</strong> divides net operating income by price to estimate an all-cash yield, letting you compare properties regardless of how they're financed. The <strong>gross rent multiplier</strong> divides price by annual rent — a lower number means you pay less per dollar of rent. The <strong>1% rule</strong> checks whether monthly rent reaches 1% of the purchase price, a rough threshold for whether a deal can cash flow.</p>
+<p>None of these is a verdict. They're tripwires that tell you which listings deserve a real underwrite and which to skip. A property can pass the 1% rule and still lose money after a big roof repair, or fail it and shine because of appreciation potential.</p>
+<ul>
+  <li><strong>Cap rate</strong> — NOI ÷ price. Ignores your loan; describes the property.</li>
+  <li><strong>GRM</strong> — price ÷ gross rent. Ignores expenses; a blunt valuation check.</li>
+  <li><strong>1% rule</strong> — monthly rent ÷ price. A go/no-go shortlist filter.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> These are screening metrics, not a full analysis. They omit financing, vacancy, capital expenditures, and market trends. Verify rents and expenses and underwrite carefully before buying. This is not financial or investment advice.</p>

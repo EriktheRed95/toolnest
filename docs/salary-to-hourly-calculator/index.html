@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Salary to Hourly Calculator</title>
+<meta name="description" content="Convert an annual salary to an hourly wage, or an hourly rate to a yearly salary. See weekly, biweekly, monthly, and daily pay based on your hours and weeks worked.">
+<meta name="keywords" content="salary to hourly calculator, hourly to salary calculator, annual salary to hourly wage, hourly rate to yearly salary, pay converter">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/salary-to-hourly-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Salary to Hourly Calculator">
+<meta property="og:description" content="Convert an annual salary to an hourly wage, or an hourly rate to a yearly salary. See weekly, biweekly, monthly, and daily pay based on your hours and weeks worked.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/salary-to-hourly-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Salary to Hourly Calculator", "url": "https://erikthered95.github.io/toolnest/salary-to-hourly-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Convert an annual salary to an hourly wage, or an hourly rate to a yearly salary. See weekly, biweekly, monthly, and daily pay based on your hours and weeks worked."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I convert salary to hourly pay?", "acceptedAnswer": {"@type": "Answer", "text": "Divide your annual salary by the number of hours you work in a year. This calculator does it for you: enter your salary, hours per week, and weeks per year, and it returns your hourly rate plus weekly, biweekly, monthly, and daily figures."}}, {"@type": "Question", "name": "How do I convert hourly pay to a salary?", "acceptedAnswer": {"@type": "Answer", "text": "Multiply your hourly rate by hours worked per week, then by weeks worked per year. The second section does this and also breaks the result into monthly and weekly pay."}}, {"@type": "Question", "name": "How many hours and weeks should I use?", "acceptedAnswer": {"@type": "Answer", "text": "A common full-time assumption is 40 hours a week for 52 weeks a year (2,080 hours). If you take unpaid time off, lower the weeks; if you work part-time or overtime, adjust the hours so the estimate fits your real schedule."}}, {"@type": "Question", "name": "Are these figures before or after tax?", "acceptedAnswer": {"@type": "Answer", "text": "They're gross \u2014 before taxes, benefits, and other deductions. Your actual take-home pay will be lower and depends on where you live and your personal situation."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Salary to Hourly Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Salary to Hourly Calculator"}]}</script>
+<article class="tool"><h1>Salary to Hourly Calculator</h1><p class="lede">Convert an annual salary to an hourly wage, or an hourly rate to a yearly salary. See weekly, biweekly, monthly, and daily pay based on your hours and weeks worked.</p><h2 style="margin-top:0">Salary &rarr; Hourly</h2>
+<div class="row">
+  <div class="field"><label for="sh-salary">Annual salary ($)</label><input type="number" id="sh-salary" value="60000" min="0" step="100"></div>
+  <div class="field"><label for="sh-a-hours">Hours per week</label><input type="number" id="sh-a-hours" value="40" min="0" step="0.5"></div>
+  <div class="field"><label for="sh-a-weeks">Weeks per year</label><input type="number" id="sh-a-weeks" value="52" min="0" step="1"></div>
+</div>
+<div class="result" id="sh-a-out"></div>
+
+<h2>Hourly &rarr; Salary</h2>
+<div class="row">
+  <div class="field"><label for="sh-rate">Hourly rate ($)</label><input type="number" id="sh-rate" value="25" min="0" step="0.01"></div>
+  <div class="field"><label for="sh-b-hours">Hours per week</label><input type="number" id="sh-b-hours" value="40" min="0" step="0.5"></div>
+  <div class="field"><label for="sh-b-weeks">Weeks per year</label><input type="number" id="sh-b-weeks" value="52" min="0" step="1"></div>
+</div>
+<div class="result" id="sh-b-out"></div>
+
+<script>
+(function () {
+  var cf = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calcA() {
+    var out = document.getElementById('sh-a-out');
+    var salary = v('sh-salary'), hours = v('sh-a-hours'), weeks = v('sh-a-weeks');
+    if (salary <= 0 || hours <= 0 || weeks <= 0) { out.innerHTML = '<p class="note">Enter a salary, hours per week, and weeks per year.</p>'; return; }
+    var hourly = salary / (hours * weeks);
+    var weekly = salary / weeks;
+    var biweekly = weekly * 2;
+    var monthly = salary / 12;
+    var daily = hourly * (hours / 5);
+    out.innerHTML =
+      '<div class="result-sub">Hourly rate</div>' +
+      '<div class="result-big">' + cf.format(hourly) + '/hr</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Hourly', cf.format(hourly)) +
+        kv('Daily', cf.format(daily)) +
+        kv('Weekly', cf.format(weekly)) +
+        kv('Biweekly', cf.format(biweekly)) +
+        kv('Monthly', cf.format(monthly)) +
+        kv('Annual', cf.format(salary)) +
+      '</div>';
+  }
+
+  function calcB() {
+    var out = document.getElementById('sh-b-out');
+    var rate = v('sh-rate'), hours = v('sh-b-hours'), weeks = v('sh-b-weeks');
+    if (rate <= 0 || hours <= 0 || weeks <= 0) { out.innerHTML = '<p class="note">Enter an hourly rate, hours per week, and weeks per year.</p>'; return; }
+    var annual = rate * hours * weeks;
+    var monthly = annual / 12;
+    var weekly = annual / weeks;
+    out.innerHTML =
+      '<div class="result-sub">Annual salary</div>' +
+      '<div class="result-big">' + cf.format(annual) + '/yr</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Annual', cf.format(annual)) +
+        kv('Monthly', cf.format(monthly)) +
+        kv('Weekly', cf.format(weekly)) +
+        kv('Hourly', cf.format(rate)) +
+      '</div>';
+  }
+
+  ['sh-salary', 'sh-a-hours', 'sh-a-weeks'].forEach(function (id) { document.getElementById(id).addEventListener('input', calcA); });
+  ['sh-rate', 'sh-b-hours', 'sh-b-weeks'].forEach(function (id) { document.getElementById(id).addEventListener('input', calcB); });
+  calcA();
+  calcB();
+})();
+</script>
+
+<h2>Salary and hourly pay, both directions</h2>
+<p>Salaried and hourly figures describe the same income from different angles, and switching between them is one of the most useful things you can do when comparing job offers or planning a budget. This tool works <strong>both ways</strong>: the top section turns an annual salary into an hourly rate, and the bottom section turns an hourly rate into a yearly salary. Each has its own result box, so you can use one or compare the two side by side.</p>
+<p>The key inputs are your <strong>hours per week</strong> and <strong>weeks per year</strong>. Standard full-time work is often modelled as 40 hours across 52 weeks — about 2,080 paid hours — but you can adjust both to match part-time schedules, unpaid leave, or overtime so the numbers reflect your real situation.</p>
+<h2>Reading the breakdown</h2>
+<p>Beyond the headline figure, each section breaks pay down into the periods you actually get paid in: hourly, daily, weekly, biweekly, monthly, and annual. That makes it easy to sanity-check a quoted rate against a paycheck or to see what a raise looks like per hour. Everything recalculates the moment you change a field.</p>
+<p class="note">All figures are gross estimates before taxes, benefits, and other deductions, which vary by location and circumstance.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How do I convert salary to hourly pay?</summary><div class="faq-a">Divide your annual salary by the number of hours you work in a year. This calculator does it for you: enter your salary, hours per week, and weeks per year, and it returns your hourly rate plus weekly, biweekly, monthly, and daily figures.</div></details>
+<details class="faq-item"><summary>How do I convert hourly pay to a salary?</summary><div class="faq-a">Multiply your hourly rate by hours worked per week, then by weeks worked per year. The second section does this and also breaks the result into monthly and weekly pay.</div></details>
+<details class="faq-item"><summary>How many hours and weeks should I use?</summary><div class="faq-a">A common full-time assumption is 40 hours a week for 52 weeks a year (2,080 hours). If you take unpaid time off, lower the weeks; if you work part-time or overtime, adjust the hours so the estimate fits your real schedule.</div></details>
+<details class="faq-item"><summary>Are these figures before or after tax?</summary><div class="faq-a">They're gross — before taxes, benefits, and other deductions. Your actual take-home pay will be lower and depends on where you live and your personal situation.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/sales-tax-calculator/"><h3>Sales Tax Calculator</h3><p>Add sales tax to a price or work backward from a tax-included total. Enter the amount and tax rate to see the tax owed and the final total instantly.</p></a><a class="card" href="/toolnest/square-footage-calculator/"><h3>Square Footage Calculator</h3><p>Calculate square footage from length and width in feet. See the area in square feet, square yards, and square meters, plus total cost from a price per square foot.</p></a><a class="card" href="/toolnest/tdee-calculator/"><h3>TDEE & Calorie Calculator</h3><p>Estimate your Total Daily Energy Expenditure (TDEE) and BMR using the Mifflin-St Jeor equation, plus daily calorie targets for losing, maintaining, or gaining weight.</p></a><a class="card" href="/toolnest/tip-calculator/"><h3>Tip Calculator</h3><p>Calculate the tip and split the bill in seconds. Enter the bill, choose a tip percentage, and see the tip, total, and amount per person.</p></a><a class="card" href="/toolnest/unit-converter/"><h3>Unit Converter</h3><p>Convert between units of length, weight, temperature, and volume. Pick a category, enter a value, and choose your 'from' and 'to' units for an instant result.</p></a><a class="card" href="/toolnest/work-hours-calculator/"><h3>Work Hours Calculator</h3><p>Calculate hours worked from clock-in and clock-out times, minus unpaid breaks. See the result in hours and minutes, as decimal hours, and as gross pay if you add a rate.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!--META
+{
+  "title": "Roth IRA Calculator",
+  "slug": "roth-ira-calculator",
+  "category": "finance",
+  "h1": "Roth IRA Calculator",
+  "description": "Estimate how much your Roth IRA could grow tax-free. Enter your balance, annual contribution, time horizon, and expected return to project your tax-free retirement savings.",
+  "keywords": "roth ira calculator, roth ira growth calculator, tax-free retirement calculator, ira contribution calculator, roth ira projection, retirement savings",
+  "faq": [
+    {"q": "What is a Roth IRA?", "a": "A Roth IRA is a retirement account you fund with after-tax dollars. Because you've already paid tax on the money going in, qualified withdrawals in retirement — including all the investment growth — come out completely tax-free. That tax-free growth is the Roth's biggest advantage over a traditional IRA, where contributions may be deductible but withdrawals are taxed."},
+    {"q": "What are the 2025 Roth IRA contribution limits?", "a": "For 2025 you can contribute up to $7,000 across all your IRAs, or $8,000 if you're age 50 or older thanks to the catch-up provision. These are annual limits, not per account. The default in this calculator uses $7,000 — adjust it down if you plan to contribute less."},
+    {"q": "Are there income limits for a Roth IRA?", "a": "Yes. The ability to contribute directly phases out at higher incomes — for 2025 the phase-out begins around $146,000 for single filers and $230,000 for married couples filing jointly, with contributions disallowed above the top of each range. Higher earners sometimes use a 'backdoor' Roth conversion instead. Check current IRS figures for your situation."},
+    {"q": "Why is Roth growth so valuable?", "a": "In a taxable account, dividends and gains can be taxed along the way and at withdrawal. In a Roth, decades of compounding happen with no tax drag and no tax due when you take qualified distributions. Over a long horizon, sheltering that growth from tax can mean keeping tens of thousands of dollars more."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="ri-balance">Current balance ($)</label><input type="number" id="ri-balance" value="10000" min="0" step="500"></div>
+  <div class="field"><label for="ri-contrib">Annual contribution ($)</label><input type="number" id="ri-contrib" value="7000" min="0" step="500"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="ri-years">Years</label><input type="number" id="ri-years" value="30" min="1" max="80" step="1"></div>
+  <div class="field"><label for="ri-rate">Annual return (%)</label><input type="number" id="ri-rate" value="7" min="0" step="0.1"></div>
+</div>
+
+<div class="result" id="ri-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['ri-balance', 'ri-contrib', 'ri-years', 'ri-rate'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var start = v('ri-balance');
+    var contrib = v('ri-contrib');
+    var years = Math.round(v('ri-years'));
+    var r = v('ri-rate') / 100;
+
+    var balance = start;
+    for (var y = 0; y < years; y++) {
+      balance = balance * (1 + r) + contrib;
+    }
+    var contributed = start + contrib * years;
+    var growth = balance - contributed;
+
+    document.getElementById('ri-out').innerHTML =
+      '<div class="result-sub">Tax-free balance after ' + years + ' years</div>' +
+      '<div class="result-big">' + money.format(balance) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Total contributed', money.format(contributed)) +
+        kv('&nbsp;&nbsp;Starting balance', money.format(start)) +
+        kv('&nbsp;&nbsp;Contributions', money.format(contrib * years)) +
+        kv('<strong>Tax-free growth</strong>', '<strong>' + money.format(growth) + '</strong>') +
+      '</div>' +
+      '<p class="note">In a Roth IRA, that ' + money.format(growth) + ' of growth is yours to withdraw tax-free in retirement — no tax due on qualified distributions.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>The power of tax-free growth</h2>
+<p>A Roth IRA is one of the most valuable retirement accounts available, and its advantage is simple: you contribute money you've already paid tax on, and in return every dollar of qualified growth comes out tax-free in retirement. This calculator projects your balance by adding your annual contribution and compounding the total once a year at your expected return, then separates what you put in from what the account earned.</p>
+<p>Because the growth is never taxed, the longer your money stays invested the more the Roth pulls ahead of a comparable taxable account. Over a 30- or 40-year horizon, sheltering decades of compounding from tax can mean keeping far more of your final balance.</p>
+<ul>
+  <li><strong>Contribute early each year</strong> — funding in January rather than December gives the money extra months to compound.</li>
+  <li><strong>Max it out when you can</strong> — the annual limit is use-it-or-lose-it; you can't make up missed years later.</li>
+  <li><strong>Mind the income limits</strong> — direct contributions phase out at higher incomes.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> This assumes a steady annual return and constant contributions; real markets fluctuate and returns aren't guaranteed. Contribution and income limits change yearly — verify current IRS figures. This is not financial or tax advice.</p>

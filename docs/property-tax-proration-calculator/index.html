@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Property Tax Proration Calculator</title>
+<meta name="description" content="Split annual property taxes between buyer and seller at closing based on the closing date, using a simple calendar-year proration.">
+<meta name="keywords" content="property tax proration calculator, tax proration at closing, seller tax credit, prorated property taxes, real estate closing taxes">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/property-tax-proration-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Property Tax Proration Calculator">
+<meta property="og:description" content="Split annual property taxes between buyer and seller at closing based on the closing date, using a simple calendar-year proration.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/property-tax-proration-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Property Tax Proration Calculator", "url": "https://erikthered95.github.io/toolnest/property-tax-proration-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Split annual property taxes between buyer and seller at closing based on the closing date, using a simple calendar-year proration."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is property tax proration?", "acceptedAnswer": {"@type": "Answer", "text": "At closing, property taxes are split between buyer and seller based on how long each owned the home during the tax period. The seller is responsible for the days they owned the property, and the buyer for the rest. Because taxes are often paid in arrears, the seller's share is typically credited to the buyer at closing."}}, {"@type": "Question", "name": "How is the proration calculated here?", "acceptedAnswer": {"@type": "Answer", "text": "This tool uses a simple calendar-year method: it divides the annual tax by 365 to get a daily rate, then charges the seller for every day from January 1 through the day before closing. The buyer owns the closing day and the rest of the year, so the buyer covers the remaining days."}}, {"@type": "Question", "name": "Who actually pays the prorated taxes?", "acceptedAnswer": {"@type": "Answer", "text": "It depends on local custom and whether taxes are paid in advance or in arrears. Commonly the seller's share appears as a credit to the buyer on the closing statement, since the buyer will pay the full tax bill when it comes due. Your settlement statement spells out the exact mechanics."}}, {"@type": "Question", "name": "Why might my actual proration differ?", "acceptedAnswer": {"@type": "Answer", "text": "Many areas prorate on a fiscal year rather than a calendar year, use a 360-day year, or assign the closing day to the seller. Local custom, the purchase contract, and the title company's conventions all affect the split, so treat this as an estimate and confirm with your closing documents."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Property Tax Proration Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Property Tax Proration Calculator"}]}</script>
+<article class="tool"><h1>Property Tax Proration Calculator</h1><p class="lede">Split annual property taxes between buyer and seller at closing based on the closing date, using a simple calendar-year proration.</p><div class="row">
+  <div class="field"><label for="pt-tax">Annual property tax ($)</label><input type="number" id="pt-tax" value="4380" min="0" step="10"></div>
+  <div class="field"><label for="pt-date">Closing date</label><input type="date" id="pt-date" value="2026-07-01"></div>
+</div>
+
+<div class="result" id="pt-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var tax = v('pt-tax');
+    var dateStr = document.getElementById('pt-date').value;
+    var out = document.getElementById('pt-out');
+    if (tax <= 0 || !dateStr) {
+      out.innerHTML = '<p class="note">Enter an annual tax amount and a closing date.</p>';
+      return;
+    }
+    var parts = dateStr.split('-');
+    var year = +parts[0], month = +parts[1], day = +parts[2];
+    // Day of year, Jan 1 = day 1 (treat as non-leap 365-day basis)
+    var start = Date.UTC(year, 0, 1);
+    var close = Date.UTC(year, month - 1, day);
+    var dayOfYear = Math.round((close - start) / 86400000) + 1;
+
+    var dailyRate = tax / 365;
+    var sellerDays = dayOfYear - 1;
+    var sellerShare = dailyRate * sellerDays;
+    var buyerShare = tax - sellerShare;
+    var buyerDays = 365 - sellerDays;
+
+    out.innerHTML =
+      '<div class="result-sub">Seller&rsquo;s share (credit to buyer)</div>' +
+      '<div class="result-big">' + money.format(sellerShare) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Buyer&rsquo;s share', money.format(buyerShare)) +
+        kv('Daily tax rate', money.format(dailyRate)) +
+        kv('Seller owns (days)', sellerDays + ' (Jan 1 &ndash; day before closing)') +
+        kv('Buyer owns (days)', buyerDays + ' (closing day &ndash; Dec 31)') +
+      '</div>' +
+      '<p class="note">The seller&rsquo;s ' + money.format(sellerShare) + ' covers the ' + sellerDays + ' days they owned the home and is typically credited to the buyer at closing.</p>';
+  }
+  document.getElementById('pt-tax').addEventListener('input', calc);
+  document.getElementById('pt-date').addEventListener('input', calc);
+  document.getElementById('pt-date').addEventListener('change', calc);
+  calc();
+})();
+</script>
+
+<h2>How property tax proration works</h2>
+<p>When a home changes hands mid-year, neither party should pay taxes for days they didn't own the place. Proration splits the annual bill fairly: the seller covers everything from January 1 up to the day before closing, and the buyer takes over from the closing day through the end of the year. This calculator finds the closing date's day of the year, multiplies a daily tax rate by the seller's days, and shows each side's share.</p>
+<p>Because property taxes are frequently billed in arrears, the seller's portion usually shows up as a <strong>credit to the buyer</strong> on the settlement statement — the buyer then pays the full bill when it arrives. The math here uses a clean calendar-year, 365-day basis, which is the easiest method to reason about.</p>
+<ul>
+  <li><strong>Daily rate</strong> — annual tax divided by 365.</li>
+  <li><strong>Seller days</strong> — January 1 through the day before closing.</li>
+  <li><strong>Buyer days</strong> — closing day through December 31.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> Proration customs differ widely — some areas use a fiscal year, a 360-day basis, or assign the closing day to the seller. The purchase contract and local practice govern the real split. Always rely on your official closing statement. This is not financial, tax, or legal advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What is property tax proration?</summary><div class="faq-a">At closing, property taxes are split between buyer and seller based on how long each owned the home during the tax period. The seller is responsible for the days they owned the property, and the buyer for the rest. Because taxes are often paid in arrears, the seller's share is typically credited to the buyer at closing.</div></details>
+<details class="faq-item"><summary>How is the proration calculated here?</summary><div class="faq-a">This tool uses a simple calendar-year method: it divides the annual tax by 365 to get a daily rate, then charges the seller for every day from January 1 through the day before closing. The buyer owns the closing day and the rest of the year, so the buyer covers the remaining days.</div></details>
+<details class="faq-item"><summary>Who actually pays the prorated taxes?</summary><div class="faq-a">It depends on local custom and whether taxes are paid in advance or in arrears. Commonly the seller's share appears as a credit to the buyer on the closing statement, since the buyer will pay the full tax bill when it comes due. Your settlement statement spells out the exact mechanics.</div></details>
+<details class="faq-item"><summary>Why might my actual proration differ?</summary><div class="faq-a">Many areas prorate on a fiscal year rather than a calendar year, use a 360-day year, or assign the closing day to the seller. Local custom, the purchase contract, and the title company's conventions all affect the split, so treat this as an estimate and confirm with your closing documents.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/real-estate-commission-calculator/"><h3>Real Estate Commission Calculator</h3><p>Calculate the total real estate commission on a home sale and how it splits between the listing side, buyer side, and the agent's brokerage.</p></a><a class="card" href="/toolnest/rent-affordability-calculator/"><h3>Rent Affordability Calculator</h3><p>Find out how much rent you can afford based on your income and the 30% rule. See comfortable, moderate, and stretch budgets, plus the income most landlords require.</p></a><a class="card" href="/toolnest/rent-vs-buy-calculator/"><h3>Rent vs. Buy Calculator</h3><p>Should you rent or buy a home? Compare the true cost of buying — mortgage, taxes, upkeep, and equity — against renting and investing the difference, over your time horizon.</p></a><a class="card" href="/toolnest/cash-on-cash-calculator/"><h3>Rental Property Cash-on-Cash Calculator</h3><p>Analyze a rental property deal: monthly cash flow, cash-on-cash return, cap rate, and NOI from rent, expenses, and financing. Built for real estate investors and BRRRR deals.</p></a><a class="card" href="/toolnest/retirement-calculator/"><h3>Retirement Savings Calculator</h3><p>Project how much your retirement savings could grow. Enter your age, current balance, monthly contribution, and expected return to estimate your nest egg at retirement.</p></a><a class="card" href="/toolnest/roth-ira-calculator/"><h3>Roth IRA Calculator</h3><p>Estimate how much your Roth IRA could grow tax-free. Enter your balance, annual contribution, time horizon, and expected return to project your tax-free retirement savings.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>

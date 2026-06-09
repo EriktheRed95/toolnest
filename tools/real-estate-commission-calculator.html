@@ -1,0 +1,70 @@
+<!--META
+{
+  "title": "Real Estate Commission Calculator",
+  "slug": "real-estate-commission-calculator",
+  "category": "finance",
+  "h1": "Real Estate Commission Calculator",
+  "description": "Calculate the total real estate commission on a home sale and how it splits between the listing side, buyer side, and the agent's brokerage.",
+  "keywords": "real estate commission calculator, agent commission calculator, listing commission, realtor commission split, home sale commission",
+  "faq": [
+    {"q": "How much is a typical real estate commission?", "a": "Total commission has historically run around 5%–6% of the sale price, usually split between the listing brokerage and the buyer's brokerage. Rates are not fixed by law and are fully negotiable, and recent industry changes have made commissions more openly negotiated than they once were."},
+    {"q": "Who pays the real estate commission?", "a": "Traditionally the seller paid the full commission out of the sale proceeds, with the listing broker sharing a portion with the buyer's broker. Newer rules in many markets mean buyers may now negotiate and pay their own agent directly. Either way, the total still comes out of the transaction."},
+    {"q": "What is the brokerage split?", "a": "An agent rarely keeps the full side commission. They share it with their brokerage under an agreed split — for example, 70/30 or, for top producers, 100% minus flat fees. Set the agent split above to see roughly what an agent nets on the listing side before taxes and expenses."},
+    {"q": "Are commissions negotiable?", "a": "Yes. Commission rates and splits are negotiable between you and your agent, and they vary by market, price point, and service level. Some brokerages offer flat fees or discounted listings. Always confirm the exact rate and who pays it in your listing or buyer agreement."}
+  ]
+}
+META-->
+<div class="row">
+  <div class="field"><label for="rc-price">Sale price ($)</label><input type="number" id="rc-price" value="400000" min="0" step="1000"></div>
+  <div class="field"><label for="rc-comm">Total commission (%)</label><input type="number" id="rc-comm" value="5.5" min="0" max="100" step="0.1"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="rc-list">Listing-side share (%) <span class="hint">rest goes to buyer side</span></label><input type="number" id="rc-list" value="50" min="0" max="100" step="1"></div>
+  <div class="field"><label for="rc-split">Agent split with brokerage (%) <span class="hint">100 = keeps all</span></label><input type="number" id="rc-split" value="100" min="0" max="100" step="1"></div>
+</div>
+
+<div class="result" id="rc-out"></div>
+
+<script>
+(function () {
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var ids = ['rc-price', 'rc-comm', 'rc-list', 'rc-split'];
+  function v(id) { return +document.getElementById(id).value || 0; }
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+
+  function calc() {
+    var price = v('rc-price');
+    var commPct = v('rc-comm');
+    var listPct = v('rc-list');
+    var splitPct = v('rc-split');
+    var out = document.getElementById('rc-out');
+    if (price <= 0 || commPct <= 0) { out.innerHTML = '<p class="note">Enter a sale price and commission rate.</p>'; return; }
+
+    var total = price * commPct / 100;
+    var listingSide = total * listPct / 100;
+    var buyerSide = total - listingSide;
+    var agentNet = listingSide * splitPct / 100;
+
+    out.innerHTML =
+      '<div class="result-sub">Total commission</div>' +
+      '<div class="result-big">' + money.format(total) + '</div>' +
+      '<div style="margin-top:12px">' +
+        kv('Listing-side commission', money.format(listingSide)) +
+        kv('Buyer-side commission', money.format(buyerSide)) +
+        kv('Agent net, listing side (after ' + splitPct + '% split)', money.format(agentNet)) +
+      '</div>' +
+      '<p class="note">Commissions are negotiable and splits vary by brokerage, market, and agreement.</p>';
+  }
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+<h2>How real estate commissions split</h2>
+<p>When a home sells, the total commission is a percentage of the <strong>sale price</strong> — historically around 5%–6%, though it's fully negotiable. That total is then divided between the <strong>listing side</strong> (the seller's agent and brokerage) and the <strong>buyer side</strong> (the buyer's agent and brokerage). This calculator lets you set the listing-side share, with the remainder going to the buyer side, so you can model an even 50/50 split or anything else you've agreed to.</p>
+<p>An individual agent rarely pockets a whole side. They share it with their brokerage under a <strong>commission split</strong> — anything from a junior agent's 60/40 to a top producer keeping 100% minus flat fees. Set the agent split to see roughly what an agent nets on the listing side before taxes, marketing, and other business expenses.</p>
+<ul>
+  <li><strong>Negotiable</strong> — rates and splits are not fixed and vary widely by market and price point.</li>
+  <li><strong>Who pays</strong> — recent rule changes mean buyers may now negotiate and pay their own agent directly.</li>
+</ul>
+<p class="note"><strong>Estimate only.</strong> Actual commission terms, who pays them, and brokerage splits depend on your agreements and local market. This is not financial advice.</p>

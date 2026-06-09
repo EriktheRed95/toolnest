@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Average (Mean, Median, Mode) Calculator</title>
+<meta name="description" content="Paste numbers and instantly get the mean, median, and mode, plus count, sum, min, max, and range. Free online average calculator that updates live.">
+<meta name="keywords" content="average calculator, mean median mode, mean calculator, median calculator, mode calculator, statistics calculator, find the average">
+<link rel="canonical" href="https://erikthered95.github.io/toolnest/average-calculator/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToolNest">
+<meta property="og:title" content="Average (Mean, Median, Mode) Calculator">
+<meta property="og:description" content="Paste numbers and instantly get the mean, median, and mode, plus count, sum, min, max, and range. Free online average calculator that updates live.">
+<meta property="og:url" content="https://erikthered95.github.io/toolnest/average-calculator/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/toolnest/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="stylesheet" href="/toolnest/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Average (Mean, Median, Mode) Calculator", "url": "https://erikthered95.github.io/toolnest/average-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Paste numbers and instantly get the mean, median, and mode, plus count, sum, min, max, and range. Free online average calculator that updates live."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What's the difference between mean, median, and mode?", "acceptedAnswer": {"@type": "Answer", "text": "The mean is the sum of all values divided by how many there are. The median is the middle value when the numbers are sorted. The mode is the value that appears most often. Each describes the 'center' of your data in a different way."}}, {"@type": "Question", "name": "When should I use the median instead of the mean?", "acceptedAnswer": {"@type": "Answer", "text": "Use the median when your data has outliers or is skewed, such as incomes or house prices. A few very large or very small values pull the mean away from the typical value, but the median stays in the middle and is more representative."}}, {"@type": "Question", "name": "What if there's no single mode?", "acceptedAnswer": {"@type": "Answer", "text": "If every value appears the same number of times, there's no mode. If two or more values tie for the most frequent, the data is multimodal and the calculator lists all of them. This is normal and just means several values are equally common."}}]}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/toolnest/">ToolNest</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+    <nav class="site-nav"><a href="/toolnest/">Home</a><a href="/toolnest/#finance">Real Estate & Finance</a><a href="/toolnest/#everyday">Everyday Calculators</a><a href="/toolnest/#random">Word & Random Tools</a></nav>
+  </div>
+</header>
+<main id="main" class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Average Calculator — Mean, Median, Mode</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Average Calculator \u2014 Mean, Median, Mode"}]}</script>
+<article class="tool"><h1>Average Calculator — Mean, Median, Mode</h1><p class="lede">Paste numbers and instantly get the mean, median, and mode, plus count, sum, min, max, and range. Free online average calculator that updates live.</p><div class="field">
+  <label for="avg-input">Numbers (separated by commas, spaces, or new lines)</label>
+  <textarea id="avg-input" rows="6" style="width:100%;resize:vertical" placeholder="e.g. 4, 8, 15, 16, 23, 42">12, 7, 9, 12, 5, 20, 7, 14</textarea>
+</div>
+<div class="result">
+  <div class="result-sub">Mean (average)</div>
+  <div class="result-big" id="avg-big">0</div>
+  <div id="avg-out" style="margin-top:12px"></div>
+</div>
+
+<script>
+(function () {
+  var num = new Intl.NumberFormat('en-US', { maximumFractionDigits: 4 });
+  function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  var input = document.getElementById('avg-input'), big = document.getElementById('avg-big'), out = document.getElementById('avg-out');
+
+  function parse(s) {
+    return s.split(/[\s,]+/).map(function (t) { return parseFloat(t); }).filter(function (n) { return isFinite(n); });
+  }
+
+  function calc() {
+    var nums = parse(input.value);
+    var n = nums.length;
+    if (n === 0) {
+      big.textContent = '—';
+      out.innerHTML = '<div class="note warn">Enter some numbers to see the statistics.</div>';
+      return;
+    }
+    var sum = nums.reduce(function (a, b) { return a + b; }, 0);
+    var mean = sum / n;
+    var sorted = nums.slice().sort(function (a, b) { return a - b; });
+    var mid = Math.floor(n / 2);
+    var median = n % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    var min = sorted[0], max = sorted[n - 1];
+
+    var counts = {}, best = 0;
+    nums.forEach(function (x) { counts[x] = (counts[x] || 0) + 1; if (counts[x] > best) best = counts[x]; });
+    var modes = [];
+    for (var k in counts) { if (counts[k] === best) modes.push(parseFloat(k)); }
+    var modeText;
+    if (best <= 1) { modeText = 'No mode (all values unique)'; }
+    else if (modes.length === Object.keys(counts).length) { modeText = 'No mode (every value ties)'; }
+    else { modeText = modes.sort(function (a, b) { return a - b; }).map(function (m) { return num.format(m); }).join(', ') + ' (×' + best + ')'; }
+
+    big.textContent = num.format(mean);
+    out.innerHTML =
+      kv('Count', n) +
+      kv('Sum', num.format(sum)) +
+      kv('Mean', num.format(mean)) +
+      kv('Median', num.format(median)) +
+      kv('Mode', modeText) +
+      kv('Minimum', num.format(min)) +
+      kv('Maximum', num.format(max)) +
+      kv('Range', num.format(max - min));
+  }
+  input.addEventListener('input', calc);
+  calc();
+})();
+</script>
+
+<h2>Find the mean, median, and mode</h2>
+<p>Paste a list of numbers — separated by commas, spaces, or new lines — and the calculator instantly works out the three most common measures of center. The <strong>mean</strong> is the everyday average. The <strong>median</strong> is the middle value, which resists outliers. The <strong>mode</strong> is the most frequent value, and the tool flags when several tie or when there's no mode at all. Non-numeric text is ignored, so you can paste messy data without cleaning it first.</p>
+<p>Alongside the averages you also get the <strong>count, sum, minimum, maximum, and range</strong>, giving a quick snapshot of how your data is spread. This is handy for grading, budgeting, lab measurements, sports stats, or any time you need to summarize a set of numbers. Everything runs in your browser and recalculates live as you edit, so it stays fast and completely private.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>What's the difference between mean, median, and mode?</summary><div class="faq-a">The mean is the sum of all values divided by how many there are. The median is the middle value when the numbers are sorted. The mode is the value that appears most often. Each describes the 'center' of your data in a different way.</div></details>
+<details class="faq-item"><summary>When should I use the median instead of the mean?</summary><div class="faq-a">Use the median when your data has outliers or is skewed, such as incomes or house prices. A few very large or very small values pull the mean away from the typical value, but the median stays in the middle and is more representative.</div></details>
+<details class="faq-item"><summary>What if there's no single mode?</summary><div class="faq-a">If every value appears the same number of times, there's no mode. If two or more values tie for the most frequent, the data is multimodal and the calculator lists all of them. This is normal and just means several values are equally common.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/bmi-calculator/"><h3>BMI Calculator</h3><p>Calculate your body mass index (BMI) in metric or imperial units. See your BMI number, weight category, and the healthy weight range for your height.</p></a><a class="card" href="/toolnest/compound-interest-calculator/"><h3>Compound Interest Calculator</h3><p>See how your savings grow with compound interest. Enter a starting amount, monthly contributions, rate, and time to project your future balance and total interest earned.</p></a><a class="card" href="/toolnest/date-difference-calculator/"><h3>Date Difference Calculator</h3><p>Calculate the difference between two dates in years, months, and days, plus the total number of days, weeks, hours, and minutes between them.</p></a><a class="card" href="/toolnest/discount-calculator/"><h3>Discount Calculator</h3><p>Calculate the sale price and how much you save with a percent-off discount. Stack a second discount or add sales tax to find your real final price.</p></a><a class="card" href="/toolnest/final-grade-calculator/"><h3>Final Grade Calculator</h3><p>Find out the score you need on your final exam to reach your target overall grade, based on your current grade and the exam's weight.</p></a><a class="card" href="/toolnest/fuel-cost-calculator/"><h3>Fuel Cost Calculator</h3><p>Estimate the fuel cost of a trip from distance, MPG, and gas price. See total cost, gallons used, and cost per person when splitting a road trip.</p></a></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-links"><a href="/toolnest/about/">About</a> &middot; <a href="/toolnest/contact/">Contact</a> &middot; <a href="/toolnest/privacy/">Privacy Policy</a> &middot; <a href="/toolnest/disclaimer/">Disclaimer</a></p>
+    <p class="footer-note">&copy; 2026 ToolNest. Our tools are provided for general informational purposes only and are not professional, legal, or financial advice &mdash; see our <a href="/toolnest/disclaimer/">disclaimer</a>.</p>
+  </div>
+</footer>
+<script src="/toolnest/assets/site.js" defer></script>
+</body>
+</html>
