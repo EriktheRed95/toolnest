@@ -1,14 +1,14 @@
 <!--META
 {
-  "title": "Body Fat Calculator (Navy Method)",
+  "title": "Body Fat Calculator (Legacy Circumference Method)",
   "slug": "body-fat-calculator",
   "category": "everyday",
-  "h1": "Body Fat Calculator (Navy Method)",
-  "description": "Estimate your body fat percentage with the US Navy circumference method. Enter a few tape measurements to see your body fat percentage and category.",
+  "h1": "Body Fat Calculator (Legacy Circumference Method)",
+  "description": "Estimate your body fat percentage using a legacy circumference equation. Enter a few tape measurements to see your body fat percentage and category.",
   "keywords": "body fat calculator, navy method body fat, body fat percentage, tape measure body fat, body composition calculator",
   "faq": [
     {"q": "How does the Navy method work?", "a": "The US Navy formula estimates body fat from circumference measurements — neck and waist (plus hip for women) along with height. It uses these tape measurements in a logarithmic equation, avoiding the need for calipers or special equipment."},
-    {"q": "How accurate is it?", "a": "For most people it lands within about 3–4 percentage points of more precise methods like DEXA scans. Accuracy depends heavily on measuring in the right spots with a snug, level tape. It's a useful estimate for tracking trends, not a clinical measurement."},
+    {"q": "How accurate is it?", "a": "Accuracy varies by body type and measurement technique. This legacy circumference equation is not a clinical measurement or an official current Navy assessment."},
     {"q": "Where do I measure?", "a": "Measure your neck just below the larynx, your waist at the navel for men or at the narrowest point for women, and (for women) the hips at the widest point. Keep the tape level and snug without compressing the skin, and measure relaxed after exhaling."},
     {"q": "What is a healthy body fat percentage?", "a": "Healthy ranges differ by sex. Men are generally considered fit around 14–17% and average around 18–24%; women are fit around 21–24% and average around 25–31%. Athletes are lower, and there is an essential minimum your body needs to function."}
   ]
@@ -32,7 +32,7 @@ META-->
 <script>
 (function () {
   var ids = ['bf-height', 'bf-neck', 'bf-waist', 'bf-hip'];
-  function v(id) { return +document.getElementById(id).value || 0; }
+  function v(id) { var raw = document.getElementById(id).value; return raw.trim() === '' ? NaN : Number(raw); }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
   function sex() { return document.querySelector('input[name="bf-sex"]:checked').value; }
   var hipField = document.getElementById('bf-hip-field');
@@ -50,7 +50,7 @@ META-->
     var s = sex();
     hipField.style.display = s === 'female' ? '' : 'none';
     var h = v('bf-height'), neck = v('bf-neck'), waist = v('bf-waist'), hip = v('bf-hip');
-    if (h <= 0 || neck <= 0 || waist <= 0 || (s === 'female' && hip <= 0)) {
+    if (![h, neck, waist].every(function (n) { return Number.isFinite(n) && n > 0 && n <= 300; }) || (s === 'female' && (!Number.isFinite(hip) || hip <= 0 || hip > 300))) {
       out.innerHTML = '<p class="note">Enter your height, neck, waist' + (s === 'female' ? ', and hip' : '') + ' measurements.</p>';
       return;
     }
@@ -66,13 +66,13 @@ META-->
       out.innerHTML = '<p class="note warn">Those measurements don’t produce a valid estimate. Double-check your tape readings.</p>';
       return;
     }
-    var cat = category(bf, s);
+    var cat = bf < (s === 'male' ? 2 : 10) ? 'Below reference band — seek professional interpretation' : category(bf, s);
     out.innerHTML =
       '<div class="result-sub">Estimated body fat &mdash; ' + cat + '</div>' +
       '<div class="result-big">' + bf.toFixed(1) + '%</div>' +
       '<div style="margin-top:12px">' +
         kv('Category', cat) +
-        kv('Method', 'US Navy circumference') +
+        kv('Method', 'Legacy circumference estimate') +
       '</div>' +
       '<p class="note">Categories (' + (s === 'male' ? 'men' : 'women') + '): ' +
       (s === 'male'
@@ -88,7 +88,7 @@ META-->
 </script>
 
 <h2>Estimating body fat with a tape measure</h2>
-<p>The <strong>US Navy method</strong> estimates your body fat percentage from a handful of body circumferences instead of skinfold calipers or a lab scan. By plugging your neck, waist, and height — plus hips for women — into a logarithmic formula, it produces a number you can track over time using nothing more than a flexible tape measure. It's the same approach the Navy uses for body composition screening.</p>
+<p>The <strong>US Navy method</strong> estimates your body fat percentage from a handful of body circumferences instead of skinfold calipers or a lab scan. By plugging your neck, waist, and height — plus hips for women — into a logarithmic formula, it produces a number you can track over time using nothing more than a flexible tape measure. This is a legacy equation, not the current Navy assessment protocol.</p>
 <p>Measurement technique matters more than anything else here. Keep the tape level and snug without digging into the skin, measure relaxed after a normal exhale, and take each reading in the same spot every time. Men measure the waist at the navel; women measure at the narrowest point and the hips at the widest. Consistency is what makes the trend meaningful.</p>
 <ul>
   <li><strong>Neck</strong> — just below the larynx, tape sloping slightly downward at the front.</li>
@@ -96,3 +96,5 @@ META-->
   <li><strong>Hip</strong> — women only, at the widest part of the buttocks.</li>
 </ul>
 <p class="note"><strong>Not medical advice.</strong> This is a rough estimate for general information only and isn't a substitute for evaluation by a qualified healthcare provider.</p>
+
+<p>Scope: this legacy formula is for general adult reference. For official assessments, consult the <a href="https://www.mynavyhr.navy.mil/Support-Services/Culture-Resilience/Physical-Readiness/Guides/">current Navy physical-readiness guides</a> (reviewed September 20, 2026).</p>

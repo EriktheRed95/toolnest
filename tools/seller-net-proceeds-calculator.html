@@ -19,7 +19,7 @@ META-->
   <div class="field"><label for="s-payoff">Mortgage payoff ($) <span class="hint">remaining balance</span></label><input type="number" id="s-payoff" value="250000" min="0" step="1000"></div>
 </div>
 <div class="row">
-  <div class="field"><label for="s-comm">Agent commission (%)</label><input type="number" id="s-comm" value="5" min="0" step="0.1"></div>
+  <div class="field"><label for="s-comm">Agent commission (%)</label><input type="number" id="s-comm" value="5" min="0" step="0.1" max="100"></div>
   <div class="field"><label for="s-title">Title &amp; escrow ($)</label><input type="number" id="s-title" value="2500" min="0" step="100"></div>
 </div>
 <div class="row">
@@ -39,6 +39,17 @@ META-->
   var ids = ['s-price', 's-payoff', 's-comm', 's-title', 's-transfer', 's-warranty', 's-concess', 's-other'];
   function v(id) { return +document.getElementById(id).value || 0; }
   function calc() {
+    if (ids.some(function (id) {
+      var field = document.getElementById(id), raw = String(field.value), value = Number(raw);
+      return raw.trim() === '' || !Number.isFinite(value) || Math.abs(value) > 1e12 ||
+        (/rate|appr|rentinc|invest/.test(id) && value > 100) ||
+        (field.min !== '' && field.min !== undefined && value < Number(field.min)) ||
+        (field.max !== '' && field.max !== undefined && value > Number(field.max));
+    })) {
+      document.getElementById('s-out').innerHTML = '<p class="note warn" role="alert">Enter valid numbers within the indicated ranges. Amounts cannot exceed one trillion and annual rates cannot exceed 100%.</p>';
+
+      return;
+    }
     var price = v('s-price');
     var commission = price * v('s-comm') / 100;
     var costs = commission + v('s-title') + v('s-transfer') + v('s-warranty') + v('s-concess') + v('s-other');

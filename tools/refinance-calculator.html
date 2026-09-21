@@ -42,10 +42,21 @@ META-->
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
   function payment(P, annualRate, months) {
     var r = annualRate / 100 / 12;
-    return r === 0 ? P / months : P * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1);
+    return r === 0 ? P / months : P * r / -Math.expm1(-months * Math.log1p(r));
   }
 
   function calc() {
+    if (ids.some(function (id) {
+      var field = document.getElementById(id), raw = String(field.value), value = Number(raw);
+      return raw.trim() === '' || !Number.isFinite(value) || Math.abs(value) > 1e12 ||
+        (/rate|appr|rentinc|invest/.test(id) && value > 100) ||
+        (field.min !== '' && field.min !== undefined && value < Number(field.min)) ||
+        (field.max !== '' && field.max !== undefined && value > Number(field.max));
+    })) {
+      document.getElementById('r-out').innerHTML = '<p class="note warn" role="alert">Enter valid numbers within the indicated ranges. Amounts cannot exceed one trillion and annual rates cannot exceed 100%.</p>';
+
+      return;
+    }
     var bal = v('r-balance');
     var curMonths = Math.round(v('r-remain') * 12);
     var newMonths = v('r-newterm') * 12;
@@ -66,10 +77,11 @@ META-->
     } else if (breakeven === null) {
       verdict = '';
     } else {
-      var years = Math.floor(breakeven / 12), rem = Math.round(breakeven % 12);
+      var roundedMonths = Math.ceil(breakeven);
+      var years = Math.floor(roundedMonths / 12), rem = roundedMonths % 12;
       verdict = '<p class="note">You recover the ' + money.format(costs) + ' in closing costs after about <strong>' +
         Math.ceil(breakeven) + ' months</strong>' + (years ? ' (~' + years + ' yr ' + rem + ' mo)' : '') +
-        '. Refinancing pays off if you keep the home longer than that.</p>';
+        '. This is a payment-savings break-even estimate, not a total-cost comparison. Compare remaining balances, loan terms and fees before deciding.</p>';
     }
 
     document.getElementById('r-out').innerHTML =

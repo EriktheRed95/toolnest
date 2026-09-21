@@ -41,11 +41,20 @@ META-->
     for (var i = 0; i < b.length; i++) s += (b[i] + 0x100).toString(16).slice(1);
     return s;
   }
+  var revision = 0;
+  var pairs = [['SHA-1', 'hsh-sha1'], ['SHA-256', 'hsh-sha256'], ['SHA-512', 'hsh-sha512']];
   function go() {
+    var current = ++revision;
+    pairs.forEach(function (pair) { document.getElementById(pair[1]).textContent = ''; });
+    if (!window.crypto || !window.crypto.subtle || typeof TextEncoder === 'undefined') {
+      pairs.forEach(function (pair) { document.getElementById(pair[1]).textContent = 'Hashing unavailable. Use HTTPS or localhost in a supported browser.'; }); return;
+    }
     var data = new TextEncoder().encode(inEl.value);
-    [['SHA-1', 'hsh-sha1'], ['SHA-256', 'hsh-sha256'], ['SHA-512', 'hsh-sha512']].forEach(function (pair) {
-      window.crypto.subtle.digest(pair[0], data).then(function (buf) {
-        document.getElementById(pair[1]).textContent = toHex(buf);
+    pairs.forEach(function (pair) {
+      Promise.resolve().then(function () { return window.crypto.subtle.digest(pair[0], data); }).then(function (buf) {
+        if (current === revision) document.getElementById(pair[1]).textContent = toHex(buf);
+      }).catch(function () {
+        if (current === revision) document.getElementById(pair[1]).textContent = 'Hash could not be generated. Try again.';
       });
     });
   }

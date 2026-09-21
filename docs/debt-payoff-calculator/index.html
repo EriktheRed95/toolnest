@@ -65,8 +65,9 @@
       '<td><input type="number" value="' + d[2] + '" id="dp-apr' + i + '" min="0" step="0.1" style="width:100%"></td>' +
       '<td><input type="number" value="' + d[3] + '" id="dp-min' + i + '" min="0" step="10" style="width:100%"></td>';
     rowsEl.appendChild(tr);
+    ['name', 'bal', 'apr', 'min'].forEach(function (field, index) { document.getElementById('dp-' + field + i).setAttribute('aria-label', ['Debt name', 'Balance', 'APR', 'Minimum payment'][index] + ' ' + (i + 1)); });
   });
-  function v(id) { return +document.getElementById(id).value || 0; }
+  function v(id) { var raw = document.getElementById(id).value; return raw.trim() === '' ? NaN : Number(raw); }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
   function fmtMonths(m) { var y = Math.floor(m / 12), mo = m % 12; return (y ? y + ' yr ' : '') + mo + ' mo'; }
 
@@ -102,10 +103,20 @@
         active[k].bal -= pay; pool -= pay;
       }
     }
-    return { months: months, interest: totalInterest };
+    return { months: months, interest: totalInterest, paidOff: debts.every(function (d) { return d.bal <= 0.005; }) };
   }
 
   function calc() {
+    var out = document.getElementById('dp-out');
+    for (var i = 0; i < 5; i++) {
+      var raw = ['dp-bal', 'dp-apr', 'dp-min'].map(function (id) { return document.getElementById(id + i).value.trim(); });
+      if (raw.every(function (x) { return x === ''; })) continue;
+      var values = raw.map(Number);
+      if (raw.some(function (x) { return x === ''; }) || !values.every(Number.isFinite) || values.some(function (x) { return x < 0; }) || values[0] > 1e9 || values[1] > 100 || values[2] > 1e9) {
+        out.innerHTML = '<p class="note warn" role="alert">Complete balance, APR and minimum payment for debt ' + (i + 1) + ' using finite nonnegative numbers (amounts up to $1 billion, APR up to 100%). Leave all three blank to skip a row.</p>'; return;
+      }
+    }
+    if (!Number.isFinite(v('dp-extra')) || v('dp-extra') < 0 || v('dp-extra') > 1e9) { out.innerHTML = '<p class="note warn" role="alert">Enter an extra payment from $0 to $1 billion.</p>'; return; }
     var debts = getDebts();
     var extra = v('dp-extra');
     var out = document.getElementById('dp-out');
@@ -116,6 +127,7 @@
 
     var snow = simulate(debts, extra, 'snowball');
     var aval = simulate(debts, extra, 'avalanche');
+    if (!snow.paidOff || !aval.paidOff) { out.innerHTML = '<p class="note warn" role="alert">No payoff within the 100-year simulation limit for one or both strategies. The payment may not cover interest. Increase payments or review the inputs; no debt-free date or total payoff interest is available.</p>'; return; }
     var interestSaved = snow.interest - aval.interest;
     var monthsSaved = snow.months - aval.months;
 

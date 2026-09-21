@@ -69,13 +69,24 @@
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
 
   function calc() {
+    if (ids.some(function (id) {
+      var field = document.getElementById(id), raw = String(field.value), value = Number(raw);
+      return raw.trim() === '' || !Number.isFinite(value) || Math.abs(value) > 1e12 ||
+        (/rate|appr|rentinc|invest/.test(id) && value > 100) ||
+        (field.min !== '' && field.min !== undefined && value < Number(field.min)) ||
+        (field.max !== '' && field.max !== undefined && value > Number(field.max));
+    })) {
+      document.getElementById('co-out').innerHTML = '<p class="note warn" role="alert">Enter valid numbers within the indicated ranges. Amounts cannot exceed one trillion and annual rates cannot exceed 100%.</p>';
+
+      return;
+    }
     var price = v('co-price');
     var rent = v('co-rent');
     var down = price * v('co-dp') / 100;
     var loan = Math.max(0, price - down);
     var r = v('co-rate') / 100 / 12;
     var n = v('co-term') * 12;
-    var pi = r === 0 ? loan / n : loan * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    var pi = r === 0 ? loan / n : loan * r / -Math.expm1(-n * Math.log1p(r));
 
     var grossAnnual = rent * 12;
     var vacancy = grossAnnual * v('co-vac') / 100;
@@ -93,11 +104,11 @@
 
     document.getElementById('co-out').innerHTML =
       '<div class="result-sub">Cash-on-cash return</div>' +
-      '<div class="result-big">' + coc.toFixed(1) + '%</div>' +
+      '<div class="result-big">' + (cashInvested > 0 ? coc.toFixed(1) + '%' : 'Not defined (no cash invested)') + '</div>' +
       '<div style="margin-top:12px">' +
         kv('Monthly cash flow', (monthlyCashFlow < 0 ? '&minus; ' : '') + money.format(Math.abs(monthlyCashFlow))) +
         kv('Annual cash flow', (annualCashFlow < 0 ? '&minus; ' : '') + money.format(Math.abs(annualCashFlow))) +
-        kv('Cap rate', capRate.toFixed(2) + '%') +
+        kv('Cap rate', price > 0 ? capRate.toFixed(2) + '%' : 'Not defined (zero price)') +
         kv('Net operating income (NOI)', money.format(noi)) +
         kv('&nbsp;&nbsp;Effective gross income', money.format(effectiveGross)) +
         kv('&nbsp;&nbsp;Operating expenses', '&minus; ' + money.format(opex)) +
@@ -106,7 +117,7 @@
       '</div>' +
       (monthlyCashFlow < 0
         ? '<p class="note">This deal has negative cash flow — the rent doesn’t cover expenses plus the mortgage. You’d pay in each month, betting on appreciation or paydown.</p>'
-        : '<p class="note">Positive cash flow of ' + money.format(monthlyCashFlow) + '/mo. Compare the ' + coc.toFixed(1) + '% cash-on-cash return against other deals and your target.</p>');
+        : '<p class="note">Positive cash flow of ' + money.format(monthlyCashFlow) + '/mo. ' + (cashInvested > 0 ? 'Compare the ' + coc.toFixed(1) + '% cash-on-cash return against other deals and your target.' : 'Cash-on-cash return is undefined because no cash is invested.') + '</p>');
   }
   ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
   calc();

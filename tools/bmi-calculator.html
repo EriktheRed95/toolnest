@@ -14,6 +14,7 @@
   ]
 }
 META-->
+<p class="note">Adult screening only, ages 20 and older. These categories are not for children or teens.</p>
 <div class="checks" style="margin-bottom:14px">
   <label><input type="radio" name="bmi-unit" value="metric" checked> Metric (cm, kg)</label>
   <label><input type="radio" name="bmi-unit" value="imperial"> Imperial (ft/in, lb)</label>
@@ -37,7 +38,7 @@ META-->
 <script>
 (function () {
   var ids = ['bmi-cm', 'bmi-kg', 'bmi-ft', 'bmi-in', 'bmi-lb'];
-  function v(id) { return +document.getElementById(id).value || 0; }
+  function v(id) { var raw = document.getElementById(id).value; return raw.trim() === '' ? NaN : Number(raw); }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
   function unit() { return document.querySelector('input[name="bmi-unit"]:checked').value; }
 
@@ -58,8 +59,9 @@ META-->
       weightKg = v('bmi-lb') * 0.453592;
     }
     var out = document.getElementById('bmi-out');
-    if (heightM <= 0 || weightKg <= 0) { out.innerHTML = '<p class="note">Enter your height and weight.</p>'; return; }
+    if (!Number.isFinite(heightM) || !Number.isFinite(weightKg) || heightM <= 0 || heightM > 3 || weightKg <= 0 || weightKg > 1000 || (unit() === 'imperial' && (v('bmi-ft') < 0 || v('bmi-in') < 0 || v('bmi-in') >= 12))) { out.innerHTML = '<p class="note">Enter finite positive height and weight (height up to 300 cm, weight up to 1,000 kg; inches 0–11.99).</p>'; return; }
     var bmi = weightKg / (heightM * heightM);
+    if (!Number.isFinite(bmi)) { out.innerHTML = '<p class="note">Enter finite height and weight within the supported range.</p>'; return; }
     var cat = category(bmi);
     var lo = 18.5 * heightM * heightM, hi = 24.9 * heightM * heightM;
     var range = unit() === 'metric'
@@ -94,3 +96,5 @@ META-->
 <p>BMI is a starting point, not the whole story. It measures total weight without distinguishing <strong>muscle from fat</strong>, so a muscular athlete can register as "overweight" despite low body fat, while someone with little muscle might read as healthy while carrying excess fat. It also doesn't capture where fat sits on the body — abdominal fat carries more risk — or account for age and ethnicity, both of which affect how BMI relates to health.</p>
 <p>For children and teens, BMI is interpreted using age- and sex-specific percentiles instead of the adult cutoffs. Whatever your number, use it as one signal among many, and rely on a healthcare professional for guidance specific to you.</p>
 <p class="note"><strong>Not medical advice.</strong> This tool is for general information only and isn't a substitute for evaluation by a qualified healthcare provider.</p>
+
+<p>Reference: <a href="https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html">CDC adult BMI categories</a> (reviewed September 20, 2026).</p>

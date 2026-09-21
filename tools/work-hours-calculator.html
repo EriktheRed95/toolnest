@@ -23,7 +23,7 @@ META-->
   <div class="field"><label for="wh-rate">Hourly rate ($, optional)</label><input type="number" id="wh-rate" value="0" min="0" step="0.01"></div>
 </div>
 
-<div class="result" id="wh-out"></div>
+<div class="result" id="wh-result" aria-live="polite"></div>
 
 <script>
 (function () {
@@ -31,20 +31,22 @@ META-->
   var inEl = document.getElementById('wh-in'), outEl = document.getElementById('wh-out');
   var breakEl = document.getElementById('wh-break'), rateEl = document.getElementById('wh-rate');
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
-  function mins(t) { if (!t) return null; var p = t.split(':'); return (+p[0]) * 60 + (+p[1]); }
+  function mins(t) { if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(t)) return null; var p = t.split(':'); return (+p[0]) * 60 + (+p[1]); }
 
   function calc() {
-    var out = document.getElementById('wh-out');
+    var out = document.getElementById('wh-result');
     var mi = mins(inEl.value), mo = mins(outEl.value);
     if (mi === null || mo === null) { out.innerHTML = '<p class="note">Enter clock-in and clock-out times.</p>'; return; }
     var span = mo - mi;
     var overnight = false;
     if (span <= 0) { span += 24 * 60; overnight = true; }
-    var brk = +breakEl.value || 0;
-    var worked = Math.max(0, span - brk);
+    var brk = Number(breakEl.value), rate = rateEl.value.trim() === '' ? 0 : Number(rateEl.value);
+    if (breakEl.value.trim() === '' || !Number.isInteger(brk) || brk < 0 || brk > span || !Number.isFinite(rate) || rate < 0 || !Number.isFinite(rate * span / 60)) {
+      out.innerHTML = '<p class="note warn">Enter whole unpaid break minutes from zero to the shift length and a finite nonnegative hourly rate.</p>'; return;
+    }
+    var worked = span - brk;
     var h = Math.floor(worked / 60), m = worked % 60;
     var dec = worked / 60;
-    var rate = +rateEl.value || 0;
 
     var rows =
       kv('Hours worked', h + 'h ' + m + 'm') +

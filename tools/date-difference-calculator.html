@@ -7,10 +7,10 @@
   "description": "Calculate the difference between two dates in years, months, and days, plus the total number of days, weeks, hours, and minutes between them.",
   "keywords": "date difference calculator, days between dates, time between two dates, date duration calculator, how many days between",
   "faq": [
-    {"q": "How is the difference calculated?", "a": "The calculator counts whole calendar years from the start date, then leftover months, then leftover days — using the real calendar so different month lengths and leap years are handled exactly, not approximated. It also gives totals in days, weeks, hours, and minutes."},
+    {"q": "How is the difference calculated?", "a": "It counts the largest number of whole calendar-month anniversaries from the start date that still land on or before the end date, splits those into years and months, then counts the leftover days. Anniversaries are clamped: if the start day doesn't exist in the target month, it falls back to the last day of that month, so 31 January to 1 March 2025 is 1 month 1 day and the leftover days are never negative."},
     {"q": "What if the end date is before the start date?", "a": "The calculator uses the absolute difference, so the order of the two dates doesn't matter. It will note that the dates were swapped but still show the same duration."},
-    {"q": "Are leap years included?", "a": "Yes. Because the tool works directly with calendar dates, February 29 and the varying lengths of months are counted automatically in both the breakdown and the totals."},
-    {"q": "Does it count both the start and end days?", "a": "It measures the span between the two dates, so a difference from one day to the next counts as one day. If you need to include both endpoints, add one to the total days."}
+    {"q": "Are leap years included?", "a": "Yes. Because the tool works directly with calendar dates, February 29 and the varying lengths of months are counted automatically in both the breakdown and the totals. Entering a date that doesn't exist, such as 29 February in a non-leap year, is rejected instead of being silently rolled forward."},
+    {"q": "Are the hour and minute totals exact clock time?", "a": "No — they are nominal conversions of whole calendar days (days × 24 and days × 1,440). The day count itself is computed from dates alone, in UTC, so a daylight-saving changeover can never add or lose a day; but a real spring-forward day is only 23 clock hours, so elapsed local clock time can differ from the nominal hour total."}
   ]
 }
 META-->
@@ -25,39 +25,77 @@ META-->
 (function () {
   var nf = new Intl.NumberFormat('en-US');
   var start = document.getElementById('dd-start'), end = document.getElementById('dd-end');
-  var t = new Date();
-  start.value = t.toISOString().slice(0, 10);
-  end.value = t.toISOString().slice(0, 10);
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function pad(n, width) { var s = String(n); while (s.length < width) s = '0' + s; return s; }
+  function iso(p) { return pad(p.y, 4) + '-' + pad(p.m, 2) + '-' + pad(p.d, 2); }
+
+  function daysInMonth(y, m) {
+    if (m === 2) return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0 ? 29 : 28;
+    return (m === 4 || m === 6 || m === 9 || m === 11) ? 30 : 31;
+  }
+  // Strict YYYY-MM-DD parse: the value must be a real calendar date.
+  function parseDate(raw) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(raw == null ? '' : raw).trim());
+    if (!m) return null;
+    var y = +m[1], mo = +m[2], d = +m[3];
+    if (y < 1 || mo < 1 || mo > 12 || d < 1 || d > daysInMonth(y, mo)) return null;
+    return { y: y, m: mo, d: d };
+  }
+  // Date-only arithmetic is done at UTC midnight, so local clock shifts
+  // (daylight saving) can never add or drop a day.
+  function toMs(p) {
+    var dt = new Date(Date.UTC(2000, p.m - 1, p.d));
+    dt.setUTCFullYear(p.y);
+    return dt.getTime();
+  }
+  function dayCount(p, q) { return Math.round((toMs(q) - toMs(p)) / 86400000); }
+  // Calendar-month anniversary, clamped to the last valid day of the target
+  // month: 31 Jan + 1 month = 28 Feb (29 Feb in a leap year).
+  function addMonthsClamped(p, n) {
+    var total = p.y * 12 + (p.m - 1) + n;
+    var y = Math.floor(total / 12), m = total - y * 12 + 1;
+    return { y: y, m: m, d: Math.min(p.d, daysInMonth(y, m)) };
+  }
 
   function calc() {
     var out = document.getElementById('dd-out');
-    if (!start.value || !end.value) { out.innerHTML = '<p class="note">Enter both dates.</p>'; return; }
-    var a = new Date(start.value + 'T00:00:00'), b = new Date(end.value + 'T00:00:00');
-    var swapped = false;
-    if (b < a) { var tmp = a; a = b; b = tmp; swapped = true; }
+    var a = parseDate(start.value), b = parseDate(end.value);
+    if (!a || !b) {
+      out.innerHTML = '<p class="note warn" role="alert">Enter both dates as real calendar dates in YYYY-MM-DD form (year 0001–9999).</p>';
+      return;
+    }
+    var swapped = toMs(b) < toMs(a);
+    if (swapped) { var tmp = a; a = b; b = tmp; }
 
-    var years = b.getFullYear() - a.getFullYear();
-    var months = b.getMonth() - a.getMonth();
-    var days = b.getDate() - a.getDate();
-    if (days < 0) { months--; var prevMonth = new Date(b.getFullYear(), b.getMonth(), 0); days += prevMonth.getDate(); }
-    if (months < 0) { years--; months += 12; }
+    // Whole clamped month anniversaries from the start date, then leftover days.
+    var totalMonths = (b.y - a.y) * 12 + (b.m - a.m);
+    var anniversary = addMonthsClamped(a, totalMonths);
+    if (toMs(anniversary) > toMs(b)) { totalMonths--; anniversary = addMonthsClamped(a, totalMonths); }
+    var years = Math.floor(totalMonths / 12), months = totalMonths - years * 12;
+    var days = dayCount(anniversary, b);
 
-    var totalDays = Math.floor((b - a) / 86400000);
-    var weeks = Math.floor(totalDays / 7), remDays = totalDays % 7;
+    var totalDays = dayCount(a, b);
+    var weeks = Math.floor(totalDays / 7), remDays = totalDays - weeks * 7;
 
     var breakdown = years + ' yr ' + months + ' mo ' + days + ' d';
     out.innerHTML =
       '<div class="result-sub">Difference between the dates</div>' +
       '<div class="result-big">' + breakdown + '</div>' +
       '<div style="margin-top:12px">' +
+        kv('Counted from', iso(a) + ' to ' + iso(b)) +
+        kv('Last month anniversary', iso(anniversary) + ' + ' + days + ' day' + (days === 1 ? '' : 's')) +
         kv('Total days', nf.format(totalDays) + ' days') +
         kv('Total weeks', nf.format(weeks) + ' weeks ' + remDays + ' day' + (remDays === 1 ? '' : 's')) +
-        kv('Total hours', nf.format(totalDays * 24) + ' hours') +
-        kv('Total minutes', nf.format(totalDays * 24 * 60) + ' minutes') +
+        kv('Total hours (days × 24)', nf.format(totalDays * 24) + ' hours') +
+        kv('Total minutes (days × 1,440)', nf.format(totalDays * 24 * 60) + ' minutes') +
       '</div>' +
-      (swapped ? '<p class="note warn">The end date was before the start date, so the dates were swapped to show the absolute difference.</p>' : '');
+      (swapped ? '<p class="note warn">The end date was before the start date, so the dates were swapped to show the absolute difference.</p>' : '') +
+      '<p class="note">Months are counted as clamped calendar anniversaries: the day of the month is kept where it exists and pulled back to the last day of a shorter month, so 31 Jan to 1 Mar 2025 is 1 mo 1 d. Hours and minutes are nominal conversions of whole calendar days (days × 24), not elapsed clock time — a daylight-saving day still counts as 24 hours here.</p>';
   }
+  var t = new Date();
+  var today = iso({ y: t.getFullYear(), m: t.getMonth() + 1, d: t.getDate() });
+  start.value = today;
+  end.value = today;
   [start, end].forEach(function (el) { el.addEventListener('input', calc); });
   calc();
 })();
@@ -65,6 +103,8 @@ META-->
 
 <h2>The exact span between two dates</h2>
 <p>Whether you're counting down to an event, measuring how long a project ran, or working out someone's tenure, this calculator gives the precise gap between any two dates. It breaks the difference into <strong>years, months, and days</strong> by reading the actual calendar — so the uneven lengths of months and every leap day are counted correctly rather than averaged away.</p>
-<p>Alongside the calendar breakdown, it converts the same span into <strong>total days, weeks, hours, and minutes</strong>. These figures are handy for billing, deadlines, or simply satisfying curiosity about how much time has really passed.</p>
+<p>Alongside the calendar breakdown, it converts the same span into <strong>total days, weeks, hours, and minutes</strong>. These figures are handy for billing, deadlines, or simply satisfying curiosity about how much time has really passed. The span is measured between the two dates, so one day to the next counts as one day — add one to the total if you need to include both endpoints.</p>
+<h2>How months and hours are counted</h2>
+<p>The month part of the breakdown uses <strong>clamped calendar anniversaries</strong>. Moving forward a month keeps the same day number when that day exists and otherwise stops at the end of the shorter month, which is why 31 January to 1 March reads as 1 month 1 day rather than producing a negative leftover. All day counting is done on dates alone in UTC, so a <strong>daylight-saving</strong> changeover in your local time zone never shifts the answer. The hour and minute totals are nominal conversions of those whole days (days × 24), not a stopwatch reading of local clock time.</p>
 <h2>Order doesn't matter</h2>
 <p>You can put the later date first or second — the calculator always shows the absolute difference and simply notes when it has swapped the inputs for you. Both fields default to today, so you can change just one date to measure forward or backward from now. Everything recalculates the instant you change a field, making it quick to compare several spans in a row.</p>

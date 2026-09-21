@@ -20,6 +20,7 @@ How it works
 
 Run:  python build.py     ->  writes everything into  docs/  (served by Pages)
 """
+import html
 import json
 import os
 import re
@@ -198,7 +199,8 @@ def render(meta, content_html, url):
         "KEYWORDS": meta["keywords"],
         "CANONICAL": url,
         "SITE_NAME": config.SITE_NAME,
-        "CONTACT_EMAIL": config.CONTACT_EMAIL,
+        "CONTACT_EMAIL": html.escape(config.CONTACT_EMAIL, quote=True),
+        "CONTACT_DETAILS": ('<p><strong>Email:</strong> <a href="mailto:' + html.escape(config.CONTACT_EMAIL, quote=True) + '">' + html.escape(config.CONTACT_EMAIL) + '</a></p>') if config.CONTACT_EMAIL and not config.CONTACT_EMAIL.endswith("@example.com") else '<p class="note">A contact address is not yet available.</p>',
         "BASE": BASE,
         "NAV": nav_html(),
         "FOOTER_LINKS": footer_links(),

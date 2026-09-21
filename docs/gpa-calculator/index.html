@@ -62,6 +62,9 @@
       '<td><select class="gp-grade" style="width:100%">' + gradeOptions() + '</select></td>' +
       '<td><input type="number" class="gp-cred" value="' + (credits != null ? credits : '') + '" min="0" step="0.5" style="width:100%"></td>';
     rowsEl.appendChild(tr);
+    tr.querySelector('input[type="text"]').setAttribute('aria-label', 'Course name ' + (i + 1));
+    tr.querySelector('.gp-grade').setAttribute('aria-label', 'Grade ' + (i + 1));
+    tr.querySelector('.gp-cred').setAttribute('aria-label', 'Credits ' + (i + 1));
     tr.querySelector('.gp-grade').value = grade || 'A';
     tr.querySelector('.gp-grade').addEventListener('change', calc);
     tr.querySelector('.gp-cred').addEventListener('input', calc);
@@ -72,8 +75,11 @@
     var creds = rowsEl.querySelectorAll('.gp-cred');
     var totalCred = 0, totalPoints = 0;
     for (var i = 0; i < grades.length; i++) {
-      var c = +creds[i].value || 0;
-      if (c <= 0) continue;
+      var raw = creds[i].value.trim();
+      if (raw === '') continue;
+      var c = Number(raw);
+      if (!Number.isFinite(c) || c < 0 || c > 1000 || !Object.prototype.hasOwnProperty.call(GRADES, grades[i].value)) { document.getElementById('gp-out').innerHTML = '<p class="note warn" role="alert">Enter credits from 0 to 1,000 and a listed grade for each course. Blank credits skip a row.</p>'; return; }
+      if (c === 0) continue;
       totalCred += c;
       totalPoints += GRADES[grades[i].value] * c;
     }

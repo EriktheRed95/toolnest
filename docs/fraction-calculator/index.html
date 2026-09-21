@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://pagead2.googlesyndication.com">
 <link rel="stylesheet" href="/toolnest/assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Fraction Calculator", "url": "https://erikthered95.github.io/toolnest/fraction-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Add, subtract, multiply, and divide fractions. Get the simplified result, its decimal value, and the mixed-number form, all calculated instantly."}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does the calculator simplify fractions?", "acceptedAnswer": {"@type": "Answer", "text": "After computing the result, it finds the greatest common divisor (GCD) of the numerator and denominator using Euclid's algorithm, then divides both by it. That reduces the fraction to its lowest terms \u2014 for example, 6/8 becomes 3/4."}}, {"@type": "Question", "name": "What is a mixed number?", "acceptedAnswer": {"@type": "Answer", "text": "A mixed number combines a whole number and a proper fraction, like 1 1/4. When a result is improper (the numerator is larger than the denominator), the tool also shows the mixed-number form alongside the simplified fraction."}}, {"@type": "Question", "name": "Can it handle negative fractions?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Enter a negative numerator or denominator and the calculator tracks the sign correctly. The result keeps the sign on the numerator and shows a leading minus where appropriate."}}, {"@type": "Question", "name": "What happens if I divide by zero?", "acceptedAnswer": {"@type": "Answer", "text": "A fraction can't have a denominator of zero, and you can't divide by a fraction equal to zero. If either situation comes up, the calculator flags it instead of showing a result."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does the calculator simplify fractions?", "acceptedAnswer": {"@type": "Answer", "text": "Every step is done in exact whole-number arithmetic, so nothing is rounded along the way. After computing the result it finds the greatest common divisor (GCD) of the numerator and denominator using Euclid's algorithm, then divides both by it. That reduces the fraction to its lowest terms \u2014 for example, 6/8 becomes 3/4."}}, {"@type": "Question", "name": "What is a mixed number?", "acceptedAnswer": {"@type": "Answer", "text": "A mixed number combines a whole number and a proper fraction, like 1 1/4. When a result is improper (the numerator is larger than the denominator), the tool also shows the mixed-number form alongside the simplified fraction."}}, {"@type": "Question", "name": "Can it handle negative fractions?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Enter a negative numerator or denominator and the calculator tracks the sign correctly. The result keeps the sign on the numerator and shows a leading minus where appropriate."}}, {"@type": "Question", "name": "What happens if I divide by zero?", "acceptedAnswer": {"@type": "Answer", "text": "A fraction can't have a denominator of zero, and you can't divide by a fraction equal to zero. If either situation comes up, the calculator flags it instead of showing a result. The same goes for incomplete input: a blank box or a decimal entry is reported rather than quietly treated as zero."}}, {"@type": "Question", "name": "Is the decimal exact?", "acceptedAnswer": {"@type": "Answer", "text": "The fraction is always exact. The decimal is exact when the value terminates within the digits shown, and otherwise it is rounded and marked with a \u2248 sign \u2014 a repeating value like 1/3 can't be written exactly as a decimal. Each of the four boxes accepts whole numbers of up to 15 digits, which keeps every intermediate product exact."}}]}</script>
 
 </head>
 <body>
@@ -56,23 +56,61 @@
 <script>
 (function () {
   var ids = ['fr-an', 'fr-ad', 'fr-bn', 'fr-bd'];
-  function v(id) { return Math.trunc(+document.getElementById(id).value || 0); }
+  var MAX_DIGITS = 15;          // conservative cap; cross products stay well inside exact BigInt work
+  var SIG_DIGITS = 12;          // fractional digits shown for a rounded decimal
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
-  function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = b; b = a % b; a = t; } return a; }
+  function warn(msg) { document.getElementById('fr-out').innerHTML = '<p class="note warn" role="alert">' + msg + '</p>'; }
+
+  // Every box must hold a complete whole number: digits, optional leading sign.
+  // Blanks, decimals, exponent forms and stray characters are rejected, never coerced.
+  function readInt(id) {
+    var raw = String(document.getElementById(id).value == null ? '' : document.getElementById(id).value).trim();
+    if (raw === '') return { err: 'form' };
+    if (!/^[+-]?\d+$/.test(raw)) return { err: 'form' };
+    var digits = raw.replace(/^[+-]/, '').replace(/^0+(?=\d)/, '');
+    if (digits.length > MAX_DIGITS) return { err: 'big' };
+    return { v: (raw.charAt(0) === '-' ? -BigInt(digits) : BigInt(digits)) };
+  }
+  function gcd(a, b) {
+    if (a < 0n) a = -a;
+    if (b < 0n) b = -b;
+    while (b) { var t = a % b; a = b; b = t; }
+    return a;
+  }
+  // Exact when the fraction terminates within the digits shown, otherwise rounded
+  // half away from zero and flagged as approximate. All of it is integer work.
+  function decimalOf(n, d) {
+    var neg = n < 0n, a = neg ? -n : n, p = SIG_DIGITS;
+    if (a > 0n) {
+      var e = String(a).length - String(d).length;
+      if (e < 0) p = Math.min(60, SIG_DIGITS - e);
+    }
+    var scaled = a * (10n ** BigInt(p));
+    var q = scaled / d, r = scaled % d;
+    var exact = r === 0n;
+    if (r * 2n >= d) q += 1n;
+    var s = String(q);
+    while (s.length <= p) s = '0' + s;
+    var frac = s.slice(s.length - p).replace(/0+$/, '');
+    var text = s.slice(0, s.length - p) + (frac ? '.' + frac : '');
+    if (neg && q !== 0n) text = '-' + text;
+    return { text: text, exact: exact };
+  }
 
   function calc() {
     var out = document.getElementById('fr-out');
-    var an = v('fr-an'), ad = v('fr-ad'), bn = v('fr-bn'), bd = v('fr-bd');
+    var vals = [];
+    for (var i = 0; i < ids.length; i++) {
+      var read = readInt(ids[i]);
+      if (read.err === 'big') { warn('Keep each number to ' + MAX_DIGITS + ' digits or fewer so every result stays exact.'); return; }
+      if (read.err) { warn('Enter a whole number in all four boxes — digits only, with an optional leading minus sign. Blanks and decimals aren’t accepted.'); return; }
+      vals.push(read.v);
+    }
+    var an = vals[0], ad = vals[1], bn = vals[2], bd = vals[3];
     var op = document.getElementById('fr-op').value;
 
-    if (ad === 0 || bd === 0) {
-      out.innerHTML = '<p class="note warn">A denominator can’t be zero.</p>';
-      return;
-    }
-    if (op === 'div' && bn === 0) {
-      out.innerHTML = '<p class="note warn">You can’t divide by zero (fraction B equals 0).</p>';
-      return;
-    }
+    if (ad === 0n || bd === 0n) { warn('A denominator can’t be zero.'); return; }
+    if (op === 'div' && bn === 0n) { warn('You can’t divide by zero (fraction B equals 0).'); return; }
 
     var n, d;
     if (op === 'add') { n = an * bd + bn * ad; d = ad * bd; }
@@ -81,26 +119,26 @@
     else { n = an * bd; d = ad * bn; }
 
     // normalize sign so denominator is positive
-    if (d < 0) { n = -n; d = -d; }
-    var g = gcd(n, d) || 1;
-    n /= g; d /= g;
+    if (d < 0n) { n = -n; d = -d; }
+    if (n === 0n) { d = 1n; }
+    else { var g = gcd(n, d); n /= g; d /= g; }
 
-    var decimal = (n / d);
-    var simplified = d === 1 ? String(n) : n + '/' + d;
+    var dec = decimalOf(n, d);
+    var simplified = d === 1n ? String(n) : String(n) + '/' + String(d);
     var mixed = '';
-    if (d !== 1 && Math.abs(n) > d) {
-      var whole = Math.trunc(n / d);
-      var rem = Math.abs(n % d);
-      mixed = whole + ' ' + rem + '/' + d;
+    if (d !== 1n && (n < 0n ? -n : n) > d) {
+      var whole = n / d, rem = n % d;
+      mixed = String(whole) + ' ' + String(rem < 0n ? -rem : rem) + '/' + String(d);
     }
 
     out.innerHTML =
       '<div class="result-sub">Simplified result</div>' +
       '<div class="result-big">' + simplified + '</div>' +
       '<div style="margin-top:12px">' +
-        kv('Decimal', (Math.round(decimal * 1e6) / 1e6).toString()) +
+        kv('Decimal', (dec.exact ? '' : '≈ ') + dec.text) +
         (mixed ? kv('Mixed number', mixed) : '') +
-      '</div>';
+      '</div>' +
+      (dec.exact ? '' : '<p class="note">The fraction shown is exact; the decimal is rounded because this value doesn’t terminate within the digits displayed.</p>');
   }
 
   ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
@@ -111,15 +149,16 @@
 
 <h2>Working with fractions</h2>
 <p>Fraction arithmetic trips up a lot of people because the rules differ for each operation. To <strong>add or subtract</strong>, you first need a common denominator; to <strong>multiply</strong>, you multiply across the tops and bottoms; and to <strong>divide</strong>, you flip the second fraction and multiply. This calculator handles all four and then reduces the answer to lowest terms automatically, so you never have to spot the common factor yourself.</p>
-<p>Each result comes in three forms so you can use whichever fits: the <strong>simplified fraction</strong>, its <strong>decimal</strong> equivalent, and — when the answer is improper — the <strong>mixed number</strong>. Negative values and sign handling are taken care of, and the tool guards against impossible inputs like a zero denominator or dividing by a fraction that equals zero.</p>
+<p>Each result comes in three forms so you can use whichever fits: the <strong>simplified fraction</strong>, its <strong>decimal</strong> equivalent, and — when the answer is improper — the <strong>mixed number</strong>. The arithmetic is carried out in exact whole numbers rather than floating point, so the fraction you see is never a rounded approximation; only the decimal is rounded, and then it is marked with a ≈ sign. Negative values and sign handling are taken care of, and the tool guards against impossible inputs like a zero denominator, dividing by a fraction that equals zero, or a box left blank or filled with a decimal.</p>
 <ul>
   <li><strong>Add / subtract</strong> — needs a common denominator, done for you.</li>
   <li><strong>Multiply</strong> — numerators times numerators, denominators times denominators.</li>
   <li><strong>Divide</strong> — invert the second fraction, then multiply.</li>
-</ul><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How does the calculator simplify fractions?</summary><div class="faq-a">After computing the result, it finds the greatest common divisor (GCD) of the numerator and denominator using Euclid's algorithm, then divides both by it. That reduces the fraction to its lowest terms — for example, 6/8 becomes 3/4.</div></details>
+</ul><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How does the calculator simplify fractions?</summary><div class="faq-a">Every step is done in exact whole-number arithmetic, so nothing is rounded along the way. After computing the result it finds the greatest common divisor (GCD) of the numerator and denominator using Euclid's algorithm, then divides both by it. That reduces the fraction to its lowest terms — for example, 6/8 becomes 3/4.</div></details>
 <details class="faq-item"><summary>What is a mixed number?</summary><div class="faq-a">A mixed number combines a whole number and a proper fraction, like 1 1/4. When a result is improper (the numerator is larger than the denominator), the tool also shows the mixed-number form alongside the simplified fraction.</div></details>
 <details class="faq-item"><summary>Can it handle negative fractions?</summary><div class="faq-a">Yes. Enter a negative numerator or denominator and the calculator tracks the sign correctly. The result keeps the sign on the numerator and shows a leading minus where appropriate.</div></details>
-<details class="faq-item"><summary>What happens if I divide by zero?</summary><div class="faq-a">A fraction can't have a denominator of zero, and you can't divide by a fraction equal to zero. If either situation comes up, the calculator flags it instead of showing a result.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/fuel-cost-calculator/"><h3>Fuel Cost Calculator</h3><p>Estimate the fuel cost of a trip from distance, MPG, and gas price. See total cost, gallons used, and cost per person when splitting a road trip.</p></a><a class="card" href="/toolnest/gpa-calculator/"><h3>GPA Calculator</h3><p>Calculate your grade point average on the 4.0 scale. Enter each course's letter grade and credit hours to get your weighted GPA instantly.</p></a><a class="card" href="/toolnest/ideal-weight-calculator/"><h3>Ideal Weight Calculator</h3><p>Estimate your ideal body weight from your height and sex using the Devine, Robinson, and Miller formulas, plus the healthy weight range from BMI.</p></a><a class="card" href="/toolnest/loan-calculator/"><h3>Loan Calculator</h3><p>Calculate the monthly payment, total interest, and total cost of any loan — personal, student, or installment. Enter the amount, rate, and term to see your numbers.</p></a><a class="card" href="/toolnest/percentage-calculator/"><h3>Percentage Calculator</h3><p>Work out percentages three ways: what is X% of Y, X is what percent of Y, and the percent increase or decrease between two numbers. Free and instant.</p></a><a class="card" href="/toolnest/roman-numeral-converter/"><h3>Roman Numeral Converter</h3><p>Convert numbers to Roman numerals and Roman numerals back to numbers. Supports 1 to 3999 with instant, two-way conversion in your browser.</p></a></div></section>
+<details class="faq-item"><summary>What happens if I divide by zero?</summary><div class="faq-a">A fraction can't have a denominator of zero, and you can't divide by a fraction equal to zero. If either situation comes up, the calculator flags it instead of showing a result. The same goes for incomplete input: a blank box or a decimal entry is reported rather than quietly treated as zero.</div></details>
+<details class="faq-item"><summary>Is the decimal exact?</summary><div class="faq-a">The fraction is always exact. The decimal is exact when the value terminates within the digits shown, and otherwise it is rounded and marked with a ≈ sign — a repeating value like 1/3 can't be written exactly as a decimal. Each of the four boxes accepts whole numbers of up to 15 digits, which keeps every intermediate product exact.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/fuel-cost-calculator/"><h3>Fuel Cost Calculator</h3><p>Estimate the fuel cost of a trip from distance, MPG, and gas price. See total cost, gallons used, and cost per person when splitting a road trip.</p></a><a class="card" href="/toolnest/gpa-calculator/"><h3>GPA Calculator</h3><p>Calculate your grade point average on the 4.0 scale. Enter each course's letter grade and credit hours to get your weighted GPA instantly.</p></a><a class="card" href="/toolnest/ideal-weight-calculator/"><h3>Ideal Weight Calculator</h3><p>Estimate your ideal body weight from your height and sex using the Devine, Robinson, and Miller formulas, plus the healthy weight range from BMI.</p></a><a class="card" href="/toolnest/loan-calculator/"><h3>Loan Calculator</h3><p>Calculate the monthly payment, total interest, and total cost of any loan — personal, student, or installment. Enter the amount, rate, and term to see your numbers.</p></a><a class="card" href="/toolnest/percentage-calculator/"><h3>Percentage Calculator</h3><p>Work out percentages three ways: what is X% of Y, X is what percent of Y, and the percent increase or decrease between two numbers. Free and instant.</p></a><a class="card" href="/toolnest/roman-numeral-converter/"><h3>Roman Numeral Converter</h3><p>Convert numbers to Roman numerals and Roman numerals back to numbers. Supports 1 to 3999 with instant, two-way conversion in your browser.</p></a></div></section>
 </main>
 <footer class="site-footer">
   <div class="container">

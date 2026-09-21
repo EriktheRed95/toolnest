@@ -32,7 +32,7 @@ AD_SLOT = ""
 
 # Show grey "Ad" placeholder boxes where ads will go (handy for local preview).
 # Has no effect once ADSENSE_CLIENT is set.
-DEV_AD_PLACEHOLDERS = True
+DEV_AD_PLACEHOLDERS = False
 
 # Contact email shown on the Contact page.
 CONTACT_EMAIL = "you@example.com"

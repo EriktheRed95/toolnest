@@ -1,0 +1,14 @@
+const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict');
+function run(file, overrides={}){const source=fs.readFileSync('tools/'+file,'utf8'),nodes={};for(const m of source.matchAll(/<([a-z]+)\b([^>]*\bid="[^"]+"[^>]*)>/g)){const attrs={};for(const a of m[2].matchAll(/([\w-]+)="([^"]*)"/g))attrs[a[1]]=a[2];let value=attrs.value||'';if(m[1]==='select'){const body=source.slice(m.index).split('</select>')[0],option=body.match(/<option(?:\s[^>]*)?>([^<]*)/);value=option?option[0].match(/value="([^"]*)"/)?.[1]||option[1]:'';}nodes[attrs.id]={...attrs,value:overrides[attrs.id]??value,innerHTML:'',textContent:'',style:{},checked:/\bchecked\b/.test(m[2]),addEventListener(){},setAttribute(){},querySelectorAll(){return []}};}
+const document={getElementById:id=>nodes[id],querySelectorAll(){return []},querySelector(){return null},addEventListener(){}};for(const script of source.matchAll(/<script>([\s\S]*?)<\/script>/g))vm.runInNewContext(script[1],{document,Intl,Number,Math,Date,JSON,parseFloat,parseInt,Set,Array,String,window:{crypto:require('crypto').webcrypto},navigator:{},setTimeout(){}},{timeout:1000});return Object.values(nodes).map(n=>n.innerHTML+' '+n.textContent).join('\n');}
+const focus=['mortgage-calculator.html','seller-net-proceeds-calculator.html','refinance-calculator.html','rent-vs-buy-calculator.html','cash-on-cash-calculator.html'];
+for(const f of focus){const out=run(f);assert(!/NaN|Infinity/.test(out),f);assert(!out.includes('role="alert"'),f);console.log('PASS default',f);}
+for(const [f,id,v]of [[focus[0],'m-tax','-1'],[focus[1],'s-price',''],[focus[2],'r-remain','0'],[focus[3],'rb-dp','101'],[focus[4],'co-vac','101']]){assert(run(f,{[id]:v}).includes('role="alert"'),f);console.log('PASS invalid',f);}
+assert(run(focus[4],{'co-dp':'0','co-close':'0'}).includes('Not defined (no cash invested)'));
+const summary={executed:[],needsBrowser:[],invalidDefault:[]};for(const f of fs.readdirSync('tools').filter(f=>f.endsWith('.html'))){try{const out=run(f);summary.executed.push(f);if(/NaN|Infinity/.test(out))summary.invalidDefault.push(f);}catch(e){summary.needsBrowser.push({file:f,reason:e.message});}}fs.writeFileSync('script-smoke.json',JSON.stringify(summary,null,2));console.log('All-tool smoke:',summary.executed.length,'executed;',summary.needsBrowser.length,'require browser;',summary.invalidDefault.length,'invalid numeric defaults');
+assert(run(focus[1]).includes('$175,000'));
+assert(run(focus[0],{'m-price':'120000','m-dp':'0','m-rate':'0','m-tax':'0','m-ins':'0','m-hoa':'0','m-pmi':'0'}).includes('$333.33'));
+assert(!/NaN|Infinity/.test(run(focus[2],{'r-rate':'1e-20','r-newrate':'1e-20'})));
+console.log('Known-value seller net, zero-rate mortgage and near-zero refinance checks passed');
+
+assert(!run(focus[4],{'co-dp':'0','co-close':'0','co-rent':'10000'}).includes('0.0% cash-on-cash'));assert(run(focus[1],{'s-comm':'101'}).includes('role="alert"'));

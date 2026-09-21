@@ -30,7 +30,7 @@ META-->
 </div>
 <div class="row">
   <div class="field"><label for="m-hoa">HOA ($/mo) <span class="hint">optional</span></label><input type="number" id="m-hoa" value="0" min="0" step="10"></div>
-  <div class="field"><label for="m-pmi">PMI rate (%/yr) <span class="hint">if &lt;20% down</span></label><input type="number" id="m-pmi" value="0.5" min="0" step="0.1"></div>
+  <div class="field"><label for="m-pmi">PMI rate (%/yr) <span class="hint">if &lt;20% down</span></label><input type="number" id="m-pmi" value="0.5" min="0" step="0.1" max="100"></div>
 </div>
 
 <div class="result" id="m-out"></div>
@@ -60,7 +60,7 @@ META-->
 
   function schedule(P, r, n) {
     var rows = [], bal = P, totalInt = 0;
-    var pay = r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    var pay = r === 0 ? P / n : P * r / -Math.expm1(-n * Math.log1p(r));
     for (var i = 1; i <= n; i++) {
       var interest = bal * r, principal = pay - interest;
       bal -= principal; totalInt += interest;
@@ -71,6 +71,17 @@ META-->
   }
 
   function calc() {
+    if (ids.some(function (id) {
+      var field = document.getElementById(id), raw = String(field.value), value = Number(raw);
+      return raw.trim() === '' || !Number.isFinite(value) || Math.abs(value) > 1e12 ||
+        (/rate|appr|rentinc|invest/.test(id) && value > 100) ||
+        (field.min !== '' && field.min !== undefined && value < Number(field.min)) ||
+        (field.max !== '' && field.max !== undefined && value > Number(field.max));
+    })) {
+      document.getElementById('m-out').innerHTML = '<p class="note warn" role="alert">Enter valid numbers within the indicated ranges. Amounts cannot exceed one trillion and annual rates cannot exceed 100%.</p>';
+      document.getElementById('m-sched').innerHTML = '';
+      return;
+    }
     var p = price();
     var dp = +document.getElementById('m-dp').value || 0;
     var loan = Math.max(0, p - dp);

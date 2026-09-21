@@ -9,11 +9,12 @@
   "faq": [
     {"q": "What is TDEE?", "a": "TDEE stands for Total Daily Energy Expenditure — the total number of calories you burn in a day, including your resting metabolism plus all movement and activity. Eating at your TDEE keeps your weight stable; eating below it leads to loss and above it to gain."},
     {"q": "What is BMR?", "a": "BMR is your Basal Metabolic Rate, the calories your body burns at complete rest just to stay alive. This calculator uses the Mifflin-St Jeor equation, one of the most accurate BMR formulas, then multiplies it by an activity factor to get your TDEE."},
-    {"q": "How do I lose or gain weight?", "a": "A deficit of about 500 calories a day roughly corresponds to losing half a kilogram (about a pound) per week; a surplus does the reverse. The targets shown subtract or add 250 and 500 calories from your TDEE for mild and standard rates."},
+    {"q": "How do I lose or gain weight?", "a": "The displayed adjustments are arithmetic examples, not personalized intake targets or predictions of weight change. Energy needs change over time; discuss an appropriate plan with a qualified professional."},
     {"q": "How accurate are these numbers?", "a": "They're well-researched estimates, but individual metabolism varies. Use them as a starting point, track your weight over a couple of weeks, and adjust your intake based on what actually happens."}
   ]
 }
 META-->
+<p class="note">For adults 18+ only. Not for pregnancy, breastfeeding, children or teens. Activity factors are rough assumptions; these are not prescribed calorie targets.</p>
 <div class="checks" style="margin-bottom:14px">
   <label><input type="radio" name="td-sex" value="male" checked> Male</label>
   <label><input type="radio" name="td-sex" value="female"> Female</label>
@@ -41,26 +42,28 @@ META-->
 (function () {
   var nf = new Intl.NumberFormat('en-US');
   var ids = ['td-age', 'td-cm', 'td-kg', 'td-act'];
-  function v(id) { return +document.getElementById(id).value || 0; }
+  function v(id) { var raw = document.getElementById(id).value; return raw.trim() === '' ? NaN : Number(raw); }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
   function sex() { return document.querySelector('input[name="td-sex"]:checked').value; }
 
   function calc() {
     var out = document.getElementById('td-out');
     var age = v('td-age'), cm = v('td-cm'), kg = v('td-kg'), act = v('td-act');
-    if (age <= 0 || cm <= 0 || kg <= 0) { out.innerHTML = '<p class="note">Enter your age, height, and weight.</p>'; return; }
+    if (![age, cm, kg, act].every(Number.isFinite) || age < 18 || age > 120 || !Number.isInteger(age) || cm <= 0 || cm > 300 || kg <= 0 || kg > 1000 || [1.2, 1.375, 1.55, 1.725, 1.9].indexOf(act) < 0) { out.innerHTML = '<p class="note">Enter adult age 18–120, finite positive height up to 300 cm and weight up to 1,000 kg, and a listed activity level.</p>'; return; }
     var bmr = 10 * kg + 6.25 * cm - 5 * age + (sex() === 'male' ? 5 : -161);
     var tdee = bmr * act;
+    if (!Number.isFinite(tdee) || bmr <= 0) { out.innerHTML = '<p class="note warn">These inputs do not produce a valid adult estimate. Check your measurements.</p>'; return; }
+    function scenario(delta) { var n = tdee + delta; return n < 1000 ? 'Not displayed — seek professional guidance' : nf.format(Math.round(n)) + ' kcal/day'; }
     out.innerHTML =
       '<div class="result-sub">Maintenance calories (TDEE)</div>' +
       '<div class="result-big">' + nf.format(Math.round(tdee)) + ' kcal/day</div>' +
       '<div style="margin-top:12px">' +
         kv('BMR (at rest)', nf.format(Math.round(bmr)) + ' kcal/day') +
         kv('Maintain weight', nf.format(Math.round(tdee)) + ' kcal/day') +
-        kv('Mild weight loss', nf.format(Math.round(tdee - 250)) + ' kcal/day') +
-        kv('Weight loss', nf.format(Math.round(tdee - 500)) + ' kcal/day') +
-        kv('Mild weight gain', nf.format(Math.round(tdee + 250)) + ' kcal/day') +
-        kv('Weight gain', nf.format(Math.round(tdee + 500)) + ' kcal/day') +
+        kv('Illustration: maintenance minus 250', scenario(-250)) +
+        kv('Illustration: maintenance minus 500', scenario(-500)) +
+        kv('Illustration: maintenance plus 250', nf.format(Math.round(tdee + 250)) + ' kcal/day') +
+        kv('Illustration: maintenance plus 500', nf.format(Math.round(tdee + 500)) + ' kcal/day') +
       '</div>' +
       '<p class="note">Estimates based on the Mifflin-St Jeor equation. Individual needs vary — consult a professional before making big diet changes.</p>';
   }
@@ -74,5 +77,7 @@ META-->
 <p>Your <strong>Total Daily Energy Expenditure (TDEE)</strong> is the number of calories you burn across a full day — resting metabolism plus everything you do, from walking to the gym to fidgeting at your desk. Knowing it is the foundation of any weight goal: eat at your TDEE to stay steady, below it to lose, above it to gain. This calculator starts from your Basal Metabolic Rate using the well-regarded Mifflin-St Jeor equation, then scales it by how active you are.</p>
 <p>Choose the activity level that honestly matches your week. People tend to overestimate, so if you're unsure, pick the lower option — it's easier to add calories later than to wonder why the scale isn't moving.</p>
 <h2>Setting a calorie target</h2>
-<p>The targets translate your TDEE into practical daily numbers. A roughly <strong>500-calorie</strong> daily deficit tends to produce about half a kilogram of loss per week, while 250 gives a gentler pace that's easier to sustain; surpluses work the same way for gaining. Pick a target, eat consistently, and weigh yourself over two or three weeks before judging whether to adjust.</p>
+<p>The targets translate your TDEE into practical daily numbers. Adding or subtracting 250 or 500 calories is shown only as arithmetic. It does not predict a fixed weekly weight change: metabolism and energy needs change with body weight. Values under 1,000 kcal/day are not displayed; higher values are not automatically appropriate or safe for you.</p>
 <p class="note"><strong>Estimates only.</strong> These figures are a starting point, not medical or dietary advice. Speak to a doctor or dietitian for guidance tailored to you.</p>
+
+<p>References: <a href="https://pubmed.ncbi.nlm.nih.gov/2305711/">Mifflin–St Jeor resting-energy equation</a> and <a href="https://www.niddk.nih.gov/health-information/weight-management/body-weight-planner">NIDDK Body Weight Planner scope</a> (reviewed September 20, 2026).</p>

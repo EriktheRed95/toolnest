@@ -9,7 +9,7 @@
   "faq": [
     {"q": "What is a mortgage recast?", "a": "A recast (or re-amortization) is when you make a large lump-sum payment toward your principal, and the lender recalculates your monthly payment over the same remaining term at the same interest rate. Your payment drops because the balance is smaller, but the loan's rate and payoff date stay the same."},
     {"q": "How is a recast different from a refinance?", "a": "A refinance replaces your loan with a new one — new rate, new term, full closing costs, and a credit check. A recast keeps your existing loan and rate; you just pay down principal and the payment is recalculated. Recasts usually cost a small flat fee (often $150–$500) rather than thousands in closing costs."},
-    {"q": "Does recasting save interest?", "a": "Yes — because you reduce the principal, you pay interest on a smaller balance for the rest of the loan, which lowers total interest. However, since the term and rate don't change, the savings come purely from the lump sum, not from a shorter payoff. Making the same lump sum without recasting saves the same interest but keeps your higher payment."},
+    {"q": "Does recasting save interest?", "a": "Yes — because you reduce the principal, you pay interest on a smaller balance for the rest of the loan, which lowers total interest. However, since the term and rate don't change, the savings come purely from the lump sum, not from a shorter payoff. Making the same lump sum without recasting usually saves more interest by keeping the higher payment and paying off the balance sooner."},
     {"q": "Should I recast or just pay extra?", "a": "Paying extra without recasting shortens your loan and saves the most interest while keeping payments the same. Recasting instead lowers your required monthly payment for breathing room, at a slightly higher long-run cost. Choose a recast if cash flow matters more than the fastest possible payoff."}
   ]
 }
@@ -33,11 +33,16 @@ META-->
   var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
   var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
   var ids = ['rc-balance', 'rc-rate', 'rc-remain', 'rc-lump', 'rc-fee'];
-  function v(id) { return +document.getElementById(id).value || 0; }
+  function v(id) { var raw = document.getElementById(id).value; return raw.trim() === "" ? NaN : Number(raw); }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
-  function payment(P, r, n) { return r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1); }
+  function payment(P, r, n) { return r === 0 ? P / n : P * r / -Math.expm1(-n * Math.log1p(r)); }
 
   function calc() {
+    var values = ids.map(v);
+    if (values.some(function (value) { return !Number.isFinite(value) || value < 0 || value > 1e12; }) || v('rc-rate') > 100 || v('rc-remain') < 1 || v('rc-remain') > 40) {
+      document.getElementById('rc-out').innerHTML = '<p class="note warn" role="alert">Enter non-negative amounts up to one trillion, a rate from 0 to 100%, and a remaining term from 1 to 40 years.</p>';
+      return;
+    }
     var bal = v('rc-balance');
     var r = v('rc-rate') / 100 / 12;
     var n = Math.round(v('rc-remain') * 12);
@@ -62,10 +67,11 @@ META-->
         kv('Lump-sum applied', money.format(lump)) +
         kv('New balance', money.format(newBal)) +
         (v('rc-fee') ? kv('Recast fee', money.format(v('rc-fee'))) : '') +
-        kv('Total interest saved', money.format(interestSaved)) +
-        kv('Same payoff date', v('rc-remain') + ' years (unchanged)') +
+        kv('Interest saved vs. no lump sum, before fee', money.format(interestSaved)) +
+        kv('Interest savings less recast fee', money.format(interestSaved - v('rc-fee'))) +
+        kv('Remaining term', newBal === 0 ? 'Paid off by lump sum' : Math.floor(n / 12) + ' years ' + (n % 12) + ' months') +
       '</div>' +
-      '<p class="note">Your rate (' + v('rc-rate') + '%) and payoff date stay the same — only the balance and payment shrink. Paying the same ' + money.format(lump) + ' <em>without</em> recasting would save the same interest but keep your payment at ' + money2.format(oldPay) + ' and pay the loan off early instead.</p>';
+      (newBal === 0 ? '<p class="note">The lump sum pays off the balance. A recast is unnecessary; ask your servicer for an exact payoff quote.</p>' : '<p class="note">Your rate (' + v('rc-rate') + '%) and payoff date stay the same — only the balance and payment shrink. Paying the same ' + money.format(lump) + ' <em>without</em> recasting would usually save more interest by keeping your payment at ' + money2.format(oldPay) + ' and pay the loan off early instead.</p>');
   }
   ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
   calc();
@@ -74,11 +80,11 @@ META-->
 
 <h2>Lower your payment without refinancing</h2>
 <p>A <strong>mortgage recast</strong> is one of the most underused tools in home finance. You make a large lump-sum payment toward your principal, and your lender <strong>re-amortizes</strong> the loan — recalculating your monthly payment over the same remaining term at the same interest rate. Because the balance is smaller, the payment drops. There's no refinance, no new rate, no credit check, and usually just a small flat fee.</p>
-<p>That makes a recast especially appealing when you already have a low rate you don't want to lose. Refinancing into today's higher rates to lower a payment can backfire; recasting keeps your existing rate and simply puts your extra cash to work.</p>
+<p>That makes a recast especially appealing when you already have a low rate you don't want to lose. Refinancing into a higher rate to lower a payment can backfire; recasting keeps your existing rate and simply puts your extra cash to work.</p>
 <h2>Recast vs. refinance vs. paying extra</h2>
 <ul>
   <li><strong>Recast</strong> — keeps your rate and payoff date, lowers the required monthly payment. Best when cash flow flexibility is the goal and you have a lump sum (an inheritance, bonus, or home-sale proceeds).</li>
   <li><strong>Refinance</strong> — replaces the loan entirely. Worth it mainly when you can secure a meaningfully lower rate or need to change the term, and only if the savings beat the closing costs.</li>
-  <li><strong>Paying extra (no recast)</strong> — applies the lump sum but keeps your current payment, so the loan is paid off <em>early</em>. This saves the same interest as a recast while shortening the term — the fastest path to debt-free, if you don't need the lower payment.</li>
+  <li><strong>Paying extra (no recast)</strong> — applies the lump sum but keeps your current payment, so the loan is paid off <em>early</em>. At a positive interest rate, this generally saves more interest than making only the lower recast payments while shortening the term — the fastest path to debt-free, if you don't need the lower payment.</li>
 </ul>
 <p class="note"><strong>Estimate only.</strong> Not all loans are eligible to recast (many government-backed loans aren't), minimum lump sums and fees vary by servicer, and figures here use principal and interest only. Confirm the details with your loan servicer. This is not financial advice.</p>
