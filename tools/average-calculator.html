@@ -25,7 +25,17 @@ META-->
 
 <script>
 (function () {
-  var num = new Intl.NumberFormat('en-US', { maximumFractionDigits: 4 });
+  var nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 4 });
+  var sig = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 4 });
+  var sci = new Intl.NumberFormat('en-US', { notation: 'scientific', maximumSignificantDigits: 4 });
+  // 4 decimals normally; 4 significant digits for tiny values; overflow is stated, not shown as ∞
+  var num = { format: function (x) {
+    if (!isFinite(x)) return 'Too large to display';
+    var a = Math.abs(x);
+    if (a === 0) return '0';
+    if (a >= 0.0001) return nf.format(x);
+    return a >= 1e-12 ? sig.format(x) : sci.format(x);
+  } };
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
   var input = document.getElementById('avg-input'), big = document.getElementById('avg-big'), out = document.getElementById('avg-out');
 
@@ -42,10 +52,11 @@ META-->
       return;
     }
     var sum = nums.reduce(function (a, b) { return a + b; }, 0);
-    var mean = sum / n;
+    // If the sum overflows, the mean can still be finite: average the scaled values instead.
+    var mean = isFinite(sum) ? sum / n : nums.reduce(function (a, b) { return a + b / n; }, 0);
     var sorted = nums.slice().sort(function (a, b) { return a - b; });
     var mid = Math.floor(n / 2);
-    var median = n % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    var median = n % 2 ? sorted[mid] : sorted[mid - 1] / 2 + sorted[mid] / 2;
     var min = sorted[0], max = sorted[n - 1];
 
     var counts = {}, best = 0;
@@ -54,7 +65,7 @@ META-->
     for (var k in counts) { if (counts[k] === best) modes.push(parseFloat(k)); }
     var modeText;
     if (best <= 1) { modeText = 'No mode (all values unique)'; }
-    else if (modes.length === Object.keys(counts).length) { modeText = 'No mode (every value ties)'; }
+    else if (modes.length > 1 && modes.length === Object.keys(counts).length) { modeText = 'No mode (every value ties)'; }
     else { modeText = modes.sort(function (a, b) { return a - b; }).map(function (m) { return num.format(m); }).join(', ') + ' (×' + best + ')'; }
 
     big.textContent = num.format(mean);

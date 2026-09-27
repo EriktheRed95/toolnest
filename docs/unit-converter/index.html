@@ -54,10 +54,23 @@
 <script>
 (function () {
   var nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 6 });
+  var sig = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 7 });
+  var sci = new Intl.NumberFormat('en-US', { notation: 'scientific', maximumSignificantDigits: 7 });
+  // Show 6 decimals for values >= 1 and 7 significant digits below 1, so a tiny
+  // nonzero result is never displayed as 0.
+  function fmt(x) {
+    var a = Math.abs(x);
+    if (a === 0) return '0';
+    if (a >= 1) return nf.format(x);
+    return a >= 1e-12 ? sig.format(x) : sci.format(x);
+  }
+  // Exact definitions: 1959 international yard and pound (1 lb = 453.59237 g,
+  // 1 in = 0.0254 m) and the US gallon of 231 cubic inches (3.785411784 L).
+  var GAL = 3.785411784;
   var units = {
     length: { m: 1, km: 1000, cm: 0.01, mm: 0.001, mi: 1609.344, yd: 0.9144, ft: 0.3048, "in": 0.0254 },
-    weight: { g: 1, kg: 1000, mg: 0.001, lb: 453.592, oz: 28.3495, tonne: 1e6 },
-    volume: { l: 1, ml: 0.001, "gal (US)": 3.78541, qt: 0.946353, pt: 0.473176, cup: 0.236588, "fl oz": 0.0295735 },
+    weight: { g: 1, kg: 1000, mg: 0.001, lb: 453.59237, oz: 453.59237 / 16, tonne: 1e6 },
+    volume: { l: 1, ml: 0.001, "gal (US)": GAL, qt: GAL / 4, pt: GAL / 8, cup: GAL / 16, "fl oz": GAL / 128 },
     temperature: { C: 1, F: 1, K: 1 }
   };
   var cat = document.getElementById('uc-cat'), val = document.getElementById('uc-val');
@@ -77,20 +90,24 @@
   function calc() {
     var out = document.getElementById('uc-out');
     var v = parseFloat(val.value);
-    if (isNaN(v)) { out.innerHTML = '<p class="note">Enter a value to convert.</p>'; return; }
+    if (!isFinite(v)) { out.innerHTML = '<p class="note">Enter a value to convert.</p>'; return; }
     var f = fromSel.value, t = toSel.value, result;
     if (cat.value === 'temperature') {
-      result = fromCelsius(toCelsius(v, f), t);
+      var c = toCelsius(v, f);
+      if (c + 273.15 < -1e-9) { out.innerHTML = '<p class="note warn" role="alert">That temperature is below absolute zero (0 K, −273.15 °C, −459.67 °F).</p>'; return; }
+      // round away binary noise such as -459.67 F -> -0.00000000000006 K
+      result = Math.round(fromCelsius(c, t) * 1e9) / 1e9;
     } else {
       var u = units[cat.value];
       result = v * u[f] / u[t];
     }
+    if (!isFinite(result)) { out.innerHTML = '<p class="note warn" role="alert">The result is too large to display. Enter a smaller value.</p>'; return; }
     out.innerHTML =
-      '<div class="result-sub">' + nf.format(v) + ' ' + f + ' equals</div>' +
-      '<div class="result-big">' + nf.format(result) + ' ' + t + '</div>' +
+      '<div class="result-sub">' + fmt(v) + ' ' + f + ' equals</div>' +
+      '<div class="result-big">' + fmt(result) + ' ' + t + '</div>' +
       '<div style="margin-top:12px">' +
-        kv('From', nf.format(v) + ' ' + f) +
-        kv('To', nf.format(result) + ' ' + t) +
+        kv('From', fmt(v) + ' ' + f) +
+        kv('To', fmt(result) + ' ' + t) +
       '</div>';
   }
   cat.addEventListener('change', function () { fill(); calc(); });

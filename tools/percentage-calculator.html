@@ -37,30 +37,54 @@ META-->
 <script>
 (function () {
   var nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 4 });
+  var sig = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 4 });
+  var sci = new Intl.NumberFormat('en-US', { notation: 'scientific', maximumSignificantDigits: 4 });
+  // 4 decimals normally; 4 significant digits for tiny values so they never show as 0
+  function fmt(x) {
+    var a = Math.abs(x);
+    if (a === 0) return '0';
+    if (a >= 0.0001) return nf.format(x);
+    return a >= 1e-12 ? sig.format(x) : sci.format(x);
+  }
+  // Blank or non-finite fields are incomplete, never silently treated as 0
+  function num(id) {
+    var s = String(document.getElementById(id).value).trim();
+    var n = s === '' ? NaN : Number(s);
+    return isFinite(n) ? n : NaN;
+  }
+  function say(o, msg) { o.className = 'result'; o.textContent = msg; }
+  var TOO_BIG = 'The result is too large to display. Enter smaller numbers.';
   function bind(ids, fn) {
     ids.forEach(function (id) { document.getElementById(id).addEventListener('input', fn); });
     fn();
   }
   bind(['p1-x', 'p1-y'], function () {
-    var x = +document.getElementById('p1-x').value, y = +document.getElementById('p1-y').value;
+    var x = num('p1-x'), y = num('p1-y');
     var o = document.getElementById('p1-out');
-    if (isNaN(x) || isNaN(y)) return;
-    o.className = 'result'; o.innerHTML = '<span class="result-big">' + nf.format(x * y / 100) + '</span>';
+    if (isNaN(x) || isNaN(y)) { say(o, 'Enter a percent and a number.'); return; }
+    var r = x * y / 100;
+    if (!isFinite(r)) { say(o, TOO_BIG); return; }
+    o.className = 'result'; o.innerHTML = '<span class="result-big">' + fmt(r) + '</span>';
   });
   bind(['p2-x', 'p2-y'], function () {
-    var x = +document.getElementById('p2-x').value, y = +document.getElementById('p2-y').value;
+    var x = num('p2-x'), y = num('p2-y');
     var o = document.getElementById('p2-out');
-    if (isNaN(x) || isNaN(y) || y === 0) { o.className = 'result'; o.textContent = 'Enter a non-zero second number.'; return; }
-    o.className = 'result'; o.innerHTML = '<span class="result-big">' + nf.format(x / y * 100) + '%</span>';
+    if (isNaN(x) || isNaN(y)) { say(o, 'Enter both numbers.'); return; }
+    if (y === 0) { say(o, 'Enter a non-zero second number.'); return; }
+    var r = x / y * 100;
+    if (!isFinite(r)) { say(o, TOO_BIG); return; }
+    o.className = 'result'; o.innerHTML = '<span class="result-big">' + fmt(r) + '%</span>';
   });
   bind(['p3-a', 'p3-b'], function () {
-    var a = +document.getElementById('p3-a').value, b = +document.getElementById('p3-b').value;
+    var a = num('p3-a'), b = num('p3-b');
     var o = document.getElementById('p3-out');
-    if (isNaN(a) || isNaN(b) || a === 0) { o.className = 'result'; o.textContent = 'Enter a non-zero starting value.'; return; }
+    if (isNaN(a) || isNaN(b)) { say(o, 'Enter a starting and an ending value.'); return; }
+    if (a === 0) { say(o, 'Enter a non-zero starting value.'); return; }
     var pct = (b - a) / Math.abs(a) * 100;
+    if (!isFinite(pct)) { say(o, TOO_BIG); return; }
     var word = pct > 0 ? 'increase' : pct < 0 ? 'decrease' : 'change';
     o.className = 'result';
-    o.innerHTML = '<span class="result-big">' + (pct > 0 ? '+' : '') + nf.format(pct) + '%</span> <span class="result-sub">' + word + '</span>';
+    o.innerHTML = '<span class="result-big">' + (pct > 0 ? '+' : '') + fmt(pct) + '%</span> <span class="result-sub">' + word + '</span>';
   });
 })();
 </script>

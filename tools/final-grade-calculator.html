@@ -32,13 +32,18 @@ META-->
     var out = document.getElementById('fg-out');
     var current = parseFloat(v('fg-current')), weight = parseFloat(v('fg-weight')), desired = parseFloat(v('fg-desired'));
     if (isNaN(current) || isNaN(weight) || isNaN(desired)) { out.innerHTML = '<p class="note">Enter your current grade, exam weight, and desired grade.</p>'; return; }
-    if (weight <= 0) { out.innerHTML = '<p class="note warn">The final exam weight must be greater than 0%.</p>'; return; }
+    if (!isFinite(current) || !isFinite(desired) || current < 0 || desired < 0 || current > 1000 || desired > 1000) { out.innerHTML = '<p class="note warn" role="alert">Grades must be between 0% and 1,000%.</p>'; return; }
+    if (!(weight > 0)) { out.innerHTML = '<p class="note warn" role="alert">The final exam weight must be greater than 0%.</p>'; return; }
+    if (weight > 100) { out.innerHTML = '<p class="note warn" role="alert">The final exam weight must be 100% or less.</p>'; return; }
     var w = weight / 100;
     var needed = (desired - current * (1 - w)) / w;
-    var rounded = Math.round(needed * 10) / 10;
+    // The answer is a minimum score, so round UP to the next 0.1 (the small
+    // tolerance absorbs binary noise such as 94.60000000000001).
+    var rounded = Math.ceil(needed * 10 - 1e-7) / 10;
+    if (rounded === 0) rounded = 0;   // avoid showing -0
 
     var note;
-    if (needed > 100) note = '<p class="note warn">A score of ' + rounded + '% isn\'t achievable on a standard 100-point final — you\'d need extra credit to reach your target.</p>';
+    if (rounded > 100) note = '<p class="note warn">A score of ' + rounded + '% isn\'t achievable on a standard 100-point final — you\'d need extra credit to reach your target.</p>';
     else if (needed <= 0) note = '<p class="note ok">You\'ve already secured your desired grade — even a 0% on the final keeps you at or above ' + desired + '%.</p>';
     else note = '<p class="note ok">This is within reach on a standard 100-point exam.</p>';
 

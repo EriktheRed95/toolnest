@@ -40,8 +40,8 @@
 </div>
 <div class="btn-row" id="tip-presets">
   <button class="chip" data-tip="15">15%</button>
-  <button class="chip active" data-tip="18">18%</button>
-  <button class="chip" data-tip="20">20%</button>
+  <button class="chip" data-tip="18">18%</button>
+  <button class="chip active" data-tip="20">20%</button>
   <button class="chip" data-tip="25">25%</button>
 </div>
 <div class="checks"><label><input type="checkbox" id="tip-round"> Round total up to the nearest dollar</label></div>
@@ -52,13 +52,25 @@
   var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
   var pctEl = document.getElementById('tip-pct'), out = document.getElementById('tip-out');
   function calc() {
+    if (document.getElementById('tip-bill').value.trim() === '' || pctEl.value.trim() === '') {
+      out.innerHTML = '<p class="note warn" role="alert">Enter a bill amount and tip percentage.</p>';
+      return;
+    }
     var bill = +document.getElementById('tip-bill').value || 0;
     var pct = +pctEl.value || 0;
     var people = Math.max(1, Math.floor(+document.getElementById('tip-people').value) || 1);
     var round = document.getElementById('tip-round').checked;
-    var tip = bill * pct / 100;
-    var total = bill + tip;
-    if (round) { total = Math.ceil(total); tip = total - bill; }
+    if (!(bill >= 0 && bill <= 1e9) || !(pct >= 0 && pct <= 1000)) {
+      out.innerHTML = '<p class="note warn" role="alert">Enter a bill of $0 or more and a tip of 0% or more.</p>';
+      return;
+    }
+    // Work in whole cents so a total such as $249.00 is not pushed to $250 by
+    // binary noise (249.00000000000003) when rounding up.
+    var billC = Math.round(bill * 100);
+    var tipC = Math.round(billC * pct / 100);
+    var totalC = billC + tipC;
+    if (round) { totalC = Math.ceil(totalC / 100) * 100; tipC = totalC - billC; }
+    var tip = tipC / 100, total = totalC / 100;
     out.innerHTML =
       '<div class="kv"><span>Tip</span><span class="v">' + money.format(tip) + '</span></div>' +
       '<div class="kv"><span>Total</span><span class="v">' + money.format(total) + '</span></div>' +

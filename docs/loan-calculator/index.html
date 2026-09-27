@@ -52,16 +52,29 @@
   var ids = ['ln-amount', 'ln-rate', 'ln-term', 'ln-unit'];
   function v(id) { return +document.getElementById(id).value || 0; }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function bad(msg) { document.getElementById('ln-out').innerHTML = '<p class="note warn" role="alert">' + msg + '</p>'; }
 
   function calc() {
+    if (['ln-amount', 'ln-rate', 'ln-term'].some(function (id) { return document.getElementById(id).value.trim() === ''; })) {
+      bad('Enter a loan amount, interest rate and term.'); return;
+    }
+    var raw = {};
+    ['ln-amount', 'ln-rate', 'ln-term'].forEach(function (id) { raw[id] = +document.getElementById(id).value; });
+    if (!isFinite(raw['ln-amount']) || raw['ln-amount'] < 0 || raw['ln-amount'] > 1e12) { bad('Enter a loan amount from $0 to $1 trillion.'); return; }
+    if (!isFinite(raw['ln-rate']) || raw['ln-rate'] < 0 || raw['ln-rate'] > 1e6) { bad('Enter an interest rate of 0% or more.'); return; }
+    if (!isFinite(raw['ln-term']) || raw['ln-term'] < 0 || raw['ln-term'] > 1200) { bad('Enter a term of up to 1,200 months or 100 years.'); return; }
     var P = v('ln-amount');
     var r = v('ln-rate') / 100 / 12;
     var n = Math.round(v('ln-term') * v('ln-unit'));
     var out = document.getElementById('ln-out');
     if (P <= 0 || n <= 0) { out.innerHTML = '<p class="note">Enter a loan amount and term.</p>'; return; }
-    var pay = r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    if (n > 1200) { bad('Enter a term of up to 1,200 months or 100 years.'); return; }
+    // payment = P*r / (1 - (1+r)^-n), written with expm1/log1p so tiny rates do not
+    // cancel to 0/0 and huge rates do not overflow to Infinity/Infinity.
+    var pay = r === 0 ? P / n : P * r / -Math.expm1(-n * Math.log1p(r));
     var total = pay * n;
     var interest = total - P;
+    if (!isFinite(total)) { bad('The result is too large to display. Check the amount and rate.'); return; }
 
     out.innerHTML =
       '<div class="result-sub">Monthly payment</div>' +
@@ -69,7 +82,7 @@
       '<div style="margin-top:12px">' +
         kv('Loan amount', money.format(P)) +
         kv('Total interest', money.format(interest)) +
-        kv('Total of ' + n + ' payments', money.format(total)) +
+        kv('Total of ' + n + (n === 1 ? ' payment' : ' payments'), money.format(total)) +
         kv('Interest as % of loan', P ? (interest / P * 100).toFixed(1) + '%' : '—') +
       '</div>';
   }

@@ -32,17 +32,30 @@ META-->
   function v(id) { return +document.getElementById(id).value || 0; }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
 
+  function bad(msg) { document.getElementById('ci-out').innerHTML = '<p class="note warn" role="alert">' + msg + '</p>'; }
+
   function calc() {
+    var raw = {};
+    ids.forEach(function (id) { var s = String(document.getElementById(id).value).trim(); raw[id] = s === '' ? NaN : +s; });
+    if (!(raw['ci-principal'] >= 0 && raw['ci-principal'] <= 1e12)) { bad('Enter a starting amount from $0 to $1 trillion.'); return; }
+    if (!(raw['ci-monthly'] >= 0 && raw['ci-monthly'] <= 1e12)) { bad('Enter a monthly contribution from $0 to $1 trillion.'); return; }
+    if (!(raw['ci-rate'] >= 0 && raw['ci-rate'] <= 1000)) { bad('Enter an annual return from 0% to 1,000%.'); return; }
+    if (!(raw['ci-years'] > 0 && raw['ci-years'] <= 80)) { bad('Enter a number of years greater than 0 and up to 80.'); return; }
     var P = v('ci-principal');
     var PMT = v('ci-monthly');
     var i = v('ci-rate') / 100 / 12;
     var N = Math.round(v('ci-years') * 12);
+    if (N < 1) { bad('Enter at least one month (0.05 years).'); return; }
 
-    var fvPrincipal = P * Math.pow(1 + i, N);
-    var fvContrib = i === 0 ? PMT * N : PMT * ((Math.pow(1 + i, N) - 1) / i);
+    // (1+i)^N - 1 via expm1/log1p: exact enough for tiny rates, where the naive
+    // form cancels to 0 and silently drops every contribution.
+    var growth = i === 0 ? 0 : Math.expm1(N * Math.log1p(i));
+    var fvPrincipal = P * (1 + growth);
+    var fvContrib = i === 0 ? PMT * N : PMT * (growth / i);
     var fv = fvPrincipal + fvContrib;
     var contributed = P + PMT * N;
-    var interest = fv - contributed;
+    var interest = Math.max(0, fv - contributed);   // rate >= 0, so growth is never negative (clears -$0 float noise)
+    if (!isFinite(fv)) { bad('The projected balance is too large to display. Lower the rate or the years.'); return; }
 
     document.getElementById('ci-out').innerHTML =
       '<div class="result-sub">Future balance after ' + v('ci-years') + ' years</div>' +
