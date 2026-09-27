@@ -77,7 +77,7 @@ Create `tools/<slug>.html`. Structure (MANDATORY — `build.py` hard-fails on ba
 
 Edit tools/pages and rebuild with `python build.py`; generated docs must travel with source changes.
 Run `python audit_static.py` for links, labels and duplicate IDs.
-Focused tests: `node test-date-fraction.cjs`, `node test-date-review.cjs`, `node test-age.cjs`, `node test-work-hours.cjs`, `node test-health.cjs`, `node test-browser-dependent.cjs`, `node test-recast.cjs`, `node test-realestate.cjs`.
+Focused tests: `node test-date-fraction.cjs`, `node test-date-review.cjs`, `node test-age.cjs`, `node test-work-hours.cjs`, `node test-health.cjs`, `node test-browser-dependent.cjs`, `node test-recast.cjs`, `node test-realestate.cjs`, `node test-formula-review.cjs`, `node test-everyday-review.cjs`.
 
 September 20 review fixed date/DST/month-end arithmetic, exact fractions, age breakdown, work-hours output, health input/scope handling, hash races, debt/GPA behavior and real-estate calculator boundaries. Claude implemented the date/fraction subset; Codex independently reviewed it and fixed a remaining year-zero edge. Earlier Claude connection failure applied to the earlier seven-tool pass only.
 

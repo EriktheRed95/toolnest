@@ -40,7 +40,7 @@
   <div class="field"><label for="fuel-people">Split between (people)</label><input type="number" id="fuel-people" value="1" min="1" step="1"></div>
 </div>
 <div class="checks"><label><input type="checkbox" id="fuel-round"> Round trip (there and back)</label></div>
-<div class="result">
+<div class="result" aria-live="polite">
   <div class="result-big" id="fuel-big">$0.00</div>
   <div id="fuel-out" style="margin-top:12px"></div>
 </div>
@@ -51,15 +51,21 @@
   var num = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
   var big = document.getElementById('fuel-big'), out = document.getElementById('fuel-out');
+  function field(id) { var s = document.getElementById(id).value.trim(); return s === '' ? NaN : +s; }
+  function bad(msg) { big.textContent = ''; out.innerHTML = '<p class="note warn" role="alert">' + msg + '</p>'; }
 
   function calc() {
-    var input = +document.getElementById('fuel-dist').value || 0;
-    var mpg = +document.getElementById('fuel-mpg').value || 0;
-    var price = +document.getElementById('fuel-price').value || 0;
-    var people = Math.max(1, Math.floor(+document.getElementById('fuel-people').value) || 1);
+    var input = field('fuel-dist'), mpg = field('fuel-mpg'), price = field('fuel-price'), split = field('fuel-people');
+    if (split !== split) split = 1;   // blank "split between" means one person
+    if (input !== input || mpg !== mpg || price !== price) { bad('Enter a trip distance, fuel efficiency and gas price.'); return; }
+    if (!(input >= 0 && input <= 1e7)) { bad('Enter a trip distance from 0 to 10 million miles.'); return; }
+    if (!(mpg >= 0.1 && mpg <= 1e4)) { bad('Enter a fuel efficiency of at least 0.1 MPG.'); return; }
+    if (!(price >= 0 && price <= 1e4)) { bad('Enter a gas price from $0 to $10,000 per gallon.'); return; }
+    if (!(split >= 1 && split <= 1000)) { bad('Enter 1 to 1,000 people to split the cost.'); return; }
+    var people = Math.floor(split);
     var roundTrip = document.getElementById('fuel-round').checked;
     var distance = roundTrip ? input * 2 : input;
-    var gallons = mpg > 0 ? distance / mpg : 0;
+    var gallons = distance / mpg;
     var totalCost = gallons * price;
     var perPerson = totalCost / people;
 

@@ -35,40 +35,49 @@
 <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Sales Tax Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Sales Tax Calculator"}]}</script>
 <article class="tool"><h1>Sales Tax Calculator</h1><p class="lede">Add sales tax to a price or work backward from a tax-included total. Enter the amount and tax rate to see the tax owed and the final total instantly.</p><div class="row">
   <div class="field"><label for="st-amount">Amount ($)</label><input type="number" id="st-amount" value="50" min="0" step="0.01"></div>
-  <div class="field"><label for="st-rate">Sales tax rate (%)</label><input type="number" id="st-rate" value="8" min="0" step="0.01"></div>
+  <div class="field"><label for="st-rate">Sales tax rate (%)</label><input type="number" id="st-rate" value="8" min="0" max="100" step="0.01"></div>
 </div>
 <div class="checks"><label><input type="checkbox" id="st-reverse"> The amount already includes tax (work backward)</label></div>
 
-<div class="result" id="st-out"></div>
+<div class="result" id="st-out" aria-live="polite"></div>
 
 <script>
 (function () {
   var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var pctFmt = new Intl.NumberFormat('en-US', { maximumFractionDigits: 4 });
   var ids = ['st-amount', 'st-rate'];
-  function v(id) { return +document.getElementById(id).value || 0; }
+  function field(id) { var s = document.getElementById(id).value.trim(); return s === '' ? NaN : +s; }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function bad(msg) { document.getElementById('st-out').innerHTML = '<p class="note warn" role="alert">' + msg + '</p>'; }
+  // Round to whole cents, half up. toFixed(6) first strips binary noise so an exact
+  // half cent still rounds up: $410.00 at 6.35% is 2603.4999999999995 cents -> $26.04.
+  function cents(x) { return Math.round(+x.toFixed(6)); }
 
   function calc() {
-    var amount = v('st-amount');
-    var rate = v('st-rate') / 100;
+    var amount = field('st-amount'), pct = field('st-rate');
     var reverse = document.getElementById('st-reverse').checked;
-    var pretax, tax, total;
+    if (amount !== amount || pct !== pct) { bad('Enter an amount and a sales tax rate.'); return; }
+    if (!(amount >= 0 && amount <= 1e12)) { bad('Enter an amount from $0 to $1 trillion.'); return; }
+    if (!(pct >= 0 && pct <= 100)) { bad('Enter a sales tax rate from 0% to 100%.'); return; }
+    // Work in whole cents so the three lines shown always add up.
+    var amountC = Math.round(amount * 100), pretaxC, taxC, totalC;
     if (reverse) {
-      total = amount;
-      pretax = rate > -1 ? amount / (1 + rate) : amount;
-      tax = total - pretax;
+      totalC = amountC;
+      pretaxC = cents(amountC / (1 + pct / 100));
+      taxC = totalC - pretaxC;
     } else {
-      pretax = amount;
-      tax = amount * rate;
-      total = amount + tax;
+      pretaxC = amountC;
+      taxC = cents(amountC * pct / 100);
+      totalC = pretaxC + taxC;
     }
+    var pretax = pretaxC / 100, tax = taxC / 100, total = totalC / 100;
 
     document.getElementById('st-out').innerHTML =
       '<div class="result-sub">' + (reverse ? 'Price before tax' : 'Total with tax') + '</div>' +
       '<div class="result-big">' + money.format(reverse ? pretax : total) + '</div>' +
       '<div style="margin-top:12px">' +
         kv('Price before tax', money.format(pretax)) +
-        kv('Sales tax (' + v('st-rate') + '%)', money.format(tax)) +
+        kv('Sales tax (' + pctFmt.format(pct) + '%)', money.format(tax)) +
         kv('Total with tax', money.format(total)) +
       '</div>';
   }

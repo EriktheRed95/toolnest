@@ -39,38 +39,50 @@
 </div>
 <div class="row">
   <div class="field"><label for="dc-pct2">Extra discount (%) <span class="hint">optional, stacks</span></label><input type="number" id="dc-pct2" value="0" min="0" max="100" step="1"></div>
-  <div class="field"><label for="dc-tax">Sales tax (%) <span class="hint">optional</span></label><input type="number" id="dc-tax" value="0" min="0" step="0.01"></div>
+  <div class="field"><label for="dc-tax">Sales tax (%) <span class="hint">optional</span></label><input type="number" id="dc-tax" value="0" min="0" max="100" step="0.01"></div>
 </div>
 
-<div class="result" id="dc-out"></div>
+<div class="result" id="dc-out" aria-live="polite"></div>
 
 <script>
 (function () {
   var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  var pctFmt = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
   var ids = ['dc-price', 'dc-pct', 'dc-pct2', 'dc-tax'];
-  function v(id) { return +document.getElementById(id).value || 0; }
+  // Blank reads as NaN, or as `blank` for the optional fields.
+  function field(id, blank) { var s = document.getElementById(id).value.trim(); return s === '' ? (blank === undefined ? NaN : blank) : +s; }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function bad(msg) { document.getElementById('dc-out').innerHTML = '<p class="note warn" role="alert">' + msg + '</p>'; }
+  // Round to whole cents, half up, after stripping binary noise so exact half cents round up.
+  function cents(x) { return Math.round(+x.toFixed(6)); }
 
   function calc() {
-    var price = v('dc-price');
-    var after1 = price * (1 - v('dc-pct') / 100);
-    var after2 = after1 * (1 - v('dc-pct2') / 100);
-    var tax = after2 * v('dc-tax') / 100;
-    var finalPrice = after2 + tax;
-    var saved = price - after2;
-    var effPct = price ? saved / price * 100 : 0;
+    var price = field('dc-price'), d1 = field('dc-pct'), d2 = field('dc-pct2', 0), taxPct = field('dc-tax', 0);
+    if (price !== price || d1 !== d1) { bad('Enter an original price and a discount.'); return; }
+    if (!(price >= 0 && price <= 1e12)) { bad('Enter an original price from $0 to $1 trillion.'); return; }
+    if (!(d1 >= 0 && d1 <= 100) || !(d2 >= 0 && d2 <= 100)) { bad('Enter discounts from 0% to 100%.'); return; }
+    if (!(taxPct >= 0 && taxPct <= 100)) { bad('Enter a sales tax rate from 0% to 100%.'); return; }
+    // Each step is rounded to the cent, as at a register, so the lines shown add up.
+    var priceC = Math.round(price * 100);
+    var after1C = cents(priceC * (100 - d1) / 100);
+    var after2C = cents(after1C * (100 - d2) / 100);
+    var taxC = cents(after2C * taxPct / 100);
+    var savedC = priceC - after2C;
+    // Combined discount rate; independent of the price, so it is defined even at $0.
+    var effPct = 100 - (100 - d1) * (100 - d2) / 100;
+    var eff = pctFmt.format(effPct);
 
     document.getElementById('dc-out').innerHTML =
       '<div class="result-sub">You pay</div>' +
-      '<div class="result-big">' + money.format(finalPrice) + '</div>' +
+      '<div class="result-big">' + money.format((after2C + taxC) / 100) + '</div>' +
       '<div style="margin-top:12px">' +
-        kv('Original price', money.format(price)) +
-        kv('After ' + v('dc-pct') + '% off', money.format(after1)) +
-        (v('dc-pct2') ? kv('After extra ' + v('dc-pct2') + '% off', money.format(after2)) : '') +
-        (v('dc-tax') ? kv('Sales tax (' + v('dc-tax') + '%)', money.format(tax)) : '') +
-        kv('<strong>You save</strong>', '<strong>' + money.format(saved) + ' (' + effPct.toFixed(0) + '%)</strong>') +
+        kv('Original price', money.format(priceC / 100)) +
+        kv('After ' + pctFmt.format(d1) + '% off', money.format(after1C / 100)) +
+        (d2 ? kv('After extra ' + pctFmt.format(d2) + '% off', money.format(after2C / 100)) : '') +
+        (taxPct ? kv('Sales tax (' + pctFmt.format(taxPct) + '%)', money.format(taxC / 100)) : '') +
+        kv('<strong>You save</strong>', '<strong>' + money.format(savedC / 100) + ' (' + eff + '%)</strong>') +
       '</div>' +
-      (v('dc-pct2') ? '<p class="note">Stacked discounts apply one after another, so ' + v('dc-pct') + '% + ' + v('dc-pct2') + '% gives ' + effPct.toFixed(0) + '% off — not ' + (v('dc-pct') + v('dc-pct2')) + '%.</p>' : '');
+      (d1 && d2 ? '<p class="note">Stacked discounts apply one after another, so ' + pctFmt.format(d1) + '% + ' + pctFmt.format(d2) + '% gives ' + eff + '% off — not ' + pctFmt.format(d1 + d2) + '%.</p>' : '');
   }
   ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
   calc();

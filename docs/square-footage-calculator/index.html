@@ -36,9 +36,9 @@
 <article class="tool"><h1>Square Footage Calculator</h1><p class="lede">Calculate square footage from length and width in feet. See the area in square feet, square yards, and square meters, plus total cost from a price per square foot.</p><div class="row">
   <div class="field"><label for="sqft-length">Length (ft)</label><input type="number" id="sqft-length" value="12" min="0" step="0.01"></div>
   <div class="field"><label for="sqft-width">Width (ft)</label><input type="number" id="sqft-width" value="10" min="0" step="0.01"></div>
-  <div class="field"><label for="sqft-price">Price per sq ft ($, optional)</label><input type="number" id="sqft-price" value="0" min="0" step="0.01"></div>
+  <div class="field"><label for="sqft-price">Price per sq ft ($) <span class="hint">optional</span></label><input type="number" id="sqft-price" value="0" min="0" step="0.01"></div>
 </div>
-<div class="result">
+<div class="result" aria-live="polite">
   <div class="result-big" id="sqft-big">0 sq ft</div>
   <div id="sqft-out" style="margin-top:12px"></div>
 </div>
@@ -47,19 +47,27 @@
 (function () {
   var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
   var num = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
+  var small = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 3 });
+  var SQM_PER_SQFT = 0.09290304;   // (0.3048 m)^2, exact by definition of the international foot
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
   var big = document.getElementById('sqft-big'), out = document.getElementById('sqft-out');
+  // Blank reads as NaN (not 0) so an empty field is reported instead of silently computing.
+  function field(id) { var s = document.getElementById(id).value.trim(); return s === '' ? NaN : +s; }
+  // Nonzero areas below 0.01 keep significant digits instead of rounding to "0".
+  function fmt(x) { return x !== 0 && Math.abs(x) < 0.01 ? small.format(x) : num.format(x); }
+  function bad(msg) { big.textContent = ''; out.innerHTML = '<p class="note warn" role="alert">' + msg + '</p>'; }
 
   function calc() {
-    var l = +document.getElementById('sqft-length').value || 0;
-    var w = +document.getElementById('sqft-width').value || 0;
-    var price = +document.getElementById('sqft-price').value || 0;
+    var l = field('sqft-length'), w = field('sqft-width'), price = field('sqft-price');
+    if (price !== price) price = 0;   // the price is optional
+    if (!(l >= 0 && l <= 1e9) || !(w >= 0 && w <= 1e9)) { bad('Enter a length and width from 0 to 1 billion feet.'); return; }
+    if (!(price >= 0 && price <= 1e9)) { bad('Enter a price per square foot of $0 or more, or leave it blank.'); return; }
     var area = l * w;
-    big.textContent = num.format(area) + ' sq ft';
+    big.textContent = fmt(area) + ' sq ft';
     out.innerHTML =
-      kv('Square feet', num.format(area) + ' ft²') +
-      kv('Square yards', num.format(area / 9) + ' yd²') +
-      kv('Square meters', num.format(area * 0.092903) + ' m²') +
+      kv('Square feet', fmt(area) + ' ft²') +
+      kv('Square yards', fmt(area / 9) + ' yd²') +
+      kv('Square meters', fmt(area * SQM_PER_SQFT) + ' m²') +
       (price > 0 ? kv('Total cost', money.format(area * price)) : '');
   }
   ['sqft-length', 'sqft-width', 'sqft-price'].forEach(function (id) {

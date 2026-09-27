@@ -41,21 +41,25 @@
   <div class="field"><label for="si-years">Time (years) <span class="hint">decimals OK</span></label><input type="number" id="si-years" value="3" min="0" step="0.25"></div>
 </div>
 
-<div class="result" id="si-out"></div>
+<div class="result" id="si-out" aria-live="polite"></div>
 
 <script>
 (function () {
-  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
   var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
   var ids = ['si-principal', 'si-rate', 'si-years'];
-  function v(id) { return +document.getElementById(id).value || 0; }
+  function field(id) { var s = document.getElementById(id).value.trim(); return s === '' ? NaN : +s; }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function bad(msg) { document.getElementById('si-out').innerHTML = '<p class="note warn" role="alert">' + msg + '</p>'; }
 
   function calc() {
-    var P = v('si-principal');
-    var rate = v('si-rate');
-    var years = v('si-years');
+    var P = field('si-principal');
+    var rate = field('si-rate');
+    var years = field('si-years');
     var out = document.getElementById('si-out');
+    if (P !== P || rate !== rate || years !== years) { bad('Enter a principal, interest rate and time in years.'); return; }
+    if (!(P >= 0 && P <= 1e12)) { bad('Enter a principal from $0 to $1 trillion.'); return; }
+    if (!(rate >= 0 && rate <= 1e6)) { bad('Enter an annual interest rate of 0% or more.'); return; }
+    if (!(years >= 0 && years <= 1000)) { bad('Enter a time from 0 to 1,000 years.'); return; }
     if (P <= 0 || years <= 0) { out.innerHTML = '<p class="note">Enter a principal and time in years.</p>'; return; }
 
     var interest = P * rate / 100 * years;
@@ -66,7 +70,7 @@
       '<div class="result-big">' + money2.format(interest) + '</div>' +
       '<div style="margin-top:12px">' +
         kv('Total amount', money2.format(total)) +
-        kv('Principal', money.format(P)) +
+        kv('Principal', money2.format(P)) +
         kv('Rate &amp; time', rate + '% for ' + years + ' yr' + (years === 1 ? '' : 's')) +
       '</div>' +
       '<p class="note">Simple interest is charged only on the principal — unlike compound interest, it never earns interest on previously earned interest.</p>';

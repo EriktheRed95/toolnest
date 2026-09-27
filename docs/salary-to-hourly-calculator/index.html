@@ -33,32 +33,41 @@
 </header>
 <main id="main" class="container">
 <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#everyday">Everyday Calculators</a> &rsaquo; <span>Salary to Hourly Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Everyday Calculators", "item": "https://erikthered95.github.io/toolnest/#everyday"}, {"@type": "ListItem", "position": 3, "name": "Salary to Hourly Calculator"}]}</script>
-<article class="tool"><h1>Salary to Hourly Calculator</h1><p class="lede">Convert an annual salary to an hourly wage, or an hourly rate to a yearly salary. See weekly, biweekly, monthly, and daily pay based on your hours and weeks worked.</p><h2 style="margin-top:0">Salary &rarr; Hourly</h2>
-<div class="row">
+<article class="tool"><h1>Salary to Hourly Calculator</h1><p class="lede">Convert an annual salary to an hourly wage, or an hourly rate to a yearly salary. See weekly, biweekly, monthly, and daily pay based on your hours and weeks worked.</p><h2 style="margin-top:0" id="sh-a-title">Salary &rarr; Hourly</h2>
+<div role="group" aria-labelledby="sh-a-title"><div class="row">
   <div class="field"><label for="sh-salary">Annual salary ($)</label><input type="number" id="sh-salary" value="60000" min="0" step="100"></div>
-  <div class="field"><label for="sh-a-hours">Hours per week</label><input type="number" id="sh-a-hours" value="40" min="0" step="0.5"></div>
-  <div class="field"><label for="sh-a-weeks">Weeks per year</label><input type="number" id="sh-a-weeks" value="52" min="0" step="1"></div>
-</div>
-<div class="result" id="sh-a-out"></div>
+  <div class="field"><label for="sh-a-hours">Hours per week</label><input type="number" id="sh-a-hours" value="40" min="0" max="168" step="0.5"></div>
+  <div class="field"><label for="sh-a-weeks">Weeks per year</label><input type="number" id="sh-a-weeks" value="52" min="0" max="53" step="1"></div>
+</div></div>
+<div class="result" id="sh-a-out" aria-live="polite"></div>
 
-<h2>Hourly &rarr; Salary</h2>
-<div class="row">
+<h2 id="sh-b-title">Hourly &rarr; Salary</h2>
+<div role="group" aria-labelledby="sh-b-title"><div class="row">
   <div class="field"><label for="sh-rate">Hourly rate ($)</label><input type="number" id="sh-rate" value="25" min="0" step="0.01"></div>
-  <div class="field"><label for="sh-b-hours">Hours per week</label><input type="number" id="sh-b-hours" value="40" min="0" step="0.5"></div>
-  <div class="field"><label for="sh-b-weeks">Weeks per year</label><input type="number" id="sh-b-weeks" value="52" min="0" step="1"></div>
-</div>
-<div class="result" id="sh-b-out"></div>
+  <div class="field"><label for="sh-b-hours">Hours per week</label><input type="number" id="sh-b-hours" value="40" min="0" max="168" step="0.5"></div>
+  <div class="field"><label for="sh-b-weeks">Weeks per year</label><input type="number" id="sh-b-weeks" value="52" min="0" max="53" step="1"></div>
+</div></div>
+<div class="result" id="sh-b-out" aria-live="polite"></div>
 
 <script>
 (function () {
   var cf = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
-  function v(id) { return +document.getElementById(id).value || 0; }
+  function field(id) { var s = document.getElementById(id).value.trim(); return s === '' ? NaN : +s; }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function bad(out, msg) { out.innerHTML = '<p class="note warn" role="alert">' + msg + '</p>'; }
+  // Shared schedule checks: a week has 168 hours and a year at most 53 pay weeks.
+  function schedule(out, hours, weeks) {
+    if (!(hours > 0 && hours <= 168)) { bad(out, 'Enter hours per week above 0 and up to 168.'); return false; }
+    if (!(weeks > 0 && weeks <= 53)) { bad(out, 'Enter weeks per year above 0 and up to 53.'); return false; }
+    return true;
+  }
 
   function calcA() {
     var out = document.getElementById('sh-a-out');
-    var salary = v('sh-salary'), hours = v('sh-a-hours'), weeks = v('sh-a-weeks');
-    if (salary <= 0 || hours <= 0 || weeks <= 0) { out.innerHTML = '<p class="note">Enter a salary, hours per week, and weeks per year.</p>'; return; }
+    var salary = field('sh-salary'), hours = field('sh-a-hours'), weeks = field('sh-a-weeks');
+    if (salary !== salary || hours !== hours || weeks !== weeks) { bad(out, 'Enter a salary, hours per week, and weeks per year.'); return; }
+    if (!(salary > 0 && salary <= 1e12)) { bad(out, 'Enter an annual salary above $0 and up to $1 trillion.'); return; }
+    if (!schedule(out, hours, weeks)) return;
     var hourly = salary / (hours * weeks);
     var weekly = salary / weeks;
     var biweekly = weekly * 2;
@@ -69,7 +78,7 @@
       '<div class="result-big">' + cf.format(hourly) + '/hr</div>' +
       '<div style="margin-top:12px">' +
         kv('Hourly', cf.format(hourly)) +
-        kv('Daily', cf.format(daily)) +
+        kv('Daily (5-day week)', cf.format(daily)) +
         kv('Weekly', cf.format(weekly)) +
         kv('Biweekly', cf.format(biweekly)) +
         kv('Monthly', cf.format(monthly)) +
@@ -79,8 +88,10 @@
 
   function calcB() {
     var out = document.getElementById('sh-b-out');
-    var rate = v('sh-rate'), hours = v('sh-b-hours'), weeks = v('sh-b-weeks');
-    if (rate <= 0 || hours <= 0 || weeks <= 0) { out.innerHTML = '<p class="note">Enter an hourly rate, hours per week, and weeks per year.</p>'; return; }
+    var rate = field('sh-rate'), hours = field('sh-b-hours'), weeks = field('sh-b-weeks');
+    if (rate !== rate || hours !== hours || weeks !== weeks) { bad(out, 'Enter an hourly rate, hours per week, and weeks per year.'); return; }
+    if (!(rate > 0 && rate <= 1e9)) { bad(out, 'Enter an hourly rate above $0 and up to $1 billion.'); return; }
+    if (!schedule(out, hours, weeks)) return;
     var annual = rate * hours * weeks;
     var monthly = annual / 12;
     var weekly = annual / weeks;

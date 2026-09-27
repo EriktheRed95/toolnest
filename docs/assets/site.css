@@ -93,11 +93,12 @@ textarea{min-height:130px;resize:vertical;font-family:inherit}
 /* results */
 .result{margin-top:18px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
 .result.empty{color:var(--muted)}
-.result-big{font-size:2rem;font-weight:800;color:var(--brand);line-height:1.1}
+/* long unbroken figures ("$1,000,000,000.00/yr") may wrap so they never widen a 320px screen */
+.result-big{font-size:2rem;font-weight:800;color:var(--brand);line-height:1.1;overflow-wrap:anywhere}
 .result-sub{color:var(--muted);font-size:.9rem}
 .kv{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dashed var(--line)}
 .kv:last-child{border-bottom:0}
-.kv .v{font-weight:700}
+.kv .v{font-weight:700;text-align:right;overflow-wrap:anywhere}
 .out-list{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;word-break:break-word}
 .pw-out{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:1.25rem;letter-spacing:.02em}
 .tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.78rem;font-weight:700}
