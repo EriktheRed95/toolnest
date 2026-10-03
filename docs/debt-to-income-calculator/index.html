@@ -46,53 +46,63 @@
   <div class="field"><label for="d-other">Other debts ($/mo) <span class="hint">support, personal loans</span></label><input type="number" id="d-other" value="0" min="0" step="25"></div>
 </div>
 
-<div class="result" id="d-out"></div>
+<div class="result" id="d-out" aria-live="polite"></div>
 
 <script>
 (function () {
   var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
   var ids = ['d-income', 'd-housing', 'd-car', 'd-cards', 'd-student', 'd-other'];
-  function v(id) { return +document.getElementById(id).value || 0; }
+  var debtIds = ['d-housing', 'd-car', 'd-cards', 'd-student', 'd-other'];
+  function field(id) { var s = document.getElementById(id).value.trim(); return s === '' ? NaN : +s; }
+  function optional(id) { var s = document.getElementById(id).value.trim(); return s === '' ? 0 : +s; }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function bad(msg) { document.getElementById('d-out').innerHTML = '<p class="note warn" role="alert">' + msg + '</p>'; }
+  // whole dollars stay "$7,500"; anything with cents shows both digits
+  function cents(c) { return (c % 100 === 0 ? money : money2).format(c / 100); }
 
-  function rate(pct) {
-    if (pct <= 36) return { label: 'Excellent', cls: 'ok' };
-    if (pct <= 43) return { label: 'Acceptable', cls: '' };
-    if (pct <= 50) return { label: 'High', cls: 'warn' };
+  // thresholds are compared in whole cents (debt * 100 <= pct * income), never on a float percentage
+  function rate(debtC, incomeC) {
+    if (debtC * 100 <= 36 * incomeC) return { label: 'Excellent', cls: 'ok' };
+    if (debtC * 100 <= 43 * incomeC) return { label: 'Acceptable', cls: '' };
+    if (debtC * 100 <= 50 * incomeC) return { label: 'High', cls: 'warn' };
     return { label: 'Very high', cls: 'warn' };
   }
 
   function calc() {
-    var income = v('d-income');
-    var housing = v('d-housing');
-    var otherDebt = v('d-car') + v('d-cards') + v('d-student') + v('d-other');
-    var totalDebt = housing + otherDebt;
-    var front = income ? housing / income * 100 : 0;
-    var back = income ? totalDebt / income * 100 : 0;
-    var assess = rate(back);
-
+    var income = field('d-income');
     var out = document.getElementById('d-out');
-    if (!income) {
-      out.innerHTML = '<p class="note">Enter your gross monthly income to calculate your DTI.</p>';
-      return;
+    var debts = debtIds.map(optional);
+    if (income !== income) { bad('Enter your gross monthly income. Leave a debt field blank if you have none.'); return; }
+    if (!(income >= 0 && income <= 1e9)) { bad('Enter a gross monthly income from $0 to $1 billion.'); return; }
+    for (var k = 0; k < debts.length; k++) {
+      if (!(debts[k] >= 0 && debts[k] <= 1e9)) { bad('Enter each monthly debt payment from $0 to $1 billion, or leave it blank.'); return; }
     }
-    // How much more debt room to hit 43%
-    var room43 = income * 0.43 - totalDebt;
+    if (income <= 0) { out.innerHTML = '<p class="note">Enter your gross monthly income to calculate your DTI.</p>'; return; }
+
+    var incomeC = Math.round(income * 100);
+    var housingC = Math.round(debts[0] * 100);
+    var totalC = debts.reduce(function (sum, d) { return sum + Math.round(d * 100); }, 0);
+    var front = housingC / incomeC * 100;
+    var back = totalC / incomeC * 100;
+    var assess = rate(totalC, incomeC);
+    // How much more debt room to hit 43% (whole cents: exactly 43% leaves no room)
+    var room43C = Math.floor(incomeC * 43 / 100) - totalC;
 
     out.innerHTML =
       '<div class="result-sub">Back-end DTI ratio &mdash; ' + assess.label + '</div>' +
-      '<div class="result-big">' + back.toFixed(1) + '%</div>' +
+      '<div class="result-big">' + back.toFixed(2) + '%</div>' +
       '<div style="margin-top:12px">' +
-        kv('Front-end (housing only)', front.toFixed(1) + '%') +
-        kv('Back-end (all debts)', back.toFixed(1) + '%') +
-        kv('Total monthly debt', money.format(totalDebt)) +
-        kv('Gross monthly income', money.format(income)) +
+        kv('Front-end (housing only)', front.toFixed(2) + '%') +
+        kv('Back-end (all debts)', back.toFixed(2) + '%') +
+        kv('Total monthly debt', cents(totalC)) +
+        kv('Gross monthly income', cents(incomeC)) +
       '</div>' +
       '<p class="note">' +
-        (back <= 36 ? 'You’re under the 36% mark lenders love — this opens the most loan options and best rates.' :
-         back <= 43 ? 'You’re within the typical 43% qualifying limit for many mortgages, but lowering it improves your terms.' :
+        (totalC * 100 <= 36 * incomeC ? 'You’re at or under the 36% mark lenders love — this opens the most loan options and best rates.' :
+         totalC * 100 <= 43 * incomeC ? 'You’re within the typical 43% qualifying limit for many mortgages, but lowering it improves your terms.' :
          'Your ratio is above the common 43% limit. Paying down debt or raising income before applying will help significantly.') +
-        (room43 > 0 ? ' You have roughly ' + money.format(room43) + '/mo of debt-payment room before hitting 43%.' : '') +
+        (room43C > 0 ? ' You have roughly ' + cents(room43C) + '/mo of debt-payment room before hitting 43%.' : '') +
       '</p>';
   }
   ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });

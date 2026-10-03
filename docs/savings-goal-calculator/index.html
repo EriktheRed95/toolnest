@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://pagead2.googlesyndication.com">
 <link rel="stylesheet" href="/toolnest/assets/site.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Savings Goal Calculator", "url": "https://erikthered95.github.io/toolnest/savings-goal-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Find out how much to save each month to reach a goal. Enter your target, current savings, timeline, and APY to see the monthly contribution and interest you'll earn."}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does this savings goal calculator work?", "acceptedAnswer": {"@type": "Answer", "text": "It first grows your current savings at your APY over the time horizon, then figures out the extra monthly contribution needed to close any gap to your goal. The math uses the future-value-of-an-annuity formula so each monthly deposit earns interest from the month it's made until your target date."}}, {"@type": "Question", "name": "What APY should I use?", "acceptedAnswer": {"@type": "Answer", "text": "Use the rate your money will actually earn. High-yield savings accounts and money market accounts have recently paid in the 4-5% range, while regular savings accounts pay far less. For longer goals invested in the market, returns may be higher but aren't guaranteed. The 4% default reflects a competitive savings account."}}, {"@type": "Question", "name": "What if my current savings already covers the goal?", "acceptedAnswer": {"@type": "Answer", "text": "If your existing balance, compounded at your APY, reaches the target on its own by the goal date, the calculator tells you no further saving is required. You can then redirect what you would have saved toward another goal or simply give yourself breathing room."}}, {"@type": "Question", "name": "How can I reach my goal faster?", "acceptedAnswer": {"@type": "Answer", "text": "Three levers control the monthly amount: a smaller target, a longer timeline, or a higher return. Extending the deadline has an outsized effect because contributions have more time to compound. Automating transfers also helps, since money saved before you see it is money you won't accidentally spend."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does this savings goal calculator work?", "acceptedAnswer": {"@type": "Answer", "text": "It first grows your current savings at your APY over the time horizon, then figures out the extra monthly contribution needed to close any gap to your goal. The math uses the future-value-of-an-annuity formula: your APY is converted to an equivalent monthly rate, and each deposit, made at the end of a month, earns interest from then until your target date."}}, {"@type": "Question", "name": "What APY should I use?", "acceptedAnswer": {"@type": "Answer", "text": "Use the rate your money will actually earn. High-yield savings accounts and money market accounts have recently paid in the 4-5% range, while regular savings accounts pay far less. For longer goals invested in the market, returns may be higher but aren't guaranteed. The 4% default reflects a competitive savings account."}}, {"@type": "Question", "name": "What if my current savings already covers the goal?", "acceptedAnswer": {"@type": "Answer", "text": "If your existing balance, compounded at your APY, reaches the target on its own by the goal date, the calculator tells you no further saving is required. You can then redirect what you would have saved toward another goal or simply give yourself breathing room."}}, {"@type": "Question", "name": "How can I reach my goal faster?", "acceptedAnswer": {"@type": "Answer", "text": "Three levers control the monthly amount: a smaller target, a longer timeline, or a higher return. Extending the deadline has an outsized effect because contributions have more time to compound. Automating transfers also helps, since money saved before you see it is money you won't accidentally spend."}}]}</script>
 
 </head>
 <body>
@@ -35,61 +35,87 @@
 <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/toolnest/">Home</a> &rsaquo; <a href="/toolnest/#finance">Real Estate & Finance</a> &rsaquo; <span>Savings Goal Calculator</span></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://erikthered95.github.io/toolnest/"}, {"@type": "ListItem", "position": 2, "name": "Real Estate & Finance", "item": "https://erikthered95.github.io/toolnest/#finance"}, {"@type": "ListItem", "position": 3, "name": "Savings Goal Calculator"}]}</script>
 <article class="tool"><h1>Savings Goal Calculator</h1><p class="lede">Find out how much to save each month to reach a goal. Enter your target, current savings, timeline, and APY to see the monthly contribution and interest you'll earn.</p><div class="row">
   <div class="field"><label for="sg-goal">Goal amount ($)</label><input type="number" id="sg-goal" value="30000" min="0" step="500"></div>
-  <div class="field"><label for="sg-current">Current savings ($)</label><input type="number" id="sg-current" value="5000" min="0" step="500"></div>
+  <div class="field"><label for="sg-current">Current savings ($) <span class="hint">blank = $0</span></label><input type="number" id="sg-current" value="5000" min="0" step="500"></div>
 </div>
 <div class="row">
-  <div class="field"><label for="sg-years">Years to goal</label><input type="number" id="sg-years" value="5" min="1" max="60" step="1"></div>
-  <div class="field"><label for="sg-apy">APY (%)</label><input type="number" id="sg-apy" value="4" min="0" step="0.1"></div>
+  <div class="field"><label for="sg-years">Years to goal <span class="hint">fractions OK</span></label><input type="number" id="sg-years" value="5" min="0" max="60" step="any"></div>
+  <div class="field"><label for="sg-apy">APY (%)</label><input type="number" id="sg-apy" value="4" min="0" max="100" step="0.1"></div>
 </div>
 
-<div class="result" id="sg-out"></div>
+<div class="result" id="sg-out" aria-live="polite"></div>
 
 <script>
 (function () {
-  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
   var ids = ['sg-goal', 'sg-current', 'sg-years', 'sg-apy'];
-  function v(id) { return +document.getElementById(id).value || 0; }
+  function field(id) { var s = document.getElementById(id).value.trim(); return s === '' ? NaN : +s; }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function bad(msg) { document.getElementById('sg-out').innerHTML = '<p class="note warn" role="alert">' + msg + '</p>'; }
+  function cents(c) { return money.format(c / 100); }
 
   function calc() {
-    var goal = v('sg-goal');
-    var current = v('sg-current');
-    var i = v('sg-apy') / 100 / 12;
-    var N = Math.round(v('sg-years') * 12);
+    var goal = field('sg-goal');
+    var currentText = document.getElementById('sg-current').value.trim();
+    var current = currentText === '' ? 0 : +currentText;
+    var years = field('sg-years');
+    var apy = field('sg-apy');
     var out = document.getElementById('sg-out');
 
+    if (goal !== goal || current !== current || years !== years || apy !== apy) { bad('Enter a goal amount, the years to reach it and an APY.'); return; }
+    if (!(goal >= 0 && goal <= 1e12)) { bad('Enter a goal from $0 to $1 trillion.'); return; }
+    if (!(current >= 0 && current <= 1e12)) { bad('Enter current savings from $0 to $1 trillion, or leave it blank.'); return; }
+    var N = Math.round(years * 12);
+    if (!(N >= 1 && years <= 60)) { bad('Enter a time from 1 month to 60 years.'); return; }
+    if (!(apy >= 0 && apy <= 100)) { bad('Enter an APY from 0% to 100%.'); return; }
     if (goal <= 0) { out.innerHTML = '<p class="note">Enter a goal amount to see how much to save each month.</p>'; return; }
 
-    var fvCurrent = current * Math.pow(1 + i, N);
+    // APY is the effective yearly yield, so the monthly rate is (1 + APY)^(1/12) - 1, not APY / 12.
+    // expm1/log1p keep full precision for tiny rates: G = (1 + APY)^(N/12) - 1 is growth over the whole period.
+    var a = apy / 100;
+    var G = Math.expm1(N / 12 * Math.log1p(a));
+    var i = Math.expm1(Math.log1p(a) / 12);
+    var fvCurrent = current * (1 + G);
+    var apyText = String(+apy.toFixed(4));
+    var horizon = N % 12 === 0 ? (N / 12) + (N === 12 ? ' year' : ' years') : N + (N === 1 ? ' month' : ' months');
+    if (!(fvCurrent < 1e13)) { bad('That projected balance is too large to show. Try a lower APY or fewer years.'); return; }
 
-    if (fvCurrent >= goal) {
+    var goalC = Math.round(goal * 100), currentC = Math.round(current * 100);
+    var fvC = Math.round(fvCurrent * 100);
+
+    if (fvC >= goalC) {
       out.innerHTML =
         '<div class="result-sub">Monthly contribution needed</div>' +
         '<div class="result-big">' + money.format(0) + '</div>' +
         '<div style="margin-top:12px">' +
-          kv('Target', money.format(goal)) +
-          kv('Current savings', money.format(current)) +
-          kv('Projected from current savings', money.format(fvCurrent)) +
+          kv('Target', cents(goalC)) +
+          kv('Current savings', cents(currentC)) +
+          kv('Projected from current savings', cents(fvC)) +
         '</div>' +
-        '<p class="note ok">Your current savings alone, growing at ' + v('sg-apy') + '% APY, should reach ' + money.format(fvCurrent) + ' — enough to cover your ' + money.format(goal) + ' goal. No additional saving required.</p>';
+        '<p class="note ok">Your current savings alone, growing at ' + apyText + '% APY, should reach ' + cents(fvC) + ' in ' + horizon + ' — enough to cover your ' + cents(goalC) + ' goal. No additional saving required.</p>';
       return;
     }
 
+    // Deposits are made at the end of each month (ordinary annuity). The payment is rounded UP to the cent
+    // so the goal is actually reached; all figures below are in whole cents so the lines add up.
     var need = goal - fvCurrent;
-    var requiredMonthly = i === 0 ? need / N : need * i / (Math.pow(1 + i, N) - 1);
-    var totalContributions = requiredMonthly * N;
-    var interestEarned = goal - current - totalContributions;
+    var exactMonthly = a === 0 ? need / N : need * i / G;
+    var monthlyC = Math.max(1, Math.ceil(exactMonthly * 100 - 1e-7));
+    var contribC = monthlyC * N;
+    var balance = fvCurrent + monthlyC / 100 * (a === 0 ? N : G / i);
+    var interestC = a === 0 ? 0 : Math.max(0, Math.round(balance * 100) - currentC - contribC);
 
     out.innerHTML =
       '<div class="result-sub">Save this much each month</div>' +
-      '<div class="result-big">' + money.format(requiredMonthly) + '</div>' +
+      '<div class="result-big">' + cents(monthlyC) + '</div>' +
       '<div style="margin-top:12px">' +
-        kv('Target', money.format(goal)) +
-        kv('Current savings', money.format(current)) +
-        kv('Total you’ll contribute', money.format(totalContributions)) +
-        kv('<strong>Interest earned</strong>', '<strong>' + money.format(interestEarned) + '</strong>') +
+        kv('Target', cents(goalC)) +
+        kv('Current savings', cents(currentC)) +
+        kv('Time horizon', horizon) +
+        kv('Total you’ll contribute', cents(contribC)) +
+        kv('<strong>Interest earned</strong>', '<strong>' + cents(interestC) + '</strong>') +
+        kv('Projected balance', cents(currentC + contribC + interestC)) +
       '</div>' +
-      '<p class="note">Saving about ' + money.format(requiredMonthly) + '/month for ' + v('sg-years') + ' years gets you to ' + money.format(goal) + ', with roughly ' + money.format(interestEarned) + ' of that coming from interest rather than your own deposits.</p>';
+      '<p class="note">Saving about ' + cents(monthlyC) + '/month for ' + horizon + ' gets you to ' + cents(goalC) + ', with roughly ' + cents(interestC) + ' of that coming from interest rather than your own deposits.</p>';
   }
   ids.forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
   calc();
@@ -104,7 +130,7 @@
   <li><strong>Use a high-yield account</strong> — a competitive APY lets interest do more of the work.</li>
   <li><strong>Give yourself room</strong> — a longer horizon lowers the monthly amount and eases the strain.</li>
 </ul>
-<p class="note"><strong>Estimate only.</strong> This assumes a constant APY and steady monthly contributions; savings rates change over time and aren't guaranteed. Results compound monthly and ignore taxes on interest. Use it as a target, not an exact schedule. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How does this savings goal calculator work?</summary><div class="faq-a">It first grows your current savings at your APY over the time horizon, then figures out the extra monthly contribution needed to close any gap to your goal. The math uses the future-value-of-an-annuity formula so each monthly deposit earns interest from the month it's made until your target date.</div></details>
+<p class="note"><strong>Estimate only.</strong> This assumes a constant APY and steady monthly contributions; savings rates change over time and aren't guaranteed. The APY is treated as the effective yearly yield, deposits are assumed to land at the end of each month, and taxes on interest are ignored. Use it as a target, not an exact schedule. This is not financial advice.</p><section class="faq"><h2>Frequently asked questions</h2><details class="faq-item"><summary>How does this savings goal calculator work?</summary><div class="faq-a">It first grows your current savings at your APY over the time horizon, then figures out the extra monthly contribution needed to close any gap to your goal. The math uses the future-value-of-an-annuity formula: your APY is converted to an equivalent monthly rate, and each deposit, made at the end of a month, earns interest from then until your target date.</div></details>
 <details class="faq-item"><summary>What APY should I use?</summary><div class="faq-a">Use the rate your money will actually earn. High-yield savings accounts and money market accounts have recently paid in the 4-5% range, while regular savings accounts pay far less. For longer goals invested in the market, returns may be higher but aren't guaranteed. The 4% default reflects a competitive savings account.</div></details>
 <details class="faq-item"><summary>What if my current savings already covers the goal?</summary><div class="faq-a">If your existing balance, compounded at your APY, reaches the target on its own by the goal date, the calculator tells you no further saving is required. You can then redirect what you would have saved toward another goal or simply give yourself breathing room.</div></details>
 <details class="faq-item"><summary>How can I reach my goal faster?</summary><div class="faq-a">Three levers control the monthly amount: a smaller target, a longer timeline, or a higher return. Extending the deadline has an outsized effect because contributions have more time to compound. Automating transfers also helps, since money saved before you see it is money you won't accidentally spend.</div></details></section></article><section class="related"><h2>Related tools</h2><div class="grid"><a class="card" href="/toolnest/seller-net-proceeds-calculator/"><h3>Seller Net Proceeds Calculator</h3><p>Estimate how much cash you'll walk away with after selling your home — sale price minus mortgage payoff, agent commission, and closing costs. Free seller net sheet.</p></a><a class="card" href="/toolnest/simple-interest-calculator/"><h3>Simple Interest Calculator</h3><p>Calculate simple interest on a principal amount. Enter the principal, annual rate, and time in years to see the interest earned and the total amount.</p></a><a class="card" href="/toolnest/va-loan-calculator/"><h3>VA Loan Calculator</h3><p>Estimate your VA mortgage payment including the VA funding fee, property taxes, and insurance — with no down payment and no monthly mortgage insurance.</p></a><a class="card" href="/toolnest/1031-exchange-calculator/"><h3>1031 Exchange Calculator</h3><p>Estimate the taxes deferred by a 1031 like-kind exchange of investment property. See your realized gain, capital gains and depreciation recapture tax, and net proceeds to reinvest.</p></a><a class="card" href="/toolnest/2-1-buydown-calculator/"><h3>2-1 Buydown Calculator</h3><p>See your reduced mortgage payment in years 1 and 2 of a 2-1 temporary buydown, the monthly savings, and the upfront buydown cost.</p></a><a class="card" href="/toolnest/arm-vs-fixed-calculator/"><h3>ARM vs. Fixed Mortgage Calculator</h3><p>Compare an adjustable-rate mortgage (ARM) against a fixed-rate loan. See the intro-period savings, the payment after the rate adjusts, total cost, and the break-even point.</p></a></div></section>

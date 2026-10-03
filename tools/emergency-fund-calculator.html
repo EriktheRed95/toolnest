@@ -16,53 +16,72 @@
 META-->
 <div class="row">
   <div class="field"><label for="ef-exp">Monthly essential expenses ($)</label><input type="number" id="ef-exp" value="3500" min="0" step="100"></div>
-  <div class="field"><label for="ef-months">Months of coverage desired</label><input type="number" id="ef-months" value="6" min="1" step="1"></div>
+  <div class="field"><label for="ef-months">Months of coverage desired</label><input type="number" id="ef-months" value="6" min="1" max="120" step="1"></div>
 </div>
 <div class="row">
-  <div class="field"><label for="ef-current">Current emergency savings ($)</label><input type="number" id="ef-current" value="5000" min="0" step="100"></div>
+  <div class="field"><label for="ef-current">Current emergency savings ($) <span class="hint">blank = $0</span></label><input type="number" id="ef-current" value="5000" min="0" step="100"></div>
   <div class="field"><label for="ef-contrib">Monthly contribution ($) <span class="hint">optional</span></label><input type="number" id="ef-contrib" value="0" min="0" step="50"></div>
 </div>
 
-<div class="result" id="ef-out"></div>
+<div class="result" id="ef-out" aria-live="polite"></div>
 
 <script>
 (function () {
-  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money0 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
   var ids = ['ef-exp', 'ef-months', 'ef-current', 'ef-contrib'];
-  function v(id) { return +document.getElementById(id).value || 0; }
+  function field(id) { var s = document.getElementById(id).value.trim(); return s === '' ? NaN : +s; }
+  function optional(id) { var s = document.getElementById(id).value.trim(); return s === '' ? 0 : +s; }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function bad(msg) { document.getElementById('ef-out').innerHTML = '<p class="note warn" role="alert">' + msg + '</p>'; }
+  // whole dollars stay "$21,000"; anything with cents shows both digits, so a $0.40 gap is never "$0"
+  function cents(c) { return (c % 100 === 0 ? money0 : money2).format(c / 100); }
 
   function calc() {
-    var exp = v('ef-exp');
-    var months = v('ef-months');
-    var current = v('ef-current');
-    var contrib = v('ef-contrib');
+    var exp = field('ef-exp');
+    var months = field('ef-months');
+    var current = optional('ef-current');
+    var contrib = optional('ef-contrib');
     var out = document.getElementById('ef-out');
-    if (exp <= 0 || months <= 0) { out.innerHTML = '<p class="note">Enter your monthly expenses and months of coverage.</p>'; return; }
+    if (exp !== exp || months !== months || current !== current || contrib !== contrib) { bad('Enter your monthly expenses and the months of coverage you want.'); return; }
+    if (!(exp >= 0 && exp <= 1e9)) { bad('Enter monthly expenses from $0 to $1 billion.'); return; }
+    if (!(months >= 1 && months <= 120)) { bad('Enter months of coverage from 1 to 120.'); return; }
+    if (!(current >= 0 && current <= 1e12)) { bad('Enter current savings from $0 to $1 trillion, or leave it blank.'); return; }
+    if (!(contrib >= 0 && contrib <= 1e9)) { bad('Enter a monthly contribution from $0 to $1 billion, or leave it blank.'); return; }
+    if (exp <= 0) { out.innerHTML = '<p class="note">Enter your monthly expenses and months of coverage.</p>'; return; }
 
-    var target = exp * months;
-    var gap = target - current;
+    // whole cents, so the target, savings and gap always add up
+    var targetC = Math.round(Math.round(exp * 100) * months);
+    var currentC = Math.round(current * 100);
+    var contribC = Math.round(contrib * 100);
+    var gapC = targetC - currentC;
+    var monthsText = String(+months.toFixed(4));
 
     var html =
       '<div class="result-sub">Target emergency fund</div>' +
-      '<div class="result-big">' + money.format(target) + '</div>' +
+      '<div class="result-big">' + cents(targetC) + '</div>' +
       '<div style="margin-top:12px">' +
-        kv('Current savings', money.format(current)) +
-        kv('Remaining gap', money.format(Math.max(0, gap)));
+        kv('Current savings', cents(currentC)) +
+        kv('Remaining gap', cents(Math.max(0, gapC)));
 
-    if (gap <= 0) {
+    if (gapC <= 0) {
       html += kv('Status', 'Fully funded') + '</div>' +
-        '<p class="note ok">You\'ve reached your ' + months + '-month goal. Keep it in a safe, liquid account and replenish it after any use.</p>';
+        '<p class="note ok">You\'ve reached your ' + monthsText + '-month goal. Keep it in a safe, liquid account and replenish it after any use.</p>';
     } else {
-      if (contrib > 0) {
-        var monthsToReach = Math.ceil(gap / contrib);
-        var yrs = Math.floor(monthsToReach / 12), mo = monthsToReach % 12;
-        var timeStr = (yrs ? yrs + ' yr' + (yrs === 1 ? '' : 's') + ' ' : '') + mo + ' mo';
-        html += kv('Time to reach goal', timeStr + ' at ' + money.format(contrib) + '/mo') + '</div>';
+      if (contribC > 0) {
+        var monthsToReach = Math.ceil(gapC / contribC);
+        var timeStr;
+        if (monthsToReach > 1200) timeStr = 'More than 100 years';
+        else {
+          var yrs = Math.floor(monthsToReach / 12), mo = monthsToReach % 12;
+          timeStr = (yrs ? yrs + ' yr' + (yrs === 1 ? '' : 's') + ' ' : '') + mo + ' mo';
+        }
+        html += kv('Time to reach goal', timeStr + ' at ' + cents(contribC) + '/mo') + '</div>' +
+          '<p class="note">The timeline counts your contributions only and ignores any interest earned.</p>';
       } else {
         html += '</div>';
       }
-      html += '<p class="note warn">You\'re ' + money.format(gap) + ' short of your goal. Three to six months of essential expenses is a common guideline.</p>';
+      html += '<p class="note warn">You\'re ' + cents(gapC) + ' short of your goal. Three to six months of essential expenses is a common guideline.</p>';
     }
 
     out.innerHTML = html;

@@ -19,38 +19,49 @@ META-->
   <div class="field"><label for="ltv-value">Appraised value / purchase price ($)</label><input type="number" id="ltv-value" value="400000" min="0" step="1000"></div>
 </div>
 
-<div class="result" id="ltv-out"></div>
+<div class="result" id="ltv-out" aria-live="polite"></div>
 
 <script>
 (function () {
   var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var money2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
   var ids = ['ltv-loan', 'ltv-value'];
-  function v(id) { return +document.getElementById(id).value || 0; }
+  function field(id) { var s = document.getElementById(id).value.trim(); return s === '' ? NaN : +s; }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function bad(msg) { document.getElementById('ltv-out').innerHTML = '<p class="note warn" role="alert">' + msg + '</p>'; }
+  // whole dollars stay "$320,000"; anything with cents shows both digits
+  function cents(c) { return (c % 100 === 0 ? money : money2).format(c / 100); }
 
   function calc() {
-    var loan = v('ltv-loan');
-    var value = v('ltv-value');
+    var loan = field('ltv-loan');
+    var value = field('ltv-value');
     var out = document.getElementById('ltv-out');
+    if (loan !== loan || value !== value) { bad('Enter a loan amount and an appraised value or purchase price.'); return; }
+    if (!(loan >= 0 && loan <= 1e10)) { bad('Enter a loan amount from $0 to $10 billion.'); return; }
+    if (!(value >= 0 && value <= 1e10)) { bad('Enter a property value from $0 to $10 billion.'); return; }
     if (value <= 0) { out.innerHTML = '<p class="note">Enter an appraised value or purchase price.</p>'; return; }
 
-    var ltv = loan / value * 100;
-    var equity = value - loan;
-    var equityPct = 100 - ltv;
+    // whole cents: LTV thresholds are compared with integer cross-multiplication, so exactly 80% or
+    // 96.5% is never pushed over the line by binary rounding error
+    var L = Math.round(loan * 100), V = Math.round(value * 100);
+    var ltv = L / V * 100;
+    var equityC = V - L;
+    var equityPct = (V - L) / V * 100;
 
     var note;
-    if (ltv <= 80) note = '<p class="note ok">At 80% LTV or below, you generally avoid PMI on a conventional loan.</p>';
-    else if (ltv <= 96.5) note = '<p class="note warn">Above 80% LTV, conventional loans typically require PMI until you reach about 20% equity. FHA loans allow up to 96.5% LTV.</p>';
-    else note = '<p class="note warn">This LTV is above the 96.5% FHA limit and the ~97% conventional limit. You may need a larger down payment or a special program (VA/USDA can reach 100%).</p>';
+    if (L * 10 <= V * 8) note = '<p class="note ok">At 80% LTV or below, you generally avoid PMI on a conventional loan.</p>';
+    else if (L * 1000 <= V * 965) note = '<p class="note warn">Above 80% LTV, conventional loans typically require PMI until you reach about 20% equity. FHA loans allow up to 96.5% LTV.</p>';
+    else if (L <= V) note = '<p class="note warn">This LTV is above the 96.5% FHA limit and the ~97% conventional limit. You may need a larger down payment or a special program (VA/USDA can reach 100%).</p>';
+    else note = '<p class="note warn">The loan is larger than the property value, so there is negative equity. Most programs will not lend above 100% of value without extra collateral or a cash-in at closing.</p>';
 
     out.innerHTML =
       '<div class="result-sub">Loan-to-value ratio</div>' +
-      '<div class="result-big">' + ltv.toFixed(1) + '%</div>' +
+      '<div class="result-big">' + ltv.toFixed(2) + '%</div>' +
       '<div style="margin-top:12px">' +
-        kv('Equity', money.format(equity)) +
-        kv('Equity %', equityPct.toFixed(1) + '%') +
-        kv('Loan amount', money.format(loan)) +
-        kv('Property value', money.format(value)) +
+        kv('Equity', cents(equityC)) +
+        kv('Equity %', equityPct.toFixed(2) + '%') +
+        kv('Loan amount', cents(L)) +
+        kv('Property value', cents(V)) +
       '</div>' +
       note;
   }

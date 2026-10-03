@@ -16,42 +16,55 @@
 META-->
 <div class="row">
   <div class="field"><label for="cd-deposit">Deposit amount ($)</label><input type="number" id="cd-deposit" value="10000" min="0" step="100"></div>
-  <div class="field"><label for="cd-apy">APY (%)</label><input type="number" id="cd-apy" value="4.5" min="0" step="0.01"></div>
+  <div class="field"><label for="cd-apy">APY (%)</label><input type="number" id="cd-apy" value="4.5" min="0" max="100" step="0.01"></div>
 </div>
 <div class="row">
-  <div class="field"><label for="cd-years">Term (years) <span class="hint">fractional allowed</span></label><input type="number" id="cd-years" value="1" min="0" step="0.25"></div>
+  <div class="field"><label for="cd-years">Term (years) <span class="hint">fractional allowed</span></label><input type="number" id="cd-years" value="1" min="0" max="100" step="0.25"></div>
 </div>
 
-<div class="result" id="cd-out"></div>
+<div class="result" id="cd-out" aria-live="polite"></div>
 
 <script>
 (function () {
   var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
-  function v(id) { return +document.getElementById(id).value || 0; }
+  function field(id) { var s = document.getElementById(id).value.trim(); return s === '' ? NaN : +s; }
   function kv(k, val) { return '<div class="kv"><span>' + k + '</span><span class="v">' + val + '</span></div>'; }
+  function bad(msg) { document.getElementById('cd-out').innerHTML = '<p class="note warn" role="alert">' + msg + '</p>'; }
+  function cents(c) { return money.format(c / 100); }
 
   function calc() {
-    var deposit = v('cd-deposit');
-    var apy = v('cd-apy');
-    var years = v('cd-years');
+    var deposit = field('cd-deposit');
+    var apy = field('cd-apy');
+    var years = field('cd-years');
     var out = document.getElementById('cd-out');
+    if (deposit !== deposit || apy !== apy || years !== years) { bad('Enter a deposit amount, an APY and a term in years.'); return; }
+    if (!(deposit >= 0 && deposit <= 1e12)) { bad('Enter a deposit from $0 to $1 trillion.'); return; }
+    if (!(apy >= 0 && apy <= 100)) { bad('Enter an APY from 0% to 100%.'); return; }
+    if (!(years >= 0 && years <= 100)) { bad('Enter a term from 0 to 100 years.'); return; }
     if (deposit <= 0 || years <= 0) {
       out.innerHTML = '<p class="note">Enter a deposit amount and term.</p>';
       return;
     }
     var maturity = deposit * Math.pow(1 + apy / 100, years);
-    var interest = maturity - deposit;
+    if (!(maturity < 1e13)) { bad('That maturity value is too large to show. Try a smaller deposit, APY or term.'); return; }
+    // whole cents, so deposit + interest always equals the maturity value shown
+    var depositC = Math.round(deposit * 100);
+    // toFixed(6) strips binary noise so an exact half-cent (5000 at 5% for 3 years = 5,788.125) rounds up
+    var maturityC = Math.round(+(maturity * 100).toFixed(6));
+    var interestC = maturityC - depositC;
+    var apyText = apy.toFixed(4).replace(/0{1,2}$/, '');
+    var termText = String(+years.toFixed(4)) + ' year' + (years === 1 ? '' : 's');
 
     out.innerHTML =
       '<div class="result-sub">Value at maturity</div>' +
-      '<div class="result-big">' + money.format(maturity) + '</div>' +
+      '<div class="result-big">' + cents(maturityC) + '</div>' +
       '<div style="margin-top:12px">' +
-        kv('Deposit', money.format(deposit)) +
-        kv('Total interest earned', money.format(interest)) +
-        kv('APY', apy.toFixed(2) + '%') +
-        kv('Term', years + ' year' + (years === 1 ? '' : 's')) +
+        kv('Deposit', cents(depositC)) +
+        kv('Total interest earned', cents(interestC)) +
+        kv('APY', apyText + '%') +
+        kv('Term', termText) +
       '</div>' +
-      '<p class="note ok">This CD earns ' + money.format(interest) + ' in interest over ' + years + ' year' + (years === 1 ? '' : 's') + ' at a ' + apy.toFixed(2) + '% APY.</p>';
+      '<p class="note ok">This CD earns ' + cents(interestC) + ' in interest over ' + termText + ' at a ' + apyText + '% APY.</p>';
   }
   ['cd-deposit', 'cd-apy', 'cd-years'].forEach(function (id) {
     document.getElementById(id).addEventListener('input', calc);
